@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-peerstream}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-peerstream}
+      POSTGRES_DB: ${POSTGRES_DB:-peerstream}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./services/api
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  vpn:
+    image: qmcgaw/gluetun
+    profiles: [vpn]
+    cap_add: [NET_ADMIN]
+    environment:
+      VPN_SERVICE_PROVIDER: ${VPN_PROVIDER}
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
+      WIREGUARD_ADDRESSES: ${WIREGUARD_ADDRESSES}
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "https://ipinfo.io"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  torrent-stream:
+    build: ./services/torrent-stream
+    restart: unless-stopped
+    env_file: .env
+    network_mode: "service:vpn"
+    profiles: [vpn]
+    depends_on:
+      vpn:
+        condition: service_healthy
+    volumes:
+      - torrents:/data/torrents
+
+  torrent-stream-novpn:
+    build: ./services/torrent-stream
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8081:8081"
+    profiles: [""]
+    depends_on:
+      - postgres
+    volumes:
+      - torrents:/data/torrents
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  torrents:

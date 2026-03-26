@@ -1,4 +1,4 @@
-# PeerStream
+# HyperTube
 
 A web application to search for and stream videos downloaded via BitTorrent — streaming begins before the download completes.
 

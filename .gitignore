@@ -1,0 +1,20 @@
+.env
+*.env
+
+# Go binaries
+services/api/api
+services/torrent-stream/torrent-stream
+
+# Node
+node_modules/
+frontend/.next/
+frontend/out/
+
+# Torrent cache
+data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.claude/

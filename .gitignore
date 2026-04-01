@@ -7,8 +7,7 @@ services/torrent-stream/torrent-stream
 
 # Node
 node_modules/
-frontend/.next/
-frontend/out/
+.next/
 
 # Torrent cache
 data/

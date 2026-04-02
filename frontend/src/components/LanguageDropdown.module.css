@@ -1,0 +1,17 @@
+.dropdown {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    background-color: grey;
+}
+
+.dropdown button {
+    font-family: var(--font-family-thin);
+    font-size: var(--font-size-h3);
+    text-decoration: underline var(--color-black) !important;
+
+}

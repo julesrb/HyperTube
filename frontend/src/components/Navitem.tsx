@@ -1,7 +1,7 @@
 import {NavItem} from "@/types/nav";
 import Link from "next/link";
 import Image from "next/image";
-import styles from "./Navitem.module.css";
+import styles from "@/styles/Navitem.module.css";
 
 interface Props {
     item: NavItem;

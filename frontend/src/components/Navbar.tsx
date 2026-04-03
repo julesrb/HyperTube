@@ -1,7 +1,7 @@
 "use client";
 
 import { useModal } from "@/context/ModalContext";
-import styles from "./Navbar.module.css";
+import styles from "@/styles/Navbar.module.css";
 import { NavItem } from "@/types/nav";
 import { NavItemComponent } from "@/components/Navitem";
 import LanguageDropdown from "@/components/LanguageDropdown";

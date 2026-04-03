@@ -56,7 +56,7 @@ a { text-decoration: none; color: var(--color-text-primary); }
 .hairline { font-family: var(--font-family-thin); font-size: var(--font-size-h3); }
 .clean-btn { cursor: pointer; border: none; background: none; }
 
-.black-cross {
+.black-icon {
     filter: invert(1);
     fill: var(--color-text-primary);
  }

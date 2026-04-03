@@ -10,7 +10,7 @@ export default function ModalLayout({ children, onClose, }: { children: React.Re
             <div onClick={(e) => e.stopPropagation()} className={styles.modal + " border"}>
                 <div className={styles.header}>
                     <button className="clean-btn" onClick={onClose}>
-                        <Image className="black-cross" src="/icons/cross.svg" alt="cross" width={30} height={30}/>
+                        <Image className="black-icon" src="/icons/cross.svg" alt="cross" width={30} height={30}/>
                     </button>
                 </div>
                 <div className={styles.content}>

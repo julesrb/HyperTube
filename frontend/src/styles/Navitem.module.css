@@ -4,7 +4,5 @@
     align-items: center;
 }
 
-.navitem p {
-    padding-top: 0.2rem;
-    padding-left: 0.5rem;
-}
+.navitem p { padding-left: var(--padding-small);}
+.navitem img { margin-top: 3px; }

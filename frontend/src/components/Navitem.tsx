@@ -10,10 +10,10 @@ interface Props {
 export function NavItemComponent({item,}: Props) {
     let iconWidth = 20;
     if (item.icon === "home") iconWidth = 250;
-    const Icon = (<Image src={`/icons/${item.icon}.svg`} alt={item.name} width={iconWidth} height={20}/>);
-    const PName = <p className="hairline">{item.name}</p>
+    const Icon = (<Image className="white-icon" src={`/icons/${item.icon}.svg`} alt={item.name} width={iconWidth} height={20}/>);
+    const PName = item.name ? <p className="hairline">{item.name}</p> : null;
     if ("href" in item) {
-        return (<Link className={styles.navitem} href={item.href}>
+        return (<Link className={styles.navitem + " underline"} href={item.href}>
                 {Icon}
                 {PName}
             </Link>);
@@ -22,7 +22,7 @@ export function NavItemComponent({item,}: Props) {
     if ("hover" in item)
         return item.hover(Icon, styles.navitem);
 
-    return (<button className={styles.navitem + " clean-btn"} onClick={item.action}>
+    return (<button className={styles.navitem + " clean-btn underline"} onClick={item.action}>
         {Icon}
         {PName}
     </button>);

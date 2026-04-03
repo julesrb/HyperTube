@@ -1,17 +1,22 @@
 .dropdown {
     position: absolute;
-    top: 80px;
-    right: 20px;
-    list-style: none;
+    top: 75px;
+    right: var(--padding-large);
+
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+
     z-index: 10;
-    background-color: grey;
+
+    background-color: var(--color-background);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--color-text-primary);
+
+    padding: var(--padding-small);
 }
 
 .dropdown button {
     font-family: var(--font-family-thin);
     font-size: var(--font-size-h3);
-    text-decoration: underline var(--color-black) !important;
-
 }

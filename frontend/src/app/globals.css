@@ -28,29 +28,29 @@
     --font-size-small: 14px;
 
     --rounded-size: 16px;
+    --padding-large: 4rem;
+    --padding-medium: 2rem;
+    --padding-small: 0.5rem;
+    --box-shadow: 6px 6px 0 var(--color-text-primary);
 }
 /* ------------------------------------------------- DEFAULT VALUE -------------------------------------------------- */
 body {
     color: var(--color-text-primary);
     background-color: var(--color-background);
-    padding: 10px;
 }
 
-a {
-    text-decoration: none;
-    color: var(--color-text-primary);
-}
+a { text-decoration: none; color: var(--color-text-primary); }
 a:hover, button:hover, .underline:hover {
-    text-decoration: underline var(--color-black) !important;
-    text-decoration-thickness: 0.05rem !important;
-    text-underline-offset: 0.3rem !important;
+    text-decoration: underline var(--color-text-primary);
+    text-decoration-thickness: 0.07rem;
+    text-underline-offset: 0.3rem;
 }
 
-.clean-btn {
-    cursor: pointer;
-    border: none;
-    background: none;
-}
+.border { border: 1px solid var(--color-text-primary); }
+.selected { font-weight: bold; }
+.hairline { font-family: var(--font-family-thin); font-size: var(--font-size-h3); }
+
+.clean-btn { cursor: pointer; border: none; background: none; }
 
 /* ------------------------------------------------------ TEXT ------------------------------------------------------ */
 h1 {

@@ -5,4 +5,8 @@
 }
 
 .navitem p { padding-left: var(--padding-small);}
-.navitem img { margin-top: 3px; }
+@supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+    .navitem img {
+        margin-top: 3px;
+    }
+}

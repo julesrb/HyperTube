@@ -5,8 +5,6 @@
 }
 
 .navitem p {
-    font-family: var(--font-family-thin);
-    font-size: var(--font-size-h3);
     padding-top: 0.2rem;
     padding-left: 0.5rem;
 }

@@ -1,4 +1,4 @@
-import styles from "./LanguageDropdown.module.css";
+import styles from "@/styles/LanguageDropdown.module.css";
 import React, {useState} from "react";
 
 export default function LanguageDropdown(Icon: React.JSX.Element, className: string) {

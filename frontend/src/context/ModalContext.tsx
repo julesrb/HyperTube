@@ -1,11 +1,10 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 type ModalType =
     | "signin"
     | "register"
-    | "language"
     | null;
 
 interface ModalContextType {
@@ -20,17 +19,10 @@ export function ModalProvider({ children, }: { children: React.ReactNode; }) {
     const [activeModal, setActiveModal] = useState<ModalType>(null);
 
     const openModal = (modal: ModalType) => setActiveModal(modal);
-
     const closeModal = () => setActiveModal(null);
 
     return (
-        <ModalContext.Provider
-            value={{
-                activeModal,
-                openModal,
-                closeModal,
-            }}
-        >
+        <ModalContext.Provider value={{activeModal, openModal, closeModal,}}>
             {children}
         </ModalContext.Provider>
     );

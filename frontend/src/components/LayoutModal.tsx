@@ -1,32 +1,17 @@
 "use client";
 
-export default function ModalLayout({ children, onClose, }: { children: React.ReactNode; onClose: () => void; }) {
+import styles from "@/styles/LayoutModal.module.css";
+import React from "react";
+
+export default function ModalLayout({ children, onClose, defaultLayout }: { children: React.ReactNode; onClose: () => void; defaultLayout: boolean; }) {
+    if (!defaultLayout)
+        return (<div onClick={onClose} className={styles.customBg} >{children}</div>);
     return (
-        <div
-            onClick={onClose}
-            style={{
-                position: "fixed",
-                inset: 0,
-                background:
-                    "rgba(0,0,0,0.6)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000,
-            }}
-        >
-            <div
-                onClick={(e) =>
-                    e.stopPropagation()
-                }
-                style={{
-                    background: "white",
-                    padding: "2rem",
-                    borderRadius: "8px",
-                    width: "300px",
-                }}
-            >
-                {children}
+        <div onClick={onClose} className={styles.defaultBg} >
+            <div onClick={(e) => e.stopPropagation()} className={styles.modal + " border"}>
+                <div className={styles.content}>
+                    {children}
+                </div>
             </div>
         </div>
     );

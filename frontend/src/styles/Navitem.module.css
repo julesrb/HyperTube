@@ -1,0 +1,12 @@
+.navitem {
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+}
+
+.navitem p { padding-left: var(--padding-s); }
+@supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+    .navitem img {
+        margin-top: 3px;
+    }
+}

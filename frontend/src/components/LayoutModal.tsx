@@ -2,17 +2,13 @@
 
 import styles from "@/styles/LayoutModal.module.css";
 import React from "react";
-import Image from "next/image";
 
-export default function ModalLayout({ children, onClose, }: { children: React.ReactNode; onClose: () => void; }) {
+export default function ModalLayout({ children, onClose, defaultLayout }: { children: React.ReactNode; onClose: () => void; defaultLayout: boolean; }) {
+    if (!defaultLayout)
+        return (<div onClick={onClose} className={styles.customBg} >{children}</div>);
     return (
-        <div onClick={onClose} className={styles.bg} >
+        <div onClick={onClose} className={styles.defaultBg} >
             <div onClick={(e) => e.stopPropagation()} className={styles.modal + " border"}>
-                <div className={styles.header}>
-                    <button className="clean-btn" onClick={onClose}>
-                        <Image className="black-icon" src="/icons/cross.svg" alt="cross" width={30} height={30}/>
-                    </button>
-                </div>
                 <div className={styles.content}>
                     {children}
                 </div>

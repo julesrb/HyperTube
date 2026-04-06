@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.field {
+    padding: var(--padding-s);
+    margin: 0;
+    line-height: 1;
+    width: 100%;
+    height: var(--sign-in-height);
+    box-sizing: border-box;
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-p);
+    border: 1px solid var(--color-black);
+    background-color: var(--color-white);
+    color: var(--color-black);
+    transition: all 0.2s ease;
+}
+.field:focus {
+    border: 2px solid var(--color-black);
+    outline: none;
+
+}
+
+.label {
+    color: var(--color-grey);
+    font-family: var(--font-family-light);
+    margin-left: 2px;
+    font-size: var(--font-size-small);
+}
+

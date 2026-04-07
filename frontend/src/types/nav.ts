@@ -14,5 +14,5 @@ export type NavItem =
     | {
     name: string;
     icon: string;
-    hover: (Icon: React.JSX.Element, navitem: string) => React.JSX.Element;
+    hover: (Icon: React.JSX.Element) => React.JSX.Element;
 };

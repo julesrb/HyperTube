@@ -1,13 +1,9 @@
+@import "tailwindcss";
+
 /* --------------------------------------------------- VARIABELES --------------------------------------------------- */
-:root {
-    --color-primary: #1E90FF;
-    --color-secondary: #F5F5F5;
-    --color-accent: #FFA500;
+@theme {
+    --color-white: #F5F5F5;
     --color-black: #191919;
-    --color-grey: #828282;
-    --color-white: #FFFFFF;
-    --color-error: #FF4C4C;
-    --color-success: #28A745;
 
     --color-yellow: #FFD600;
     --color-pink: #FFA5F5;
@@ -15,227 +11,45 @@
     --color-purple: #747AF5;
     --color-blue: #AEF0FF;
     --color-red: #FF4742;
-
-    --font-family-title: "FT Calhern Black", sans-serif;
-    --font-family-body: "FT Calhern", sans-serif;
-    --font-family-light: "FT Calhern Light", sans-serif;
-    --font-family-thin: "FT Calhern Hairline", sans-serif;
-    --font-size-h1: 48px;
-    --font-size-h2: 36px;
-    --font-size-h3: 24px;
-    --font-size-p: 16px;
-    --font-size-small: 14px;
-
-    --border-radius-large: 4rem;
-    --border-radius-medium: 2rem;
-    --border-radius-small: 0.5rem;
-
-    --padding-large: 4rem;
-    --padding-medium: 2rem;
-    --padding-sm: 1.1rem;
-    --padding-s: 0.6rem;
-
-    --box-shadow-small: 8px 7px 0 var(--color-black);
-    --box-shadow-medium: 14px 14px 0 var(--color-black);
-    --box-shadow-large: 26px 26px 0 var(--color-black);
-
-    --sign-in-height: 30px;
 }
-/* ------------------------------------------------- DEFAULT VALUE -------------------------------------------------- */
-body {
-    color: var(--color-black);
-    background-color: var(--color-white);
-}
-button { padding: 0; }
 
-a { text-decoration: none; color: var(--color-black); }
-.underline:hover {
+@theme {
+    --font-body: "FT Calhern", sans-serif;
+    --font-heading: "FT Calhern Wide", sans-serif;
+    --font-hairline: "FT Calhern Hairline", sans-serif;
+}
+
+body { @apply font-body bg-white text-black; }
+h1, h2, h3, h4 { @apply font-heading font-bold; }
+h1 { @apply text-4xl; }
+h2 { @apply text-3xl; }
+h3 { @apply text-2xl; }
+h4 { @apply text-xl; }
+
+/* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
+.custom-underline:hover {
     text-decoration: underline var(--color-black);
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.3rem;
 }
 
-.border { border: 1px solid var(--color-black); }
-.border:focus { border: 2px solid var(--color-black); outline: none}
-.selected { font-weight: bold; }
-.hairline { font-family: var(--font-family-thin); font-size: var(--font-size-h3); }
-.clean-btn { cursor: pointer; border: none; background: none; }
+.custom-shadow-s { box-shadow: 8px 7px 0 var(--color-black); }
+.custom-shadow-m { box-shadow: 14px 14px 0 var(--color-black); }
+.custom-shadow-l { box-shadow: 26px 26px 0 var(--color-black); }
 
-.black-icon {
+.custom-border { border: 1px solid var(--color-black); }
+.custom-border:focus { border: 2px solid var(--color-black); outline: none}
+
+.custom-selected { font-weight: bold; }
+
+.custom-icon-black {
     filter: invert(1);
     fill: var(--color-black);
  }
 
-
-.action-btn {
-    text-transform: uppercase;
-    display: inline-block;
-    padding: 0 var(--padding-s);
-    margin: 0;
-    background-color: var(--color-red);
-    color: var(--color-white);
-    font-family: var(--font-family-body);
-    font-size: var(--font-size-p);
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
-    border: none;
-    border: 1px solid var(--color-black);
-}
-.action-btn:hover {
+.custom-btn { transition: all 0.2s ease; }
+.custom-btn:hover {
     transform: translate(-4px, -4px);
     box-shadow: 4px 4px 0 var(--color-black);
     border: 1px solid var(--color-black);
 }
-
-
-/* ------------------------------------------------------ UTILS ----------------------------------------------------- */
-.flex {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--padding-sm);
-}
-
-.max-70 { max-width: 70%; }
-.max-40 { max-width: 40%; }
-
-/* ------------------------------------------------------ TEXT ------------------------------------------------------ */
-h1 {
-    font-family: var(--font-family-title);
-    font-size: var(--font-size-h1);
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-h2 {
-    font-family: var(--font-family-title);
-    font-size: var(--font-size-h2);
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-h3 {
-    font-family: var(--font-family-title);
-    font-size: var(--font-size-h3);
-    font-weight: 500;
-}
-
-body, p {
-    font-family: var(--font-family-body);
-    font-size: var(--font-size-p);
-    font-weight: 400;
-    line-height: 1;
-}
-
-p.small {
-    font-family: var(--font-family-thin);
-    font-size: var(--font-size-small);
-    line-height: 1.4;
-}
-
-
-/* ----------------------------------------------------- BUTTON ----------------------------------------------------- */
-/*.button {*/
-/*    display: inline-block;*/
-/*    padding: 10px 20px;*/
-/*    border-radius: 5px;*/
-/*    text-decoration: none;*/
-/*    font-weight: bold;*/
-/*    transition: background-color 0.3s ease;*/
-/*}*/
-/*.button-primary {*/
-/*    background-color: var(--color-primary);*/
-/*    color: var(--color-white);*/
-/*}*/
-/*.button-primary:hover {*/
-/*    background-color: var(--color-secondary);*/
-/*}*/
-
-/*.button-secondary {*/
-/*    background-color: var(--color-secondary);*/
-/*    color: var(--color-primary);*/
-/*}*/
-/*.button-secondary:hover {*/
-/*    background-color: var(--color-primary);*/
-/*}*/
-
-/*.button-danger {*/
-/*    background-color: var(--color-error);*/
-/*    color: var(--color-white);*/
-/*}*/
-/*.button-danger:hover {*/
-/*    background-color: var(--color-red);*/
-/*}*/
-
-/*.button-success {*/
-/*    background-color: var(--color-success);*/
-/*    color: var(--color-white);*/
-/*}*/
-/*.button-success:hover {*/
-/*    background-color: var(--color-green);*/
-/*}*/
-
-
-
-/*!*------------------------*!*/
-/*.signin-form .field {*/
-/*    width: 150px;*/
-/*    font-size: .8125rem;*/
-/*    line-height: 17px;*/
-/*    padding: 5px 7px;*/
-/*    height: 28px;*/
-/*}*/
-
-
-/*.button.-action:hover {*/
-/*    color: #fff;*/
-/*    background: #009d1a;*/
-
-/*}*/
-/*.button.-action {*/
-/*    color: #f4fcf0;*/
-/*    background: #00ac1c;*/
-/*    box-shadow: inset 0 1px rgba(255,255,255,.3);*/
-/*}*/
-/*.button:hover {*/
-/*    color: #fff;*/
-/*    text-decoration: none;*/
-
-/*    background: #678;*/
-/*}*/
-/*.signin-for */
-/*.button {*/
-/*    -webkit-appearance: none;*/
-/*    -moz-appearance: none;*/
-/*    appearance: none;*/
-/*    display: inline-block;*/
-/*    padding: 9px 12px 8px;*/
-
-/*    padding-top: 9px;*/
-/*    padding-bottom: 8px;*/
-
-/*    line-height: 12px;*/
-/*    text-decoration: none;*/
-/*    font-size: .8125rem;*/
-/*    text-transform: uppercase;*/
-/*    --letter-spacing: .075em;*/
-/*    letter-spacing: var(--letter-spacing);*/
-/*    font-family: var(--font-stack-graphik);*/
-/*    font-weight: 700;*/
-/*    border: none;*/
-
-/*    box-shadow: inset 0 1px rgba(255,255,255,.2);*/
-/*    border-radius: 3px;*/
-
-/*    color: #c8d4e0;*/
-/*    background: #567;*/
-/*    cursor: pointer;*/
-/*    margin: 0;*/
-/*    -webkit-user-select: none;*/
-/*    -moz-user-select: none;*/
-/*    -o-user-select: none;*/
-/*    user-select: none;*/
-/*}*/

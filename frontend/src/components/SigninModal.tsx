@@ -2,10 +2,10 @@
 
 import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/LayoutModal";
-import styles from "@/styles/LayoutModal.module.css";
 import Image from "next/image";
 import React from "react";
 import Input from "@/components/Input";
+import Button from "@/components/Button";
 
 export default function SigninModal() {
     const {activeModal, closeModal,} = useModal();
@@ -15,17 +15,15 @@ export default function SigninModal() {
 
     return (
         <ModalLayout onClose={closeModal} defaultLayout={false}>
-            <div className={styles.signInModal + " border"} onClick={(e) => e.stopPropagation()}>
-                <button className="clean-btn" onClick={closeModal}>
-                    <Image className="black-icon" src="/icons/cross.svg" alt="cross" width={30} height={30}/>
+            <div className="absolute top-0 right-1/10 flex gap-2 p-2 bg-white custom-shadow-s custom-border" onClick={(e) => e.stopPropagation()}>
+                <button onClick={closeModal}>
+                    <Image className="custom-icon-black" src="/icons/cross.svg" alt="cross" width={30} height={30}/>
                 </button>
                 <Input type="email" placeholder="Email"></Input>
                 <Input type="password" placeholder="Password"></Input>
-                {/*<input type="email" placeholder="Email" className="field border"/>*/}
-                {/*<input type="password" placeholder="password" className="field border"/>*/}
 
                 <div className="flex" style={{alignItems: "flex-end", marginRight: "8px"}}>
-                    <button className={styles.signInBtn + " action-btn"}>Sign In</button>
+                    <Button className="h-8">Sign In</Button>
                 </div>
             </div>
         </ModalLayout>

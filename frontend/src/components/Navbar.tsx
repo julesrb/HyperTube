@@ -1,7 +1,6 @@
 "use client";
 
 import { useModal } from "@/context/ModalContext";
-import styles from "@/styles/Navbar.module.css";
 import { NavItem } from "@/types/nav";
 import { NavItemComponent } from "@/components/Navitem";
 import LanguageDropdown from "@/components/LanguageDropdown";
@@ -37,7 +36,7 @@ export default function Navbar() {
         },
     ];
 
-    return (<nav className={styles.nav}>
+    return (<nav className="flex justify-between px-16 py-8">
         {navItems.map((item, index) => (
             <NavItemComponent key={index} item={item}/>
         ))}

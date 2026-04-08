@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export default function ModalLayout({ children, onClose, defaultLayout }: { children: React.ReactNode; onClose: () => void; defaultLayout: boolean; }) {
+export default function ModalLayout({ children, onClose, defaultLayout = true } : { children: React.ReactNode, onClose: () => void, defaultLayout?: boolean }) {
     if (!defaultLayout)
         return (<div onClick={onClose} className="fixed inset-0 z-10" >{children}</div>);
     return (

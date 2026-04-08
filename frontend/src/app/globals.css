@@ -32,6 +32,11 @@ h4 { @apply text-xl; }
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.3rem;
 }
+.custom-underline-red:hover {
+    text-decoration: underline var(--color-red);
+    text-decoration-thickness: 0.07rem;
+    text-underline-offset: 0.3rem;
+}
 
 .custom-shadow-s { box-shadow: 8px 7px 0 var(--color-black); }
 .custom-shadow-m { box-shadow: 14px 14px 0 var(--color-black); }
@@ -41,11 +46,6 @@ h4 { @apply text-xl; }
 .custom-border:focus { border: 2px solid var(--color-black); outline: none}
 
 .custom-selected { font-weight: bold; }
-
-.custom-icon-black {
-    filter: invert(1);
-    fill: var(--color-black);
- }
 
 .custom-btn { transition: all 0.2s ease; }
 .custom-btn:hover {

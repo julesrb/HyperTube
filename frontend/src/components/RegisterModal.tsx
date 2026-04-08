@@ -3,9 +3,9 @@
 import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/LayoutModal";
 import React from "react";
-import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
+import CrossIcon from "@/components/icon/CrossIcon";
 
 export default function RegisterModal() {
     const { activeModal, closeModal, } = useModal();
@@ -14,11 +14,11 @@ export default function RegisterModal() {
         return null;
 
     return (
-        <ModalLayout onClose={closeModal} defaultLayout={true}>
+        <ModalLayout onClose={closeModal}>
             <div className="flex justify-between mb-2">
                 <h4 className="uppercase">Join Hypertube</h4>
                 <button onClick={closeModal}>
-                    <Image className="custom-icon-black" src="/icons/cross.svg" alt="cross" width={30} height={30}/>
+                    <CrossIcon />
                 </button>
             </div>
             <Input type="email" placeholder="Email"></Input>

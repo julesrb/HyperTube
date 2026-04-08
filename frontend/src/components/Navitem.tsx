@@ -1,25 +1,31 @@
 import { NavItem } from "@/types/nav";
 import Link from "next/link";
-import Image from "next/image";
+import {useState} from "react";
 
 
-export function NavItemComponent({item,}: { item: NavItem }) {
-    const className = "uppercase flex items-center custom-underline";
-    const Icon = (<Image className="h-5 w-auto" src={`/icons/${item.icon}.svg`} alt={item.name} width={10} height={10}/>);
+export function NavItemComponent({item,} : {item: NavItem}) {
+    const isLogoutBtn = "Logout" === item.name;
+    const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
+    const className = "uppercase flex items-center " + hoverColor;
     const PName = item.name ? <p className="font-hairline pl-2 text-2xl">{item.name}</p> : null;
+    const [isHover, setIsHover] = useState(false);
 
-    if ("href" in item) {
+    if (item.href !== undefined) {
         return (<Link className={className} href={item.href}>
-                {Icon}
+                {<item.icon />}
                 {PName}
             </Link>);
     }
 
-    if ("hover" in item)
-        return item.hover(Icon);
+    if (item.hover !== undefined)
+        return item.hover(<item.icon />);
 
-    return (<button className={className} onClick={item.action}>
-        {Icon}
+    return (<button
+                className={className}
+                onClick={item.action}
+                onMouseEnter={() => (setIsHover(true))}
+                onMouseLeave={() => (setIsHover(false))}>
+        <item.icon color={isHover && isLogoutBtn ? "red" : "black"}/>
         {PName}
     </button>);
 }

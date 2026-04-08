@@ -22,7 +22,7 @@ export default function SigninModal() {
                 <Input type="email" placeholder="Email"></Input>
                 <Input type="password" placeholder="Password"></Input>
 
-                <div className="flex" style={{alignItems: "flex-end", marginRight: "8px"}}>
+                <div className="flex items-end mr-2">
                     <Button className="h-8">Sign In</Button>
                 </div>
             </div>

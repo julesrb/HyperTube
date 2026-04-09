@@ -23,7 +23,7 @@ export default function Page() {
             <div className="border-b border-r w-12"></div>
             {(Object.keys(tabs) as Array<keyof typeof tabs>).map((tabName, index) => (<button
                 key={index}
-                className={"uppercase font-condensed text-[41px] border-t border-r px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
+                className={"uppercase font-normal text-4xl border-t border-r px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
                 onClick={() => switchTab(tabName)}>{tabName}</button>))}
             <div className="border-b w-full"></div>
         </div>
@@ -39,7 +39,7 @@ function ProfileTab() {
     return (<div className="container mx-auto">
         <h3>Profile</h3>
         <div className="grid grid-cols-2">
-            <div className="flex flex-col gap-4 items-start max-w-2/3 mx-auto">
+            <div className="flex flex-col gap-6 items-start max-w-2/3 mx-auto">
                 <Input type="email" placeholder="Email"></Input>
 
                 <div className="flex gap-2 w-full">

@@ -15,7 +15,7 @@ export default function SigninModal() {
 
     return (
         <ModalLayout onClose={closeModal} defaultLayout={false}>
-            <div className="absolute top-0 right-1/10 flex gap-2 p-2 bg-white custom-shadow-s custom-border" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute top-0 right-1/10 flex gap-2 p-2 bg-white custom-shadow-s border" onClick={(e) => e.stopPropagation()}>
                 <button onClick={closeModal}>
                     <CrossIcon />
                 </button>

@@ -15,8 +15,8 @@ export default function RegisterModal() {
 
     return (
         <ModalLayout onClose={closeModal}>
-            <div className="flex justify-between mb-2 w-full">
-                <h4 className="uppercase">Join Hypertube</h4>
+            <div className="flex justify-between mb-8 w-full">
+                <h3 className="uppercase">Join Hypertube</h3>
                 <button onClick={closeModal}>
                     <CrossIcon />
                 </button>

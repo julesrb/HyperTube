@@ -31,12 +31,12 @@ h4 { @apply text-xl; }
 input:focus { outline: none; }
 
 /* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
-.custom-underline {
+.custom-underline, .custom-h-underline:hover {
     text-decoration: underline var(--color-black);
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.2rem;
 }
-.custom-underline-red {
+.custom-underline-red, .custom-h-underline-red:hover {
     text-decoration: underline var(--color-red);
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.2rem;

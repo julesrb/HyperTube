@@ -43,7 +43,7 @@ export default function SigninModal() {
             <Input type="email" placeholder="Email"></Input>
             <Input type="password" placeholder="Password"></Input>
             <div className="relative mb-4">
-                <a className="custom-underline text-xs absolute bottom-2">Forgotten?</a>
+                <a className="custom-underline text-xs absolute bottom-1">Forgotten?</a>
             </div>
             <Button className="h-8">Sign In</Button>
         </ModalLayout>

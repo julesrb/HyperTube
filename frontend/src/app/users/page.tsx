@@ -12,7 +12,7 @@ export default function Page() {
     const [activeTab, setActiveTab] = useState<keyof typeof tabs>("profile");
     const ActiveTab = tabs[activeTab];
 
-    const switchTab = (tabName: string) => {
+    const switchTab = (tabName: keyof typeof tabs) => {
         if (activeTab !== tabName) {
             setActiveTab(tabName);
         }
@@ -21,7 +21,7 @@ export default function Page() {
     return (<div className="px-4">
         <div className="flex h-16 mb-10">
             <div className="border-b border-r w-12"></div>
-            {Object.keys(tabs).map((tabName, index) => (<button
+            {(Object.keys(tabs) as Array<keyof typeof tabs>).map((tabName, index) => (<button
                 key={index}
                 className={"uppercase font-condensed text-[41px] border-t border-r px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
                 onClick={() => switchTab(tabName)}>{tabName}</button>))}

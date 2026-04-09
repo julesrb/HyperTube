@@ -57,7 +57,7 @@ function ProfileTab() {
                 <Button className="h-8">Select New avatar</Button>
 
                 <button
-                    className={(true ? "text-red  custom-underline-red" : "text-gray") + " text-sm font-light"}>Remove
+                    className={(true ? "text-red  custom-h-underline-red" : "text-gray") + " text-sm font-light"}>Remove
                 </button>
             </div>
         </div>

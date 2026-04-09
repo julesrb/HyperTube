@@ -5,7 +5,7 @@ import {useState} from "react";
 
 export function NavItemComponent({item,} : {item: NavItem}) {
     const isLogoutBtn = "Logout" === item.name;
-    const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
+    const hoverColor = isLogoutBtn ? "hover:text-red hover:custom-underline-red" : "hover:custom-underline";
     const className = "uppercase flex items-center " + hoverColor;
     const PName = item.name ? <p className="font-hairline pl-2 text-2xl">{item.name}</p> : null;
     const [isHover, setIsHover] = useState(false);

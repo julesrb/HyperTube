@@ -18,6 +18,8 @@
     --font-body: "FT Calhern", sans-serif;
     --font-heading: "FT Calhern Wide", sans-serif;
     --font-hairline: "FT Calhern Hairline", sans-serif;
+    --font-normal: "FT Calhern Condensed", sans-serif;
+    --font-light: "FT Calhern Light", sans-serif;
 }
 
 body { @apply font-body bg-white text-black; }
@@ -26,6 +28,7 @@ h1 { @apply text-4xl; }
 h2 { @apply text-3xl; }
 h3 { @apply text-2xl; }
 h4 { @apply text-xl; }
+input:focus { outline: none; }
 
 /* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
 .custom-underline:hover {

@@ -2,7 +2,6 @@
 
 /* --------------------------------------------------- VARIABELES --------------------------------------------------- */
 @theme {
-    --color-white: #F5F5F5;
     --color-black: #191919;
     --color-gray: #878787;
 
@@ -18,16 +17,19 @@
     --font-body: "FT Calhern", sans-serif;
     --font-heading: "FT Calhern Wide", sans-serif;
     --font-hairline: "FT Calhern Hairline", sans-serif;
-    --font-normal: "FT Calhern Condensed", sans-serif;
-    --font-light: "FT Calhern Light", sans-serif;
+    --font-condensed: "FT Calhern Condensed", sans-serif;
+    --font-sans: "FT Calhern Light", sans-serif;
+
+    --tracking-normal: var(--tracking-wide);
 }
 
-body { @apply font-body bg-white text-black; }
+body { @apply font-body bg-white text-black tracking-normal; }
 h1, h2, h3, h4 { @apply font-heading font-bold; }
 h1 { @apply text-4xl; }
 h2 { @apply text-3xl; }
 h3 { @apply text-2xl; }
 h4 { @apply text-xl; }
+p { @apply text-base font-sans; }
 input:focus { outline: none; }
 
 /* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */

@@ -19,11 +19,20 @@ export default function Page() {
     }
 
     return (<div className="px-4">
-        <div className="flex h-16 mb-10">
+        <div className="flex items-center gap-4 justify-center mt-10 mb-16">
+            <span className="rounded-full bg-purple text-black size-22 flex items-center justify-center text-5xl font-condensed border">
+                FG
+            </span>
+            <div className="flex flex-col items-start">
+                <span className="text-6xl font-condensed uppercase tracking-wide">Florian G.</span>
+                <p className="uppercase">Member since 10.04.2026</p>
+            </div>
+        </div>
+        <div className="flex h-16 my-10">
             <div className="border-b border-r w-12"></div>
             {(Object.keys(tabs) as Array<keyof typeof tabs>).map((tabName, index) => (<button
                 key={index}
-                className={"uppercase font-normal text-4xl border-t border-r px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
+                className={"uppercase font-condensed tracking-wide text-4xl border-t border-r px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
                 onClick={() => switchTab(tabName)}>{tabName}</button>))}
             <div className="border-b w-full"></div>
         </div>
@@ -57,7 +66,7 @@ function ProfileTab() {
                 <Button className="h-8">Select New avatar</Button>
 
                 <button
-                    className={(true ? "text-red  custom-h-underline-red" : "text-gray") + " text-sm font-light"}>Remove
+                    className={(true ? "text-red  custom-h-underline-red" : "text-gray") + " text-sm font-sans"}>Remove
                 </button>
             </div>
         </div>

@@ -7,7 +7,7 @@ export default function ModalLayout({ children, onClose, defaultLayout = true } 
         return (<div onClick={onClose} className="fixed inset-0 z-10" >{children}</div>);
     return (
         <div onClick={onClose} className="fixed bg-gray inset-0 flex justify-center items-center z-10">
-            <div onClick={(e) => e.stopPropagation()} className="p-6 bg-white custom-shadow-m border w-[380]">
+            <div onClick={(e) => e.stopPropagation()} className="p-6 bg-white custom-shadow-m border w-90">
                 <div className="flex flex-col gap-2 items-start">
                     {children}
                 </div>

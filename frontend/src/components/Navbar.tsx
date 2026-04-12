@@ -21,7 +21,7 @@ export default function Navbar() {
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {
-        name: "Account", icon: UserIcon, href: "/user",
+        name: "Account", icon: UserIcon, href: "/users",
     }, {
         name: "Logout", icon: ExitDoorIcon, action: () => {
             setIsLogin(false);

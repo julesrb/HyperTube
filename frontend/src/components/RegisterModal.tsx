@@ -15,8 +15,8 @@ export default function RegisterModal() {
 
     return (
         <ModalLayout onClose={closeModal}>
-            <div className="flex justify-between mb-2">
-                <h4 className="uppercase">Join Hypertube</h4>
+            <div className="flex justify-between mb-8 w-full">
+                <h3 className="uppercase">Join Hypertube</h3>
                 <button onClick={closeModal}>
                     <CrossIcon />
                 </button>
@@ -31,7 +31,7 @@ export default function RegisterModal() {
             <Input type="username" placeholder="Username" className={"max-w-2/3"}></Input>
             <Input type="password" placeholder="Password" className={"max-w-2/3"}></Input>
 
-            <Button className="h-8 max-w-1/4">Sign Up</Button>
+            <Button className="h-8 mt-2">Sign Up</Button>
         </ModalLayout>
     );
 }

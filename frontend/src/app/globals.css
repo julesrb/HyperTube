@@ -2,8 +2,8 @@
 
 /* --------------------------------------------------- VARIABELES --------------------------------------------------- */
 @theme {
-    --color-white: #F5F5F5;
     --color-black: #191919;
+    --color-gray: #878787;
 
     --color-yellow: #FFD600;
     --color-pink: #FFA5F5;
@@ -17,33 +17,41 @@
     --font-body: "FT Calhern", sans-serif;
     --font-heading: "FT Calhern Wide", sans-serif;
     --font-hairline: "FT Calhern Hairline", sans-serif;
+    --font-condensed: "FT Calhern Condensed", sans-serif;
+    --font-sans: "FT Calhern Light", sans-serif;
+
+    --tracking-normal: var(--tracking-wide);
 }
 
-body { @apply font-body bg-white text-black; }
-h1, h2, h3, h4 { @apply font-heading font-bold; }
-h1 { @apply text-4xl; }
-h2 { @apply text-3xl; }
-h3 { @apply text-2xl; }
-h4 { @apply text-xl; }
+body { @apply font-body bg-white text-black tracking-normal; }
+h1, h2, h3, h4, h5, h6 { @apply font-condensed uppercase tracking-wide; }
+h1 { @apply text-8xl font-bold; }
+h2 { @apply text-6xl; }
+h3 { @apply text-5xl; }
+h4 { @apply text-4xl; }
+h5 { @apply text-3xl; }
+h6 { @apply text-2xl; }
+p { @apply text-base font-sans; }
+input:focus { outline: none; }
+.bg-gradient { @apply size-full absolute inset-0 bg-linear-to-t from-black via-transparent via-40% to-transparent opacity-90; }
 
 /* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
-.custom-underline:hover {
+.custom-underline, .custom-h-underline:hover {
     text-decoration: underline var(--color-black);
     text-decoration-thickness: 0.07rem;
-    text-underline-offset: 0.3rem;
+    text-underline-offset: 0.2rem;
 }
-.custom-underline-red:hover {
+.custom-underline-red, .custom-h-underline-red:hover {
     text-decoration: underline var(--color-red);
     text-decoration-thickness: 0.07rem;
-    text-underline-offset: 0.3rem;
+    text-underline-offset: 0.2rem;
 }
 
 .custom-shadow-s { box-shadow: 8px 7px 0 var(--color-black); }
 .custom-shadow-m { box-shadow: 14px 14px 0 var(--color-black); }
 .custom-shadow-l { box-shadow: 26px 26px 0 var(--color-black); }
 
-.custom-border { border: 1px solid var(--color-black); }
-.custom-border:focus { border: 2px solid var(--color-black); outline: none}
+/*.border:focus { border: 2px solid var(--color-black); outline: none}*/
 
 .custom-selected { font-weight: bold; }
 

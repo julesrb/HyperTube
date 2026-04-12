@@ -1,11 +1,13 @@
+"use client";
+
 import {movies} from "@/types/movie";
-import FilmSmallCard from "@/components/MovieSmallCard";
 import React from "react";
+import MovieCard from "@/components/MovieCard";
 
 export default function HomePage() {
-    return (<div>
-            <div className="flex gap-4">
-                {movies.map((movie, index) => (<FilmSmallCard key={index} movie={movie}/>))}
+    return (<div className="">
+            <div className="grid grid-cols-3 gap-4 px-4">
+                {movies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
             </div>
             <p style={{fontFamily: 'FT Calhern', fontWeight: 900, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
             <p style={{fontFamily: 'FT Calhern', fontWeight: 'bold', fontStyle: 'normal'}}>HyperTube | FT Calhern</p>

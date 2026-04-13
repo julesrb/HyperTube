@@ -104,7 +104,7 @@ export const movies: tmovies[] = [{
     title: "Dune",
     src: "yyrBBEHvwdJEgNgALxuh0EyWmsN.webp",
     year: "2026",
-    backdrops: ["6qMyijXWuDfrN8bXUJT1DErjQog.webp", "imkZLxabgZBdsWPnkPkFCHC9NCw.webp", "kEr4SY8y4ZS8drASBLzLGbQ0Zkm.webp", "tq3h43fZy0H80vzf47MAY7R9Mxo.webp", "ucDMmWAYOiBhd6cZCDWVK9DIIQ4.webp"],
+    backdrops: ["h3HsfV8Kn9Sz2QWUYYdP5ya23hx.webp", "jYEW5xZkZk2WTrdbMGAPFuBqbDc.webp", "wYMbnrdRCREjNLwFlG5SLWzBjui.webp", "zRKQW58MBEY078AxkHxEJzUskCl.webp"],
     synopsis: "L'histoire de Paul Atreides, jeune homme aussi doué que brillant, voué à connaître un destin hors du commun qui le dépasse totalement. Car, s'il veut préserver l'avenir de sa famille et de son peuple, il devra se rendre sur Dune, la planète la plus dangereuse de l'Univers. Mais aussi la seule à même de fournir la ressource la plus précieuse capable de décupler la puissance de l'Humanité. Tandis que des forces maléfiques se disputent le contrôle de cette planète, seuls ceux qui parviennent à dominer leur peur pourront survivre…",
     genres: ["Science-Fiction", "Aventure"],
     directors: ["Denis Villeneuve"],

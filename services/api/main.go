@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"hypertube/api/internal/movies"
 
-	// "peerstream/api/internal/movies"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 	// mux.HandleFunc("PATCH /users/{id}", nil)
 
 	// // Movies
-	// mux.HandleFunc("GET /movies", movies.List)
+	mux.HandleFunc("GET /movies", movies.GetMovies)
 	// mux.HandleFunc("GET /movies/{id}", nil)
 	// mux.HandleFunc("GET /movies/{id}/comments", nil)
 	// mux.HandleFunc("POST /movies/{id}/comments", nil)

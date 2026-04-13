@@ -1,14 +1,31 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
-	"hypertube/api/internal/movies"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+	"hypertube/api/internal/movies"
 )
 
 func main() {
+	ctx := context.Background()
+
+	db, err := pgxpool.New(ctx, getEnv("DATABASE_URL", "postgres://hypertube:changeme@localhost:5432/hypertube?sslmode=disable"))
+	if err != nil {
+		log.Fatalf("connect to db: %v", err)
+	}
+	defer db.Close()
+
+	if err := db.Ping(ctx); err != nil {
+		log.Fatalf("ping db: %v", err)
+	}
+	log.Println("connected to database")
+
+	moviesHandler := movies.NewHandler(db)
+
 	mux := http.NewServeMux()
 
 	// Health check
@@ -26,11 +43,11 @@ func main() {
 	// mux.HandleFunc("GET /users/{id}", nil)
 	// mux.HandleFunc("PATCH /users/{id}", nil)
 
-	// // Movies
-	mux.HandleFunc("GET /movies", movies.GetMovies)
-	// mux.HandleFunc("GET /movies/{id}", nil)
-	// mux.HandleFunc("GET /movies/{id}/comments", nil)
-	// mux.HandleFunc("POST /movies/{id}/comments", nil)
+	// Movies
+	mux.HandleFunc("GET /movies", moviesHandler.GetMovies)
+	// mux.HandleFunc("GET /movies/{id}", moviesHandler.Get)
+	// mux.HandleFunc("GET /movies/{id}/comments", moviesHandler.ListComments)
+	// mux.HandleFunc("POST /movies/{id}/comments", moviesHandler.CreateComment)
 
 	// // Comments
 	// mux.HandleFunc("GET /comments", nil)

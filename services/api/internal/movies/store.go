@@ -1,19 +1,42 @@
 package movies
 
 import (
-	_ "embed"
-	"encoding/json"
-	"fmt"
+	"context"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 	"hypertube/api/internal/models"
 )
 
-//go:embed movies.json
-var listData []byte
+type Store struct {
+	db *pgxpool.Pool
+}
 
-func loadMovies() ([]models.Movie, error) {
-	var movies []models.Movie
-	if err := json.Unmarshal(listData, &movies); err != nil {
-		return nil, fmt.Errorf("parse list.json: %w", err)
+func NewStore(db *pgxpool.Pool) *Store {
+	return &Store{db: db}
+}
+
+func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT m.* FROM   movies m
+		JOIN   featured_movies f ON f.movie_id = m.id
+		ORDER  BY f.position
+	`)
+	if err != nil {
+		return nil, err
 	}
-	return movies, nil
+	defer rows.Close()
+
+	var movies []models.Movie
+	for rows.Next() {
+		var m models.Movie
+		if err := rows.Scan(
+			&m.ID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
+			&m.IMDbRating, &m.Genres, &m.Runtime, &m.Summary,
+			&m.Director, &m.Cast, &m.Watched, &m.Seeders,
+		); err != nil {
+			return nil, err
+		}
+		movies = append(movies, m)
+	}
+	return movies, rows.Err()
 }

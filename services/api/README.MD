@@ -40,13 +40,3 @@ Returns a list of movies available in the system.
 ```
 
 ---
-
-## Planned endpoints
-
-For non-logged-in users:
-- `GET /movies` — list of movies already in the DB and processed by the hypertube system
-
-For logged-in users:
-- `GET /movies` — same as above
-- `GET /movies/continue-watching` — movies related to the user's watch history
-- `GET /movies/popular` — paginated popularity list, extracted from torrent sources, augmented by TMDB info

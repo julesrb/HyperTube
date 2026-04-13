@@ -21,7 +21,7 @@ export const movies: tmovies[] = [{
     genres: ["Science-Fiction", "Aventure", "Fantastique"],
     directors: ["Sam Worthington", "Zoe Saldaña", "Sigourney Weaver", "Stephen Lang"],
     stars: ["James Cameron"],
-    length: "3h 18m"
+    length: "3h18"
 }, {
     id: 2,
     title: "The Drama",
@@ -32,7 +32,7 @@ export const movies: tmovies[] = [{
     genres: ["Romance", "Comédie", "Drame"],
     directors: ["Kristoffer Borgli"],
     stars: ["Zendaya", "Robert Pattinson"],
-    length: "1h 45m"
+    length: "1h45"
 }, {
     id: 3,
     title: "Project Hail Mary",
@@ -43,7 +43,7 @@ export const movies: tmovies[] = [{
     genres: ["Science-Fiction", "Aventure"],
     directors: ["Phil Lord", "Christopher Miller"],
     stars: ["Ryan Gosling", "James Ortiz", "Sandra Hüller"],
-    length: "2h 35m"
+    length: "2h35"
 }, {
     id: 4,
     title: "The Super Mario Galaxy Movie",
@@ -54,7 +54,7 @@ export const movies: tmovies[] = [{
     genres: ["Familial", "Comédie", "Aventure", "Fantastique", "Animation"],
     directors: ["Michael Jelenic", "Aaron Horvath"],
     stars: ["Chris Pratt", "Charlie Day", "Anya Taylor-Joy"],
-    length: "1h 40m"
+    length: "1h40"
 }, {
     id: 5,
     title: "Hoppers",
@@ -65,7 +65,7 @@ export const movies: tmovies[] = [{
     genres: ["Animation", "Familial", "Science-Fiction", "Comédie", "Aventure"],
     directors: ["Daniel Chong"],
     stars: ["Piper Curda", "Bobby Moynihan", "Jon Hamm"],
-    length: "1h 45m"
+    length: "1h45"
 }, {
     id: 6,
     title: "The Bride!",
@@ -76,7 +76,7 @@ export const movies: tmovies[] = [{
     genres: ["Science-Fiction", "Horreur", "Fantastique"],
     directors: ["Maggie Gyllenhaal"],
     stars: ["Jessie Buckley", "Christian Bale"],
-    length: "2h 7m"
+    length: "2h7"
 }, {
     id: 7,
     title: "Send Help",
@@ -87,7 +87,7 @@ export const movies: tmovies[] = [{
     genres: ["Horreur", "Thriller", "Comédie"],
     directors: ["Sam Raimi"],
     stars: ["Rachel McAdams", "Dylan O'Brien"],
-    length: "1h 53m"
+    length: "1h53"
 }, {
     id: 8,
     title: "GOAT",
@@ -98,7 +98,7 @@ export const movies: tmovies[] = [{
     genres: ["Animation", "Comédie", "Familial"],
     directors: ["Tyree Dillihay"],
     stars: ["Caleb McLaughlin", "Gabrielle Union", "Stephen Curry"],
-    length: "1h 40m"
+    length: "1h40"
 }, {
     id: 9,
     title: "Dune",
@@ -109,5 +109,5 @@ export const movies: tmovies[] = [{
     genres: ["Science-Fiction", "Aventure"],
     directors: ["Denis Villeneuve"],
     stars: ["Timothée Chalamet", "Rebecca Ferguson", "Oscar Isaac", "Jason Momoa"],
-    length: "2h 35m"
+    length: "2h35"
 },];

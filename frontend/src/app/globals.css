@@ -25,8 +25,8 @@
     --font-sans: "FT Calhern Light", sans-serif;
 }
 
-body { @apply font-body bg-white text-black tracking-normal; }
-h1, h2, h3, h4, h5, h6 { @apply font-condensed uppercase tracking-wide; }
+body { font-family: var(--font-body); background-color: var(--color-white); color: var(--color-black); }
+h1, h2, h3, h4, h5, h6, .custom-condensed { @apply font-condensed uppercase tracking-wide; }
 h1 { @apply text-8xl font-bold; }
 h2 { @apply text-6xl; }
 h3 { @apply text-5xl; }

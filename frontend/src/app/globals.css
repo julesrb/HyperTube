@@ -32,7 +32,7 @@ h2 { @apply text-6xl; }
 h3 { @apply text-5xl; }
 h4 { @apply text-4xl; }
 h5 { @apply text-3xl; }
-p { @apply text-base font-sans; }
+p { @apply font-sans; }
 input:focus, textarea:focus { outline: none; }
 .bg-gradient { @apply size-full absolute inset-0 bg-linear-to-t from-black via-transparent via-40% to-transparent opacity-90; }
 

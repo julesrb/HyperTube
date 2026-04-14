@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 import SmallButton from "@/components/SmallButton";
+import Pagination from "@/components/Pagination";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
@@ -16,9 +17,14 @@ const MAX_COMMENT_SIZE = 300
 export default function CommentSection() {
     const [actualComments, setComments] = useState(comments);
     const user = users[0];
+    const [index, setIndex] = useState(0);
 
     const addNewComment = (newComment: tcomment) => {
         setComments([...actualComments, newComment]);
+    }
+
+    const changeIndex = (newIndex: number) => {
+        setIndex(newIndex);
     }
 
     return (<div className="mt-14 flex flex-col items-center mx-auto py-4 gap-4">
@@ -26,13 +32,15 @@ export default function CommentSection() {
             <h6 className="text-8xl">Comment</h6>
         </div>
 
-        <div className="flex flex-col-reverse gap-8 max-w-2xl">
-            {actualComments.map((comment, index) => (<Comment key={index} comment={comment}/>))}
-            <div className="flex gap-4 mb-2">
-                <SmallProfilePicture user={user}/>
-                <NewComment user={user} onSubmit={addNewComment}></NewComment>
+        <Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
+            <div className="flex flex-col-reverse gap-8 max-w-2xl">
+                {actualComments.map((comment, index) => (<Comment key={index} comment={comment}/>))}
+                <div className="flex gap-4 mb-2">
+                    <SmallProfilePicture user={user}/>
+                    <NewComment user={user} onSubmit={addNewComment}></NewComment>
+                </div>
             </div>
-        </div>
+        </Pagination>
     </div>);
 }
 

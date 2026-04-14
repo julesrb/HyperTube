@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 export default function ModalLayout({ children, onClose, defaultLayout = true } : { children: React.ReactNode, onClose: () => void, defaultLayout?: boolean }) {

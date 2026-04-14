@@ -65,6 +65,7 @@ function AvatarTab() {
         <DefaultUserIcon className="mb-6"/>
         <Button>Select New avatar</Button>
 
+        {/* TODO use SmallButton*/}
         <button
             className={(true ? "text-red  custom-h-underline-red" : "text-gray") + " text-sm font-sans"}>Remove
         </button>

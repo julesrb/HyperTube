@@ -5,7 +5,7 @@ import ModalLayout from "@/components/LayoutModal";
 import React from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import CrossIcon from "@/components/icon/CrossIcon";
+import {CrossIcon} from "@/components/Icon";
 
 // export default function SigninModal() {
 //     const {activeModal, closeModal,} = useModal();

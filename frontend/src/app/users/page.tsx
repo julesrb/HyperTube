@@ -3,7 +3,7 @@
 import Input from "@/components/Input";
 import React, {useState} from "react";
 import Button from "@/components/Button";
-import DefaultUserIcon from "@/components/icon/DefaultUserIcon";
+import DefaultUserIcon from "@/components/DefaultUserIcon";
 import {movies} from "@/types/movie";
 import MovieCard from "@/components/MovieCard";
 

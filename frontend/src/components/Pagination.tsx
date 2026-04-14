@@ -1,6 +1,5 @@
 import {ReactNode, useState} from "react";
-import RightIcon from "@/components/icon/RightIcon";
-import LeftIcon from "@/components/icon/LeftIcon";
+import {LeftIcon, RightIcon} from "@/components/Icon";
 
 export default function Pagination({children, currenIndex, totalPage, onClick} : {children: ReactNode, currenIndex: number, totalPage: number, onClick: (i: number) => void}) {
     const [leftColor, setLeftColor] = useState("gray");

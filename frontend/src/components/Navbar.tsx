@@ -4,13 +4,8 @@ import {useModal} from "@/context/ModalContext";
 import {NavItem} from "@/types/nav";
 import LanguageDropdown from "@/components/LanguageDropdown";
 import {useState} from "react";
-import RegisterIcon from "@/components/icon/RegisterIcon";
-import UserIcon from "@/components/icon/UserIcon";
-import SearchIcon from "@/components/icon/SearchIcon";
-import HomeIcon from "@/components/icon/HomeIcon";
-import ExitDoorIcon from "@/components/icon/ExitDoorIcon";
-import LanguageIcon from "@/components/icon/LanguageIcon";
 import Link from "next/link";
+import {ExitDoorIcon, HomeIcon, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
 
 export default function Navbar() {
     const {openModal} = useModal();

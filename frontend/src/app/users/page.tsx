@@ -3,9 +3,9 @@
 import Input from "@/components/Input";
 import React, {useState} from "react";
 import Button from "@/components/Button";
-import DefaultUserIcon from "@/components/DefaultUserIcon";
 import {movies} from "@/types/movie";
 import MovieCard from "@/components/MovieCard";
+import {DefaultUserIcon} from "@/components/Icon";
 
 export default function Page() {
     const tabs = {profile: ProfileTab, avatar: AvatarTab, auth: AuthTab, history: MovieHistoryTab};

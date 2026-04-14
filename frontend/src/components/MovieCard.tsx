@@ -1,10 +1,10 @@
 import Image from "next/image";
-import {tmovies} from "@/types/movie";
+import {tmovie} from "@/types/movie";
 import {useState} from "react";
 import Link from "next/link";
 
 
-export default function MovieCard({movie} : {movie: tmovies}) {
+export default function MovieCard({movie} : {movie: tmovie}) {
     const [randomBackdrop] = useState(() => {
         if (!movie.backdrops?.length) return null;
 

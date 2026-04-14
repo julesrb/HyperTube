@@ -1,4 +1,4 @@
-export type tmovies = {
+export type tmovie = {
     id: number
     title: string
     src: string
@@ -11,7 +11,7 @@ export type tmovies = {
     length: string
 };
 
-export const movies: tmovies[] = [{
+export const movies: tmovie[] = [{
     id: 1,
     title: "Avatar: Fire and Ash",
     src: "dVv28yL7kyeMK3sUTWVSKrZC6tV.jpg",

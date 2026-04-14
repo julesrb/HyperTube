@@ -24,7 +24,12 @@ func main() {
 	}
 	log.Println("connected to database")
 
-	moviesHandler := movies.NewHandler(db)
+	// prepare dependencies for DB and torrent search clients
+	store := movies.NewStore(db)
+	// searchers := []movies.MovieSearcher{}
+
+	//inject dependencies into handlers
+	moviesHandler := movies.NewHandler(store, nil)
 
 	mux := http.NewServeMux()
 
@@ -45,6 +50,7 @@ func main() {
 
 	// Movies
 	mux.HandleFunc("GET /movies", moviesHandler.GetMovies)
+	// mux.HandleFunc("GET /movies/search", moviesHandler.SearchMovies)
 	mux.HandleFunc("GET /movies/{id}", moviesHandler.GetMoviesId)
 	// mux.HandleFunc("GET /movies/{id}/comments", moviesHandler.ListComments)
 	// mux.HandleFunc("POST /movies/{id}/comments", moviesHandler.CreateComment)

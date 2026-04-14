@@ -9,7 +9,6 @@ import (
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type movieStore interface {
@@ -17,12 +16,17 @@ type movieStore interface {
 	findByID(ctx context.Context, id string) (*models.Movie, error)
 }
 
-type Handler struct {
-	store movieStore
+type movieSearcher interface {
+	searchByTitle(ctx context.Context, title string) ([]models.Movie, error)
 }
 
-func NewHandler(db *pgxpool.Pool) *Handler {
-	return &Handler{store: NewStore(db)}
+type Handler struct {
+	store    movieStore
+	searchers []movieSearcher
+}
+
+func NewHandler(store movieStore, searchers []movieSearcher) *Handler {
+	return &Handler{store: store, searchers: searchers}
 }
 
 // GetMovies returns a list of movies.

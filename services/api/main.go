@@ -45,7 +45,7 @@ func main() {
 
 	// Movies
 	mux.HandleFunc("GET /movies", moviesHandler.GetMovies)
-	// mux.HandleFunc("GET /movies/{id}", moviesHandler.Get)
+	mux.HandleFunc("GET /movies/{id}", moviesHandler.GetMoviesId)
 	// mux.HandleFunc("GET /movies/{id}/comments", moviesHandler.ListComments)
 	// mux.HandleFunc("POST /movies/{id}/comments", moviesHandler.CreateComment)
 

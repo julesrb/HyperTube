@@ -2,10 +2,14 @@ package movies
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"hypertube/api/internal/models"
 )
+
+var ErrNotFound = errors.New("not found")
 
 type Store struct {
 	db *pgxpool.Pool
@@ -39,4 +43,21 @@ func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
 		movies = append(movies, m)
 	}
 	return movies, rows.Err()
+}
+
+func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) {
+	row := s.db.QueryRow(ctx, `SELECT * FROM movies WHERE id = $1`, id)
+
+	var m models.Movie
+	if err := row.Scan(
+		&m.ID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
+		&m.IMDbRating, &m.Genres, &m.Runtime, &m.Summary,
+		&m.Director, &m.Cast, &m.Watched, &m.Seeders,
+	); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return &m, nil
 }

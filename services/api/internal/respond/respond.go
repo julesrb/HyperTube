@@ -24,6 +24,12 @@ func List(w http.ResponseWriter, status int, data any, total int) {
 	})
 }
 
+func Item(w http.ResponseWriter, status int, data any) {
+	JSON(w, status, models.Response{
+		Data: data,
+	})
+}
+
 func Error(w http.ResponseWriter, status int, code, message string) {
 	JSON(w, status, models.ErrorResponse{
 		Error: models.ErrorBody{Code: code, Message: message},

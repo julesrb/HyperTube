@@ -1,8 +1,8 @@
 import Image from "next/image";
-import {tmovies} from "@/types/movie";
+import {tmovie} from "@/types/movie";
 
 
-export default function MovieSmallCard({movie} : {movie: tmovies}) {
+export default function MovieSmallCard({movie} : {movie: tmovie}) {
     return (
         <div className="relative w-48 h-72 overflow-hidden cursor-pointer group border">
             <Image className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" width={100} height={100} src={"/images/" + movie.src} alt={"poster of movie: " + movie.title}/>

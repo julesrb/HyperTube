@@ -11,6 +11,10 @@
     --color-purple: #747AF5;
     --color-blue: #AEF0FF;
     --color-red: #FF4742;
+
+    --cursor-left: url("/svg/left-cursor.svg") 25 25, auto;
+    --cursor-right: url("/svg/right-cursor.svg") 25 25, auto;
+    --cursor-play: url("/svg/play-cursor.svg") 25 25, auto;
 }
 
 @theme {
@@ -19,21 +23,19 @@
     --font-hairline: "FT Calhern Hairline", sans-serif;
     --font-condensed: "FT Calhern Condensed", sans-serif;
     --font-sans: "FT Calhern Light", sans-serif;
-
-    --tracking-normal: var(--tracking-wide);
 }
 
-body { @apply font-body bg-white text-black tracking-normal; }
-h1, h2, h3, h4, h5, h6 { @apply font-condensed uppercase tracking-wide; }
+body { font-family: var(--font-body); background-color: var(--color-white); color: var(--color-black); }
+h1, h2, h3, h4, h5, h6, .custom-condensed { @apply font-condensed uppercase tracking-wide; }
 h1 { @apply text-8xl font-bold; }
 h2 { @apply text-6xl; }
 h3 { @apply text-5xl; }
 h4 { @apply text-4xl; }
 h5 { @apply text-3xl; }
-h6 { @apply text-2xl; }
-p { @apply text-base font-sans; }
-input:focus { outline: none; }
+p { @apply font-sans; }
+input:focus, textarea:focus { outline: none; }
 .bg-gradient { @apply size-full absolute inset-0 bg-linear-to-t from-black via-transparent via-40% to-transparent opacity-90; }
+button:hover, Link:hover { @apply cursor-pointer; }
 
 /* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
 .custom-underline, .custom-h-underline:hover {
@@ -46,6 +48,10 @@ input:focus { outline: none; }
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.2rem;
 }
+
+.custom-cursor-left:hover { cursor: var(--cursor-left); }
+.custom-cursor-right:hover { cursor: var(--cursor-right); }
+.custom-cursor-play:hover { cursor: var(--cursor-play); }
 
 .custom-shadow-s { box-shadow: 8px 7px 0 var(--color-black); }
 .custom-shadow-m { box-shadow: 14px 14px 0 var(--color-black); }

@@ -1,0 +1,112 @@
+import {comments, tcomment} from "@/types/comment";
+import {tuser, users} from "@/types/user";
+import React, {useState} from "react";
+
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/fr";
+import SmallButton from "@/components/SmallButton";
+import Pagination from "@/components/Pagination";
+
+dayjs.extend(relativeTime);
+dayjs.locale("fr");
+
+const MAX_COMMENT_SIZE = 300
+
+
+export default function CommentSection() {
+    const [actualComments, setComments] = useState(comments);
+    const user = users[0];
+    const [index, setIndex] = useState(0);
+
+    const addNewComment = (newComment: tcomment) => {
+        setComments([...actualComments, newComment]);
+    }
+
+    const changeIndex = (newIndex: number) => {
+        setIndex(newIndex);
+    }
+
+    return (<div className="mt-14 flex flex-col items-center mx-auto py-4 gap-4">
+        <div className="border-b-5 border-b-yellow w-full mb-6">
+            <h6 className="text-8xl">Comment</h6>
+        </div>
+
+        <Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
+            <div className="flex flex-col-reverse gap-8 max-w-2xl">
+                {actualComments.map((comment, index) => (<Comment key={index} comment={comment}/>))}
+                <div className="flex gap-4 mb-2">
+                    <SmallProfilePicture user={user}/>
+                    <NewComment user={user} onSubmit={addNewComment}></NewComment>
+                </div>
+            </div>
+        </Pagination>
+    </div>);
+}
+
+function Comment({comment}: { comment: tcomment }) {
+    const user = users[comment.user];
+    const [isCommentExpend, setIsExpendComment] = useState(false);
+
+    return (<div className="w-full">
+        <div className="flex gap-4">
+            <SmallProfilePicture user={user}/>
+            <div>
+                <span className="text-bold">{user.firstname} {user.lastname[0]}.</span>
+                <p className="text-sm font-normal text-gray leading-4 mb-2">{dayjs.unix(comment.created_at).fromNow()}</p>
+                <p className={isCommentExpend ? "" : "line-clamp-3"}>
+                    {comment.comment}
+                </p>
+                {comment.comment.length > MAX_COMMENT_SIZE && (<SmallButton onClick={() => setIsExpendComment(!isCommentExpend)}>
+                    {isCommentExpend ? "Reduire" : "Lire la suite"}</SmallButton>)}
+            </div>
+        </div>
+    </div>);
+}
+
+function NewComment({user, onSubmit}: { user: tuser, onSubmit: (value: tcomment) => void }) {
+    const [expendComment, setExpendComment] = useState(false);
+    const [comment, setComment] = useState("");
+    const [canPost, setCanPost] = useState(false);
+
+    console.log(user);
+    const handleComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setComment(e.target.value);
+        setCanPost(e.target.value.length !== 0);
+    }
+
+    const handlePostComment = () => {
+        setComment("");
+        setCanPost(false);
+        setExpendComment(false);
+
+        const newComment: tcomment = {
+            id: Math.floor(Date.now() / 1000),
+            user: user.id,
+            comment: comment,
+            created_at: Math.floor(Date.now() / 1000)
+        }
+        onSubmit(newComment);
+    }
+
+    return (<div className="flex flex-col items-center w-full gap-2">
+        <textarea className="border w-full block px-3 py-1.5"
+                  style={{resize: expendComment ? "vertical" : "none"}}
+                  maxLength={1000} rows={expendComment ? 5 : 1}
+                  placeholder={expendComment ? "" : "Écrire un commentaire..."}
+                  onClick={() => setExpendComment(true)}
+                  onChange={handleComment} value={comment}>
+        </textarea>
+        {expendComment &&
+            <button className={"text-white py-2 w-full " + (canPost ? "bg-black" : "bg-gray")} disabled={!canPost}
+                    onClick={handlePostComment}>Publier le commentaire</button>}
+        {expendComment &&
+            <SmallButton onClick={() => setExpendComment(false)}>Annuler</SmallButton>}
+    </div>);
+}
+
+function SmallProfilePicture({user}: { user: tuser }) {
+    return (<h6 className={`rounded-full bg-${user.color} size-10 flex items-center justify-center border shrink-0`}>
+        {user.firstname[0] + user.lastname[0]}
+    </h6>);
+}

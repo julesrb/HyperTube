@@ -3,9 +3,9 @@
 import Input from "@/components/Input";
 import React, {useState} from "react";
 import Button from "@/components/Button";
-import DefaultUserIcon from "@/components/icon/DefaultUserIcon";
 import {movies} from "@/types/movie";
 import MovieCard from "@/components/MovieCard";
+import {DefaultUserIcon} from "@/components/Icon";
 
 export default function Page() {
     const tabs = {profile: ProfileTab, avatar: AvatarTab, auth: AuthTab, history: MovieHistoryTab};
@@ -65,6 +65,7 @@ function AvatarTab() {
         <DefaultUserIcon className="mb-6"/>
         <Button>Select New avatar</Button>
 
+        {/* TODO use SmallButton*/}
         <button
             className={(true ? "text-red  custom-h-underline-red" : "text-gray") + " text-sm font-sans"}>Remove
         </button>

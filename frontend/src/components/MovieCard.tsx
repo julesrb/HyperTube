@@ -1,10 +1,10 @@
 import Image from "next/image";
-import {tmovies} from "@/types/movie";
+import {tmovie} from "@/types/movie";
 import {useState} from "react";
 import Link from "next/link";
 
 
-export default function MovieCard({movie} : {movie: tmovies}) {
+export default function MovieCard({movie} : {movie: tmovie}) {
     const [randomBackdrop] = useState(() => {
         if (!movie.backdrops?.length) return null;
 
@@ -13,7 +13,7 @@ export default function MovieCard({movie} : {movie: tmovies}) {
     });
 
     return (
-        <Link href={"/movies/" + movie.id} className="relative aspect-824/560 overflow-hidden cursor-pointer group border">
+        <Link href={"/movies/" + movie.id} className="relative aspect-824/560 overflow-hidden group border">
             <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + randomBackdrop} alt={"poster of movie: " + movie.title}/>
             <div className="absolute inset-0 p-4 flex items-end">
                 <div className="bg-gradient"></div>

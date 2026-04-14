@@ -1,5 +1,5 @@
 import React from "react";
-import EyeIcon from "@/components/icon/EyeIcon";
+import {EyeIcon} from "@/components/Icon";
 
 export default function Input({type, placeholder, className }: {type: string, placeholder: string, className?: string}) {
     const isPassword = type === "password";

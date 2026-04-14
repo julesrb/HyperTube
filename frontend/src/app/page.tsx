@@ -46,5 +46,13 @@ export default function HomePage() {
                 Wide</p>
             <p style={{fontFamily: 'FT Calhern Wide Ultrathin', fontWeight: 100, fontStyle: 'normal'}}>HyperTube | FT
                 Calhern Wide Ultrathin</p>
+        <div className="flex w-full mt-5">
+            <div className="h-4 w-full bg-yellow"></div>
+            <div className="h-4 w-full bg-pink"></div>
+            <div className="h-4 w-full bg-green"></div>
+            <div className="h-4 w-full bg-purple"></div>
+            <div className="h-4 w-full bg-blue"></div>
+            <div className="h-4 w-full bg-red"></div>
+        </div>
         </div>);
 }

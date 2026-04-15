@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 import SmallButton from "@/components/SmallButton";
 import Pagination from "@/components/Pagination";
+import Button from "@/components/Button";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
@@ -98,8 +99,7 @@ function NewComment({user, onSubmit}: { user: tuser, onSubmit: (value: tcomment)
                   onChange={handleComment} value={comment}>
         </textarea>
         {expendComment &&
-            <button className={"text-white py-2 w-full " + (canPost ? "bg-black" : "bg-gray")} disabled={!canPost}
-                    onClick={handlePostComment}>Publier le commentaire</button>}
+            <Button onClick={handlePostComment} disabled={!canPost} className="w-full">Publier le commentaire</Button>}
         {expendComment &&
             <SmallButton onClick={() => setExpendComment(false)}>Annuler</SmallButton>}
     </div>);

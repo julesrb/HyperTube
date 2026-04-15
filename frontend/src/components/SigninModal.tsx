@@ -6,6 +6,7 @@ import React from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import {CrossIcon} from "@/components/Icon";
+import SmallButton from "@/components/SmallButton";
 
 // export default function SigninModal() {
 //     const {activeModal, closeModal,} = useModal();
@@ -27,7 +28,7 @@ import {CrossIcon} from "@/components/Icon";
 // }
 
 export default function SigninModal() {
-    const {activeModal, closeModal,} = useModal();
+    const {openModal, activeModal, closeModal,} = useModal();
 
     if (activeModal !== "signin")
         return null;
@@ -43,7 +44,7 @@ export default function SigninModal() {
             <Input type="email" placeholder="Email"></Input>
             <Input type="password" placeholder="Password"></Input>
             <div className="relative mb-4">
-                <a className="custom-underline text-xs absolute bottom-1">Forgotten?</a>
+                <SmallButton className="absolute bottom-1" onClick={() => openModal("forgot-password")}>Forgotten?</SmallButton>
             </div>
             <Button className="h-8">Sign In</Button>
         </ModalLayout>

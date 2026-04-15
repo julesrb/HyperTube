@@ -1,11 +1,21 @@
 "use client";
 
 import {useModal} from "@/context/ModalContext";
-import {NavItem} from "@/types/nav";
 import LanguageDropdown from "@/components/LanguageDropdown";
-import {useState} from "react";
+import React, {useState} from "react";
 import Link from "next/link";
 import {ExitDoorIcon, HomeIcon, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
+
+type NavItem = {
+    name: string
+    icon: ({color, size}: {
+        color?: string
+        size?: number
+    }) => React.JSX.Element
+    href?: string
+    action?: () => void
+    hover?: (Icon: React.JSX.Element) => React.JSX.Element
+};
 
 export default function Navbar() {
     const {openModal} = useModal();

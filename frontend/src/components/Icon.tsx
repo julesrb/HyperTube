@@ -95,10 +95,15 @@ export function EyeIcon( { color = "black", size = 24, crossed = false }: { colo
     </svg>);
 }
 
-export function HomeIcon({ color = "black", size = 20 }) {
+export function HomeIcon({ color = "black", height = 20, width, className } : {color?: string, height?: number, width?: number, className?: string }) {
     const fullColor = `var(--color-${color})`;
+    const preserveRatio = height && width ? "none" : "xMidYMid meet";
+    if (!width)
+        width = (height * 347) / 21
+    if (!height)
+        height = (width * 21) / 347
 
-    return (<svg width="347" height={size} viewBox="0 0 347 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+    return (<svg className={className} width={width} height={height} viewBox="0 0 347 21" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio={preserveRatio}>
             <path d="M7.04004 7.31934H19.9199V0H26.96V20H19.9199V12.5195H7.04004V20H0V0H7.04004V7.31934Z" fill={fullColor}/>
             <path d="M44.8965 7.83984L51.9766 0H60.8164L48.377 12.2793V20H41.3369V12.2793L28.8965 0H37.7363L44.8965 7.83984Z" fill={fullColor}/>
             <path fillRule="evenodd" clipRule="evenodd" d="M79.2139 0C85.4536 8.58141e-05 89.0937 1.87964 89.0938 6.43945C89.0938 10.9994 85.4535 12.8798 79.0537 12.8799H69.8135V20H62.7734V0H79.2139ZM69.8135 7.95996H78.9336C80.9335 7.95994 82.0938 7.63942 82.0938 6.43945C82.0937 5.23958 80.9334 4.95998 78.9336 4.95996H69.8135V7.95996Z" fill={fullColor}/>

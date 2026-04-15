@@ -4,6 +4,6 @@ export default function Button({children, onClick, className, disabled=false}: {
     return (<button
         disabled={disabled}
         onClick={onClick}
-        className={"text-nowrap px-5 h-10 text-white " + (disabled ? "bg-gray " : "bg-black hover:bg-black/90 ") + className}
+        className={"text-nowrap px-5 h-10 text-white " + (disabled ? "bg-gray " : "bg-black hover:bg-black-hover ") + className}
     >{children}</button>);
 }

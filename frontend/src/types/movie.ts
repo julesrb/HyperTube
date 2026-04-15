@@ -76,7 +76,7 @@ export const movies: tmovie[] = [{
     genres: ["Science-Fiction", "Horreur", "Fantastique"],
     directors: ["Maggie Gyllenhaal"],
     stars: ["Jessie Buckley", "Christian Bale"],
-    length: "2h7"
+    length: "2h07"
 }, {
     id: 7,
     title: "Send Help",

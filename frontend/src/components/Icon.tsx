@@ -95,7 +95,7 @@ export function EyeIcon( { color = "black", size = 24, crossed = false }: { colo
     </svg>);
 }
 
-export function HomeIcon({ color = "black", height = 20, width, className } : {color?: string, height?: number, width?: number, className?: string }) {
+export function HypertubeLogo({ color = "black", height = 20, width, className } : {color?: string, height?: number, width?: number, className?: string }) {
     const fullColor = `var(--color-${color})`;
     const preserveRatio = height && width ? "none" : "xMidYMid meet";
     if (!width)

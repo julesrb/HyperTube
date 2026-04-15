@@ -4,7 +4,7 @@ import {useModal} from "@/context/ModalContext";
 import LanguageDropdown from "@/components/LanguageDropdown";
 import React, {useState} from "react";
 import Link from "next/link";
-import {ExitDoorIcon, HomeIcon, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
+import {ExitDoorIcon, HypertubeLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
 
 type NavItem = {
     name: string
@@ -22,7 +22,7 @@ export default function Navbar() {
     const [isLogin, setIsLogin] = useState(true);
 
     const navItems: NavItem[] = isLogin ? [{
-        name: "", icon: HomeIcon, href: "/",
+        name: "", icon: HypertubeLogo, href: "/",
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {
@@ -34,7 +34,7 @@ export default function Navbar() {
     }, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },] : [{
-        name: "", icon: HomeIcon, href: "/",
+        name: "", icon: HypertubeLogo, href: "/",
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {

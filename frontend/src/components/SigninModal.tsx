@@ -46,7 +46,11 @@ export default function SigninModal() {
             <div className="relative mb-4">
                 <SmallButton className="absolute bottom-1" onClick={() => openModal("forgot-password")}>Forgotten?</SmallButton>
             </div>
-            <Button className="h-8">Sign In</Button>
+            <Button className="h-8" onClick={login}>Sign In</Button>
         </ModalLayout>
     );
+}
+
+function login() {
+
 }

@@ -23,7 +23,7 @@ export default function MoviePage() {
 function HeroMovieSection({movie} : {movie: tmovie}) {
     const [index, setIndex] = useState(0);
 
-    return (<div className="custom-cursor-play relative flex flex-col items-center gap-4 aspect-21/9 border">
+    return (<div className="relative flex flex-col items-center gap-4 aspect-21/9 border">
         <Image className="size-full object-cover" width={5000} height={5000} loading="eager"
                src={"/images/" + movie.backdrops[index]} alt={"poster of movie " + movie.title}/>
         <div className="h-full w-50 z-30 absolute left-0 custom-cursor-left"

@@ -3,17 +3,18 @@ package models
 type Movie struct {
 	ID          string   `json:"id"`
 	Title       string   `json:"title"`
-	Year        int      `json:"year,omitempty"`
-	PosterURL   string   `json:"poster_url,omitempty"`
-	BackdropURL string   `json:"backdrop_url,omitempty"`
-	IMDbRating  float32  `json:"imdb_rating,omitempty"`
-	Genres      []string `json:"genres,omitempty"`
-	Runtime     int      `json:"runtime_minutes,omitempty"`
-	Summary     string   `json:"summary,omitempty"`
-	Director    string   `json:"director,omitempty"`
-	Cast        []string `json:"cast,omitempty"`
+	Year        string   `json:"year"`
+	PosterURL   string   `json:"poster_url"`
+	BackdropURL string   `json:"backdrop_url"`
+	IMDbRating  float32  `json:"imdb_rating"`
+	Genres      []string `json:"genres"`
+	Runtime     int      `json:"runtime_minutes"`
+	Summary     string   `json:"summary"`
+	Director    string   `json:"director"`
+	Cast        []string `json:"cast"`
 	Watched     bool     `json:"watched"`
-	Seeders     int      `json:"seeders,omitempty"`
+	Progression float32  `json:"progression"`
+	Seeders     int      `json:"seeders"`
 }
 
 type Meta struct {

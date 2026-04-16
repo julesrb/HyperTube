@@ -52,7 +52,7 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 	if err := row.Scan(
 		&m.ID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
 		&m.IMDbRating, &m.Genres, &m.Runtime, &m.Summary,
-		&m.Director, &m.Cast, &m.Watched, &m.Seeders,
+		&m.Director, &m.Cast, &m.Watched, &m.Progression, &m.Seeders,
 	); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound

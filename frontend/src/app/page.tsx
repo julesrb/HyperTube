@@ -1,51 +1,24 @@
 "use client";
 
 import {movies} from "@/types/movie";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import MovieCard from "@/components/MovieCard";
+import MoviesHero from "@/components/MovieHero";
+import {genres} from "@/types/genre";
+import GenreTag from "@/components/GenreTag";
+import {HypertubeLogo} from "@/components/Icon";
 
 export default function HomePage() {
-    return (<div className="">
-            <div className="grid grid-cols-3 gap-4 px-4">
-                {movies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
-            </div>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 900, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 'bold', fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern Hairline', fontWeight: 'normal', fontStyle: 'normal'}}>HyperTube | FT
-                Calhern Hairline</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 900, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 300, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 500, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 'normal', fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 600, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 100, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern', fontWeight: 200, fontStyle: 'normal'}}>HyperTube | FT Calhern</p>
-            <p style={{fontFamily: 'FT Calhern Ultrathin', fontWeight: 100, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Ultrathin</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 900, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 900, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 'bold', fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide Hairline', fontWeight: 'normal', fontStyle: 'normal'}}>HyperTube |
-                FT Calhern Wide Hairline</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 900, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 300, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 500, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 'normal', fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 600, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 100, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide', fontWeight: 200, fontStyle: 'normal'}}>HyperTube | FT Calhern
-                Wide</p>
-            <p style={{fontFamily: 'FT Calhern Wide Ultrathin', fontWeight: 100, fontStyle: 'normal'}}>HyperTube | FT
-                Calhern Wide Ultrathin</p>
+    return (<div>
+        <AnimateLogo />
+        <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
+        <div className="flex gap-4 items-center justify-center w-full mt-4">
+            {genres.map((genre) => <GenreTag key={genre.id}>{genre.name}</GenreTag>)}
+        </div>
+        <div className="grid grid-cols-3 gap-4 mt-4 px-4">
+            {movies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
+        </div>
+
         <div className="flex w-full mt-5">
             <div className="h-4 w-full bg-yellow"></div>
             <div className="h-4 w-full bg-pink"></div>
@@ -54,5 +27,40 @@ export default function HomePage() {
             <div className="h-4 w-full bg-blue"></div>
             <div className="h-4 w-full bg-red"></div>
         </div>
-        </div>);
+    </div>);
+}
+
+function AnimateLogo() {
+    const maxHeight = 400;
+    const minHeight = 40;
+    const [logoHeight, setLogoHeight] = useState(maxHeight);
+
+    useEffect(() => {
+        let virtualScroll = 0;
+
+        const handleWheel = (e: WheelEvent) => {
+            const isAtMin = virtualScroll >= (maxHeight - minHeight);
+            const isAtTop = window.scrollY === 0;
+
+            if (!isAtMin || (isAtTop && e.deltaY < 0)) {
+                e.preventDefault();
+
+                virtualScroll += e.deltaY;
+                virtualScroll = Math.max(0, Math.min(virtualScroll, maxHeight));
+                setLogoHeight(maxHeight - virtualScroll);
+            }
+        };
+
+        window.addEventListener("wheel", handleWheel, {passive: false,});
+
+        return () => {window.removeEventListener("wheel", handleWheel);};
+    }, []);
+
+    return (<div className="overflow-hidden w-full mb-4">
+        <div className="flex">
+            {[...Array(2)].map((_, i) => (
+                <HypertubeLogo key={i} className="animate-marquee min-w-full" width={window.innerWidth} height={logoHeight} />
+            ))}
+        </div>
+    </div>);
 }

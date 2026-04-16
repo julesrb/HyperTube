@@ -1,16 +1,11 @@
 import Image from "next/image";
 import {tmovie} from "@/types/movie";
-import {useState} from "react";
 import Link from "next/link";
+import {useRandomBackdrop} from "@/script/utils";
 
 
 export default function MovieCard({movie} : {movie: tmovie}) {
-    const [randomBackdrop] = useState(() => {
-        if (!movie.backdrops?.length) return null;
-
-        const index = Math.floor(Math.random() * movie.backdrops.length);
-        return movie.backdrops[index];
-    });
+    const randomBackdrop = useRandomBackdrop(movie);
 
     return (
         <Link href={"/movies/" + movie.id} className="relative aspect-824/560 overflow-hidden group border">

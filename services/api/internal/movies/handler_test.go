@@ -119,7 +119,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 			{
 				ID:          "693134",
 				Title:       "Dune: Part Two",
-				Year:        2024,
+				Year:        "2024",
 				PosterURL:   "https://image.tmdb.org/t/p/original/rjmLNTt5tP1obYx4YFzLHpN7KcG.jpg",
 				BackdropURL: "https://image.tmdb.org/t/p/original/oBCR7ShGq9ZdnHMK8SGOckGpEgo.jpg",
 				IMDbRating:  8.1,
@@ -134,7 +134,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 			{
 				ID:          "83533",
 				Title:       "Avatar: Fire and Ash",
-				Year:        2025,
+				Year:        "2025",
 				PosterURL:   "https://image.tmdb.org/t/p/original/lE9KpVwgeWHMwgwkNaeH5nEFh20.jpg",
 				BackdropURL: "https://image.tmdb.org/t/p/original/u8DU5fkLoM5tTRukzPC31oGPxaQ.jpg",
 				IMDbRating:  7.4,

@@ -71,7 +71,6 @@ function NewComment({user, onSubmit}: { user: tuser, onSubmit: (value: tcomment)
     const [comment, setComment] = useState("");
     const [canPost, setCanPost] = useState(false);
 
-    console.log(user);
     const handleComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setComment(e.target.value);
         setCanPost(e.target.value.length !== 0);

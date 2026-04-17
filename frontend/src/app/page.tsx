@@ -19,6 +19,14 @@ export default function HomePage() {
             {movies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
         </div>
 
+        <div className="flex w-full">
+            <div className="h-4 w-full bg-yellow-hover"></div>
+            <div className="h-4 w-full bg-pink-hover"></div>
+            <div className="h-4 w-full bg-green-hover"></div>
+            <div className="h-4 w-full bg-purple-hover"></div>
+            <div className="h-4 w-full bg-blue-hover"></div>
+            <div className="h-4 w-full bg-red-hover"></div>
+        </div>
         <div className="flex w-full mt-5">
             <div className="h-4 w-full bg-yellow"></div>
             <div className="h-4 w-full bg-pink"></div>

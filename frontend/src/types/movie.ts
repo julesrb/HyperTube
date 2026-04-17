@@ -12,6 +12,17 @@ export type tmovie = {
 };
 
 export const movies: tmovie[] = [{
+    id: 0,
+    title: "Dune",
+    src: "yyrBBEHvwdJEgNgALxuh0EyWmsN.webp",
+    year: "2026",
+    backdrops: ["h3HsfV8Kn9Sz2QWUYYdP5ya23hx.webp", "jYEW5xZkZk2WTrdbMGAPFuBqbDc.webp", "wYMbnrdRCREjNLwFlG5SLWzBjui.webp", "zRKQW58MBEY078AxkHxEJzUskCl.webp"],
+    synopsis: "L'histoire de Paul Atreides, jeune homme aussi doué que brillant, voué à connaître un destin hors du commun qui le dépasse totalement. Car, s'il veut préserver l'avenir de sa famille et de son peuple, il devra se rendre sur Dune, la planète la plus dangereuse de l'Univers. Mais aussi la seule à même de fournir la ressource la plus précieuse capable de décupler la puissance de l'Humanité. Tandis que des forces maléfiques se disputent le contrôle de cette planète, seuls ceux qui parviennent à dominer leur peur pourront survivre…",
+    genres: ["Science-Fiction", "Aventure"],
+    directors: ["Denis Villeneuve"],
+    stars: ["Timothée Chalamet", "Rebecca Ferguson", "Oscar Isaac", "Jason Momoa"],
+    length: "2h35"
+}, {
     id: 1,
     title: "Avatar: Fire and Ash",
     src: "dVv28yL7kyeMK3sUTWVSKrZC6tV.jpg",
@@ -99,15 +110,4 @@ export const movies: tmovie[] = [{
     directors: ["Tyree Dillihay"],
     stars: ["Caleb McLaughlin", "Gabrielle Union", "Stephen Curry"],
     length: "1h40"
-}, {
-    id: 9,
-    title: "Dune",
-    src: "yyrBBEHvwdJEgNgALxuh0EyWmsN.webp",
-    year: "2026",
-    backdrops: ["h3HsfV8Kn9Sz2QWUYYdP5ya23hx.webp", "jYEW5xZkZk2WTrdbMGAPFuBqbDc.webp", "wYMbnrdRCREjNLwFlG5SLWzBjui.webp", "zRKQW58MBEY078AxkHxEJzUskCl.webp"],
-    synopsis: "L'histoire de Paul Atreides, jeune homme aussi doué que brillant, voué à connaître un destin hors du commun qui le dépasse totalement. Car, s'il veut préserver l'avenir de sa famille et de son peuple, il devra se rendre sur Dune, la planète la plus dangereuse de l'Univers. Mais aussi la seule à même de fournir la ressource la plus précieuse capable de décupler la puissance de l'Humanité. Tandis que des forces maléfiques se disputent le contrôle de cette planète, seuls ceux qui parviennent à dominer leur peur pourront survivre…",
-    genres: ["Science-Fiction", "Aventure"],
-    directors: ["Denis Villeneuve"],
-    stars: ["Timothée Chalamet", "Rebecca Ferguson", "Oscar Isaac", "Jason Momoa"],
-    length: "2h35"
-},];
+}];

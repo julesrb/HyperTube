@@ -8,6 +8,7 @@ import "dayjs/locale/fr";
 import SmallButton from "@/components/SmallButton";
 import Pagination from "@/components/Pagination";
 import Button from "@/components/Button";
+import ProfilePicture from "@/components/ProfilePicture";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
@@ -37,7 +38,7 @@ export default function CommentSection() {
             <div className="flex flex-col-reverse gap-8 max-w-2xl">
                 {actualComments.map((comment, index) => (<Comment key={index} comment={comment}/>))}
                 <div className="flex gap-4 mb-2">
-                    <SmallProfilePicture user={user}/>
+                    <ProfilePicture user={user}/>
                     <NewComment user={user} onSubmit={addNewComment}></NewComment>
                 </div>
             </div>
@@ -51,7 +52,7 @@ function Comment({comment}: { comment: tcomment }) {
 
     return (<div className="w-full">
         <div className="flex gap-4">
-            <SmallProfilePicture user={user}/>
+            <ProfilePicture user={user}/>
             <div>
                 <span className="text-bold">{user.firstname} {user.lastname[0]}.</span>
                 <p className="text-sm font-normal text-gray leading-4 mb-2">{dayjs.unix(comment.created_at).fromNow()}</p>
@@ -103,10 +104,4 @@ function NewComment({user, onSubmit}: { user: tuser, onSubmit: (value: tcomment)
         {expendComment &&
             <SmallButton onClick={() => setExpendComment(false)}>Annuler</SmallButton>}
     </div>);
-}
-
-function SmallProfilePicture({user}: { user: tuser }) {
-    return (<h6 className={`rounded-full bg-${user.color} size-10 flex items-center justify-center border shrink-0`}>
-        {user.firstname[0] + user.lastname[0]}
-    </h6>);
 }

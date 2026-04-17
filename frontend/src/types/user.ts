@@ -6,6 +6,7 @@ export type tuser = {
     email: string
     color: string
     profile_picture: null | string
+    film_history: number[]
     joined_at: number
 };
 
@@ -18,6 +19,7 @@ export const users: tuser[] = [
         email: "florian.guiramand@example.com",
         color: "purple",
         profile_picture: "/images/profile_pictures.jpeg",
+        film_history: [0, 1, 2, 3, 4, 5, 6, 7],
         joined_at: 1746764800
     },
     {
@@ -28,6 +30,7 @@ export const users: tuser[] = [
         email: "emma.bernard@example.com",
         color: "pink",
         profile_picture: null,
+        film_history: [],
         joined_at: 1748851200
     },
     {
@@ -38,6 +41,7 @@ export const users: tuser[] = [
         email: "hugo.dubois@example.com",
         color: "pink",
         profile_picture: null,
+        film_history: [],
         joined_at: 1748937600
     },
     {
@@ -48,6 +52,7 @@ export const users: tuser[] = [
         email: "chloe.moreau@example.com",
         color: "blue",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749024000
     },
     {
@@ -58,6 +63,7 @@ export const users: tuser[] = [
         email: "nathan.laurent@example.com",
         color: "yellow",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749110400
     },
     {
@@ -68,6 +74,7 @@ export const users: tuser[] = [
         email: "sarah.simon@example.com",
         color: "purple",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749196800
     },
     {
@@ -78,6 +85,7 @@ export const users: tuser[] = [
         email: "thomas.michel@example.com",
         color: "blue",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749283200
     },
     {
@@ -88,6 +96,7 @@ export const users: tuser[] = [
         email: "julie.garcia@example.com",
         color: "red",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749369600
     },
     {
@@ -98,6 +107,7 @@ export const users: tuser[] = [
         email: "alexandre.roux@example.com",
         color: "green",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749456000
     },
     {
@@ -108,6 +118,7 @@ export const users: tuser[] = [
         email: "manon.fournier@example.com",
         color: "purple",
         profile_picture: null,
+        film_history: [],
         joined_at: 1749542400
     }
 ];

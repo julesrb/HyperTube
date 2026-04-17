@@ -13,6 +13,13 @@
     --color-blue: #AEF0FF;
     --color-red: #FF4742;
 
+    --color-yellow-hover: #FFE45C;
+    --color-pink-hover: #FFCEFD;
+    --color-green-hover: #5CFB9B;
+    --color-purple-hover: #A5AAFE;
+    --color-blue-hover: #BEF7FF;
+    --color-red-hover: #FF787E;
+
     --cursor-left: url("/svg/left-cursor.svg") 25 25, auto;
     --cursor-right: url("/svg/right-cursor.svg") 25 25, auto;
     --cursor-play: url("/svg/play-cursor.svg") 25 25, auto;

@@ -73,6 +73,8 @@ button:hover, Link:hover { @apply cursor-pointer; }
     text-underline-offset: 0.2rem;
 }
 
+.custom-no-underline { text-decoration: none !important; }
+
 .custom-cursor-left:hover { cursor: var(--cursor-left); }
 .custom-cursor-right:hover { cursor: var(--cursor-right); }
 .custom-cursor-play:hover { cursor: var(--cursor-play); }

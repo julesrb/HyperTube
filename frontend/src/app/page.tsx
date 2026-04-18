@@ -65,7 +65,7 @@ function AnimateLogo() {
     }, []);
 
     return (<div className="overflow-hidden w-full mb-4">
-        <div className="flex">
+        <div className="flex gap-8">
             {[...Array(2)].map((_, i) => (
                 <HypertubeLogo key={i} className="animate-marquee min-w-full" width={window.innerWidth} height={logoHeight} />
             ))}

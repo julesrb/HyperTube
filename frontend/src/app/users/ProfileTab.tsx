@@ -4,6 +4,8 @@ import Button from "@/components/Button";
 import {tUser} from "@/types/user";
 import ProfilePicture from "@/components/ProfilePicture";
 import SmallButton from "@/components/SmallButton";
+import {useNotification} from "@/context/NotificationContext";
+import {successMessages} from "@/types/message";
 
 
 export default function ProfileTab({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
@@ -16,6 +18,7 @@ export default function ProfileTab({user, setUser}: {user: tUser, setUser: (tUse
 }
 
 function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
+    const { addNotification } = useNotification();
     const [email, setEmail] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
@@ -23,7 +26,7 @@ function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) =
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const newUser = structuredClone(user);
-        const newValue = e.target.value;
+        const newValue = e.target.value.trim();
 
         if (key === "profile-email")
             setEmail(newValue);
@@ -38,20 +41,31 @@ function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) =
 
     const saveChange = () => {
         const newUser = structuredClone(user);
+        let isInfoChanged = false;
 
-        if (email)
+        if (email && email != user.email) {
             newUser.email = email;
-        if (firstname)
+            addNotification(successMessages.emailChanged, "warning");
+        }
+        if (firstname && firstname != user.firstname) {
+            isInfoChanged = true;
             newUser.firstname = firstname;
-        if (lastname)
+        }
+        if (lastname && lastname != user.lastname) {
+            isInfoChanged = true;
             newUser.lastname = lastname;
-        if (username)
+        }
+        if (username && username != user.username) {
+            isInfoChanged = true;
             newUser.username = username;
+        }
         setEmail("");
         setFirstname("");
         setLastname("");
         setUsername("");
         setUser(newUser);
+        if (isInfoChanged)
+            addNotification(successMessages.infoChanged, "success");
     }
 
     return (<div className="flex flex-col gap-4 items-start">

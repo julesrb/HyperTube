@@ -33,7 +33,7 @@
     --font-sans: "FT Calhern Light", sans-serif;
 }
 
-body { font-family: var(--font-body); background-color: var(--color-white); color: var(--color-black); }
+body { font-family: var(--font-body), sans-serif; background-color: var(--color-white); color: var(--color-black); }
 h1, h2, h3, h4, h5, h6, .custom-condensed { @apply font-condensed uppercase; }
 h1 { @apply text-8xl; }
 h2 { @apply text-6xl; }

@@ -62,12 +62,12 @@ button:hover, Link:hover { @apply cursor-pointer; }
 
 
 /* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
-.custom-underline, .custom-h-underline:hover {
+.custom-underline:hover {
     text-decoration: underline var(--color-black);
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.2rem;
 }
-.custom-underline-red, .custom-h-underline-red:hover {
+.custom-underline-red:hover {
     text-decoration: underline var(--color-red);
     text-decoration-thickness: 0.07rem;
     text-underline-offset: 0.2rem;

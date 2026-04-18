@@ -95,7 +95,7 @@ function AvatarSection({user, setUser}: {user: tuser, setUser: (tuser: tuser) =>
         <Button onClick={uploadNewPP}>Select New avatar</Button>
 
         <SmallButton
-            className={user.profile_picture ? "text-red  custom-h-underline-red" : "custom-no-underline"}
+            className={user.profile_picture ? "text-red  custom-underline-red" : "custom-no-underline"}
             onClick={() => handleNewPP(null)}>Remove</SmallButton>
 
         { !user.profile_picture && (

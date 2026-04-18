@@ -126,3 +126,11 @@ export function ExitDoorIcon({ color = "black", size = 20 }) {
         </svg>
     );
 }
+
+export function CheckIcon({ color = "black", size = 20, className = "" }) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg className={className} width={size} height={size} viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.7087 0.401886L6.653 13.184L0.459512 6.99635" stroke={fullColor} stroke-width="1.1"/>
+    </svg>);
+}

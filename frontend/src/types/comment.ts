@@ -1,11 +1,11 @@
-export type tcomment = {
+export type tComment = {
     id: number
     user: number
     comment: string
     created_at: number
 };
 
-export const comments: tcomment[] = [{
+export const comments: tComment[] = [{
     id: 0,
     user: 0,
     comment: "Super film, les effets spéciaux étaient incroyables et l'histoire très prenante.",

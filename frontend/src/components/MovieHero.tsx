@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import Image from "next/image";
-import {tmovie} from "@/types/movie";
+import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
 import Link from "next/link";
 import Button from "@/components/Button";
 
-export default function MoviesHero({items, movie, onClick}: { items?: tmovie[] | string[], movie: tmovie, onClick?: () => void }) {
+export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] | string[], movie: tMovie, onClick?: () => void }) {
     const [index, setIndex] = useState(0);
     if (items === undefined)
         items = movie.backdrops;
@@ -22,7 +22,7 @@ export default function MoviesHero({items, movie, onClick}: { items?: tmovie[] |
     </div>);
 }
 
-function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movie: tmovie, onClick?: () => void, onClickLeft: () => void, onClickRight: () => void, backdrop?: string }) {
+function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movie: tMovie, onClick?: () => void, onClickLeft: () => void, onClickRight: () => void, backdrop?: string }) {
     let randomBackdrop = useRandomBackdrop(movie);
 
     if (backdrop)

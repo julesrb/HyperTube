@@ -1,5 +1,5 @@
-import {comments, tcomment} from "@/types/comment";
-import {tuser, users} from "@/types/user";
+import {comments, tComment} from "@/types/comment";
+import {tUser, users} from "@/types/user";
 import React, {useState} from "react";
 
 import dayjs from "dayjs";
@@ -21,7 +21,7 @@ export default function CommentSection() {
     const user = users[0];
     const [index, setIndex] = useState(0);
 
-    const addNewComment = (newComment: tcomment) => {
+    const addNewComment = (newComment: tComment) => {
         setComments([...actualComments, newComment]);
     }
 
@@ -46,7 +46,7 @@ export default function CommentSection() {
     </div>);
 }
 
-function Comment({comment}: { comment: tcomment }) {
+function Comment({comment}: { comment: tComment }) {
     const user = users[comment.user];
     const [isCommentExpend, setIsExpendComment] = useState(false);
 
@@ -66,7 +66,7 @@ function Comment({comment}: { comment: tcomment }) {
     </div>);
 }
 
-function NewComment({user, onSubmit}: { user: tuser, onSubmit: (value: tcomment) => void }) {
+function NewComment({user, onSubmit}: { user: tUser, onSubmit: (value: tComment) => void }) {
     const [expendComment, setExpendComment] = useState(false);
     const [comment, setComment] = useState("");
     const [canPost, setCanPost] = useState(false);
@@ -81,7 +81,7 @@ function NewComment({user, onSubmit}: { user: tuser, onSubmit: (value: tcomment)
         setCanPost(false);
         setExpendComment(false);
 
-        const newComment: tcomment = {
+        const newComment: tComment = {
             id: Math.floor(Date.now() / 1000),
             user: user.id,
             comment: comment,

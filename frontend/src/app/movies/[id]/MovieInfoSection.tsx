@@ -1,7 +1,7 @@
-import {tmovie} from "@/types/movie";
+import {tMovie} from "@/types/movie";
 import GenreTag from "@/components/GenreTag";
 
-export default function MovieInfoSection({movie} : {movie: tmovie}) {
+export default function MovieInfoSection({movie} : {movie: tMovie}) {
     return (<div className="flex flex-col mt-3 gap-4 max-w-2/3 mx-auto">
         <h1 className="relative mx-auto mb-6 text-center">{movie.title}
         <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>

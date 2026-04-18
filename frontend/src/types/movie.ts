@@ -1,4 +1,4 @@
-export type tmovie = {
+export type tMovie = {
     id: number
     title: string
     src: string
@@ -11,7 +11,7 @@ export type tmovie = {
     length: string
 };
 
-export const movies: tmovie[] = [{
+export const movies: tMovie[] = [{
     id: 0,
     title: "Dune",
     src: "yyrBBEHvwdJEgNgALxuh0EyWmsN.webp",

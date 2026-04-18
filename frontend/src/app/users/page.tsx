@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import {movies} from "@/types/movie";
 import MovieCard from "@/components/MovieCard";
 import ProfilePicture from "@/components/ProfilePicture";
-import {tuser, users} from "@/types/user";
+import {tUser, users} from "@/types/user";
 import ProfileTab from "@/app/users/ProfileTab";
 import AuthTab from "@/app/users/AuthTab";
 
@@ -41,7 +41,7 @@ export default function Page() {
     </div>);
 }
 
-function MovieHistoryTab({user}: {user: tuser}) {
+function MovieHistoryTab({user}: {user: tUser}) {
     if (user.film_history.length === 0)
         return (<div className="flex justify-center pt-5"><p>You haven&#39;t seen any films yet.</p></div>);
     return (<div className="grid grid-cols-3 gap-4">

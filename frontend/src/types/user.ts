@@ -1,4 +1,4 @@
-export type tuser = {
+export type tUser = {
     id: number
     username: string
     firstname: string
@@ -10,7 +10,7 @@ export type tuser = {
     joined_at: number
 };
 
-export const users: tuser[] = [
+export const users: tUser[] = [
     {
         id: 0,
         username: "fguirama",

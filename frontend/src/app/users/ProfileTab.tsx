@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import {tuser} from "@/types/user";
+import {tUser} from "@/types/user";
 import ProfilePicture from "@/components/ProfilePicture";
 import SmallButton from "@/components/SmallButton";
 
 
-export default function ProfileTab({user, setUser}: {user: tuser, setUser: (tuser: tuser) => void}) {
+export default function ProfileTab({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
     return (
         <div className="flex gap-30 max-w-2/3 w-full justify-center items-center mx-auto">
             <ProfileSection user={user} setUser={setUser} />
@@ -15,7 +15,7 @@ export default function ProfileTab({user, setUser}: {user: tuser, setUser: (tuse
     );
 }
 
-function ProfileSection({user, setUser}: {user: tuser, setUser: (tuser: tuser) => void}) {
+function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
     const [email, setEmail] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
@@ -69,7 +69,7 @@ function ProfileSection({user, setUser}: {user: tuser, setUser: (tuser: tuser) =
 }
 
 
-function AvatarSection({user, setUser}: {user: tuser, setUser: (tuser: tuser) => void}) {
+function AvatarSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
     const colors = ["yellow", "pink", "green", "purple", "blue", "red"];
 
     const handleNewPP = (newPP: string | null) => {

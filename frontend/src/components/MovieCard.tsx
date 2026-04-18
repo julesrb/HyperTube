@@ -1,11 +1,11 @@
 import Image from "next/image";
-import {tmovie} from "@/types/movie";
+import {tMovie} from "@/types/movie";
 import Link from "next/link";
 import {useRandomBackdrop} from "@/script/utils";
 import React from "react";
 
 
-export default function MovieCard({movie} : {movie: tmovie}) {
+export default function MovieCard({movie} : {movie: tMovie}) {
     const randomBackdrop = useRandomBackdrop(movie);
 
     return (

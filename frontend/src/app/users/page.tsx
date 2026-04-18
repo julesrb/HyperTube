@@ -1,31 +1,31 @@
 "use client";
 
-import Input from "@/components/Input";
 import React, {useState} from "react";
-import Button from "@/components/Button";
 import {movies} from "@/types/movie";
 import MovieCard from "@/components/MovieCard";
-import {DefaultUserIcon} from "@/components/Icon";
+import ProfilePicture from "@/components/ProfilePicture";
+import {tUser, users} from "@/types/user";
+import ProfileTab from "@/app/users/ProfileTab";
+import AuthTab from "@/app/users/AuthTab";
 
 export default function Page() {
-    const tabs = {profile: ProfileTab, avatar: AvatarTab, auth: AuthTab, history: MovieHistoryTab};
+    const [user, setUser] = useState(users[0]);
+    const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab};
     const [activeTab, setActiveTab] = useState<keyof typeof tabs>("profile");
     const ActiveTab = tabs[activeTab];
+    const date = new Date(user.joined_at);
 
     const switchTab = (tabName: keyof typeof tabs) => {
-        if (activeTab !== tabName) {
+        if (activeTab !== tabName)
             setActiveTab(tabName);
-        }
     }
 
     return (<div className="px-4">
         <div className="flex items-center gap-4 justify-center mt-10 mb-16">
-            <h3 className="font-bold rounded-full bg-purple size-22 flex items-center justify-center border">
-                FG
-            </h3>
+            <ProfilePicture user={user} size={1}/>
             <div className="flex flex-col items-start">
-                <h2>Florian G.</h2>
-                <p className="uppercase">Member since 10.04.2026</p>
+                <h2>{user.firstname} {user.lastname[0]}.</h2>
+                <p className="uppercase">Member since {date.toLocaleDateString('fr-FR').replace(/\//g, '.')}</p>
             </div>
         </div>
         <div className="flex h-16 my-10">
@@ -36,58 +36,15 @@ export default function Page() {
                 onClick={() => switchTab(tabName)}><h4>{tabName}</h4></button>))}
             <div className="border-b w-full"></div>
         </div>
-        <div>
-            <ActiveTab/>
-        </div>
+        <ActiveTab user={user} setUser={setUser}/>
 
     </div>);
 }
 
-
-function ProfileTab() {
-    return (<div className="flex flex-col gap-4 items-start max-w-2/5 mx-auto">
-        <Input type="email" placeholder="Email"></Input>
-
-        <div className="flex gap-2 w-full">
-            <Input type="firstname" placeholder="Firstname"></Input>
-            <Input type="lastname" placeholder="Lastname"></Input>
-        </div>
-
-        <Input type="username" placeholder="Username" className={"max-w-3/5"}></Input>
-
-        <Button className="h-8">Save Changes</Button>
-    </div>);
-}
-
-
-function AvatarTab() {
-    return (<div className="flex flex-col gap-2 items-center justify-center">
-        <DefaultUserIcon className="mb-6"/>
-        <Button>Select New avatar</Button>
-
-        {/* TODO use SmallButton*/}
-        <button
-            className={(true ? "text-red  custom-h-underline-red" : "text-gray") + " text-sm font-sans"}>Remove
-        </button>
-    </div>);
-}
-
-
-
-function AuthTab() {
-    return (<div className="max-w-2/5 mx-auto flex flex-col items-start gap-4">
-
-        <Input type="password" placeholder="Current password"></Input>
-        <Input type="password" placeholder="New password"></Input>
-        <Input type="password" placeholder="Confirm new password"></Input>
-
-        <Button>Change</Button>
-    </div>);
-}
-
-
-function MovieHistoryTab() {
+function MovieHistoryTab({user}: {user: tUser}) {
+    if (user.film_history.length === 0)
+        return (<div className="flex justify-center pt-5"><p>You haven&#39;t seen any films yet.</p></div>);
     return (<div className="grid grid-cols-3 gap-4">
-        {movies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
+        {user.film_history.map((movieIdx, index) => (<MovieCard key={index} movie={movies[movieIdx]}/>))}
     </div>);
 }

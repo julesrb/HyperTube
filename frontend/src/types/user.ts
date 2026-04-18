@@ -1,15 +1,16 @@
-export type tuser = {
+export type tUser = {
     id: number
     username: string
     firstname: string
     lastname: string
     email: string
     color: string
-    avatar: string
+    profile_picture: null | string
+    film_history: number[]
     joined_at: number
 };
 
-export const users: tuser[] = [
+export const users: tUser[] = [
     {
         id: 0,
         username: "fguirama",
@@ -17,7 +18,8 @@ export const users: tuser[] = [
         lastname: "Guiramand",
         email: "florian.guiramand@example.com",
         color: "purple",
-        avatar: "https://i.pravatar.cc/150?img=1",
+        profile_picture: "/images/profile_pictures.jpeg",
+        film_history: [0, 1, 2, 3, 4, 5, 6, 7],
         joined_at: 1746764800
     },
     {
@@ -27,7 +29,8 @@ export const users: tuser[] = [
         lastname: "Bernard",
         email: "emma.bernard@example.com",
         color: "pink",
-        avatar: "https://i.pravatar.cc/150?img=2",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1748851200
     },
     {
@@ -37,7 +40,8 @@ export const users: tuser[] = [
         lastname: "Dubois",
         email: "hugo.dubois@example.com",
         color: "pink",
-        avatar: "https://i.pravatar.cc/150?img=3",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1748937600
     },
     {
@@ -47,7 +51,8 @@ export const users: tuser[] = [
         lastname: "Moreau",
         email: "chloe.moreau@example.com",
         color: "blue",
-        avatar: "https://i.pravatar.cc/150?img=4",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749024000
     },
     {
@@ -57,7 +62,8 @@ export const users: tuser[] = [
         lastname: "Laurent",
         email: "nathan.laurent@example.com",
         color: "yellow",
-        avatar: "https://i.pravatar.cc/150?img=5",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749110400
     },
     {
@@ -67,7 +73,8 @@ export const users: tuser[] = [
         lastname: "Simon",
         email: "sarah.simon@example.com",
         color: "purple",
-        avatar: "https://i.pravatar.cc/150?img=6",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749196800
     },
     {
@@ -77,7 +84,8 @@ export const users: tuser[] = [
         lastname: "Michel",
         email: "thomas.michel@example.com",
         color: "blue",
-        avatar: "https://i.pravatar.cc/150?img=7",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749283200
     },
     {
@@ -87,7 +95,8 @@ export const users: tuser[] = [
         lastname: "Garcia",
         email: "julie.garcia@example.com",
         color: "red",
-        avatar: "https://i.pravatar.cc/150?img=8",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749369600
     },
     {
@@ -97,7 +106,8 @@ export const users: tuser[] = [
         lastname: "Roux",
         email: "alexandre.roux@example.com",
         color: "green",
-        avatar: "https://i.pravatar.cc/150?img=9",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749456000
     },
     {
@@ -107,7 +117,8 @@ export const users: tuser[] = [
         lastname: "Fournier",
         email: "manon.fournier@example.com",
         color: "purple",
-        avatar: "https://i.pravatar.cc/150?img=10",
+        profile_picture: null,
+        film_history: [],
         joined_at: 1749542400
     }
 ];

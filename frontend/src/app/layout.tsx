@@ -4,23 +4,29 @@ import SigninModal from "@/components/SigninModal";
 import RegisterModal from "@/components/RegisterModal";
 import "./fonts.css";
 import "./globals.css";
+import {NotificationProvider} from "@/context/NotificationContext";
+import {NotificationList} from "@/components/NotificationList";
 
 
 export default function RootLayout({children,}: { children: React.ReactNode; }) {
     return (<html>
-        <body>
+    <body>
 
-        <ModalProvider>
+    <ModalProvider>
+        <NotificationProvider>
+
+            <NotificationList/>
 
             <Navbar/>
 
-            <SigninModal />
-            <RegisterModal />
+            <SigninModal/>
+            <RegisterModal/>
 
             {children}
 
-        </ModalProvider>
+        </NotificationProvider>
+    </ModalProvider>
 
-        </body>
-        </html>);
+    </body>
+    </html>);
 }

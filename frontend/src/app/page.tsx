@@ -20,6 +20,14 @@ export default function HomePage() {
         </div>
 
         <div className="flex w-full mt-5">
+            <div className="h-4 w-full bg-yellow-hover"></div>
+            <div className="h-4 w-full bg-pink-hover"></div>
+            <div className="h-4 w-full bg-green-hover"></div>
+            <div className="h-4 w-full bg-purple-hover"></div>
+            <div className="h-4 w-full bg-blue-hover"></div>
+            <div className="h-4 w-full bg-red-hover"></div>
+        </div>
+        <div className="flex w-full">
             <div className="h-4 w-full bg-yellow"></div>
             <div className="h-4 w-full bg-pink"></div>
             <div className="h-4 w-full bg-green"></div>
@@ -57,7 +65,7 @@ function AnimateLogo() {
     }, []);
 
     return (<div className="overflow-hidden w-full mb-4">
-        <div className="flex">
+        <div className="flex gap-8">
             {[...Array(2)].map((_, i) => (
                 <HypertubeLogo key={i} className="animate-marquee min-w-full" width={window.innerWidth} height={logoHeight} />
             ))}

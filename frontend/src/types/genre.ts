@@ -1,9 +1,9 @@
-export type tgenre = {
+export type tGenre = {
     id: number
     name: string
 };
 
-export const genres: tgenre[] = [
+export const genres: tGenre[] = [
     {
         id: 0,
         name: "Animation",

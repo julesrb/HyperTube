@@ -4,8 +4,7 @@ import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/LayoutModal";
 import React from "react";
 import Input from "@/components/Input";
-import Button from "@/components/Button";
-import {CrossIcon} from "@/components/Icon";
+import {Button, CloseButton} from "@/components/Button";
 
 export default function RegisterModal() {
     const { activeModal, closeModal, } = useModal();
@@ -17,9 +16,7 @@ export default function RegisterModal() {
         <ModalLayout onClose={closeModal}>
             <div className="flex justify-between mb-8 w-full">
                 <h3 className="uppercase">Join Hypertube</h3>
-                <button onClick={closeModal}>
-                    <CrossIcon />
-                </button>
+                <CloseButton onClick={closeModal}/>
             </div>
             <Input type="email" placeholder="Email"></Input>
 

@@ -4,8 +4,7 @@ import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/LayoutModal";
 import React from "react";
 import Input from "@/components/Input";
-import Button from "@/components/Button";
-import {CrossIcon} from "@/components/Icon";
+import {Button, CloseButton} from "@/components/Button";
 import SmallButton from "@/components/SmallButton";
 
 // export default function SigninModal() {
@@ -37,9 +36,7 @@ export default function SigninModal() {
         <ModalLayout onClose={closeModal}>
             <div className="flex justify-between mb-8 w-full">
                 <h3 className="uppercase">Sign in</h3>
-                <button onClick={closeModal}>
-                    <CrossIcon />
-                </button>
+                <CloseButton onClick={closeModal} />
             </div>
             <Input type="email" placeholder="Email"></Input>
             <Input type="password" placeholder="Password"></Input>

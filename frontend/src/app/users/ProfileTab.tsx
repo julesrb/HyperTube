@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import Button from "@/components/Button";
+import {Button} from "@/components/Button";
 import {tUser} from "@/types/user";
 import ProfilePicture from "@/components/ProfilePicture";
 import SmallButton from "@/components/SmallButton";

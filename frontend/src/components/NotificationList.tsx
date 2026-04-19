@@ -1,8 +1,9 @@
 "use client";
 
-import React, {useState} from "react";
+import React from "react";
 import {tNotification, useNotification} from "@/context/NotificationContext";
-import {CheckIcon, CrossIcon} from "@/components/Icon";
+import {CheckIcon} from "@/components/Icon";
+import {CloseButton} from "@/components/Button";
 
 export const NotificationList = () => {
     const { notifications, removeNotification } = useNotification();
@@ -19,7 +20,6 @@ export const NotificationList = () => {
 };
 
 const NotificationItem = ({notification, onClose}: { notification: tNotification; onClose: (id: string) => void;}) => {
-    const [isHover, setIsHover] = useState(false);
     const bgColors = {success: "green", warning: "yellow", error: "red", info: "purple"};
 
     return (<div className={`flex justify-between custom-shadow-s border bg-${bgColors[notification.type]}`}>
@@ -29,12 +29,7 @@ const NotificationItem = ({notification, onClose}: { notification: tNotification
                 <p>{notification.message}</p>
             </div>
 
-            <button className="p-4"
-                    onClick={() => onClose(notification.id)}
-                    onMouseEnter={() => setIsHover(true)}
-                    onMouseLeave={() => setIsHover(false)}>
-                <CrossIcon color={isHover ? "black-hover" : "black"} />
-            </button>
+            <CloseButton className="p-4" onClick={() => onClose(notification.id)}/>
         </div>
     );
 };

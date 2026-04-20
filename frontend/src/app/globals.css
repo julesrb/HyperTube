@@ -69,6 +69,12 @@ button:hover, Link:hover { @apply cursor-pointer; }
 .custom-shadow-m { box-shadow: 14px 14px 0 var(--color-black); }
 .custom-shadow-l { box-shadow: 26px 26px 0 var(--color-black); }
 
+.custom-btn { transition: all 0.2s ease; }
+.custom-btn:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 4px 4px 0 var(--color-black);
+    border: 1px solid var(--color-black);
+}
 
 /* --------------------------------------------------- ANIMATION ---------------------------------------------------- */
 @keyframes marquee {

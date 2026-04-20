@@ -134,3 +134,39 @@ export function CheckIcon({ color = "black", size = 20, className = "" }) {
         <path d="M16.7087 0.401886L6.653 13.184L0.459512 6.99635" stroke={fullColor} strokeWidth="1.1"/>
     </svg>);
 }
+
+export function GridIcon({color = "black", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15">
+        <path fill={fullColor} stroke={fullColor} strokeWidth="1.5" d="M1.252 1.697h4.5v4.5h-4.5zM8.752 1.697h4.5v4.5h-4.5zM16.252 1.697h4.5v4.5h-4.5zM1.252 9.197h4.5v4.5h-4.5zM8.752 9.197h4.5v4.5h-4.5zM16.252 9.197h4.5v4.5h-4.5z"></path>
+    </svg>);
+}
+
+export function ListIcon({color = "black", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+        <path fillRule="evenodd" clipRule="evenodd" d="M21.499 3.33H5.719V.505h15.78V3.33ZM3.325 3.33H.5V.505h2.825V3.33ZM21.499 8.649H5.719V5.824h15.78v2.825ZM3.325 8.661H.5V5.836h2.825v2.825ZM21.499 13.966H5.719v-2.825h15.78v2.825ZM3.325 13.964H.5V11.14h2.825v2.825Z"
+              fill={fullColor}></path>
+    </svg>);
+}
+
+export function SortIcon({color = "black", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 18">
+        <path d="M15.396.668h1.987v12.886l2.601-2.878 1.429 1.39-5.024 5.287-5.537-5.288 1.428-1.39 3.116 2.879V.668ZM5.195 16.892H7.13V4.348L9.662 7.15l1.39-1.353L6.163.65.772 5.797l1.39 1.353 3.033-2.802v12.544Z"
+            fill={fullColor}></path>
+        <path d="M5.174 17.369h1.992V4.456l2.607 2.885 1.431-1.393L6.17.65.621 5.948 2.053 7.34l3.121-2.885V17.37Z"
+              fill={fullColor}></path>
+    </svg>);
+}
+
+export function StarIcon({color = "yellow", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 20">
+            <path d="M10.4617 0L12.9313 7.60081H20.9233L14.4577 12.2984L16.9273 19.8992L10.4617 15.2016L3.99603 19.8992L6.46569 12.2984L4.86374e-05 7.60081H7.99202L10.4617 0Z" fill={fullColor} />
+    </svg>)
+}

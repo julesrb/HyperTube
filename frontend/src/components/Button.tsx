@@ -5,7 +5,7 @@ export function Button({children, onClick, className, disabled=false}: {children
     return (<button
         disabled={disabled}
         onClick={onClick}
-        className={"text-nowrap px-5 h-10 text-white " + (disabled ? "bg-gray " : "bg-black hover:bg-black-hover ") + className}
+        className={"uppercase text-nowrap px-5 h-10 text-white " + (disabled ? "bg-gray " : "bg-black hover:bg-black-hover ") + className}
     >{children}</button>);
 }
 

@@ -2,7 +2,7 @@
 
 import React, {useState} from "react";
 import {movies} from "@/types/movie";
-import MovieCard from "@/components/MovieCard";
+import {MovieCard} from "@/components/MovieCard";
 import ProfilePicture from "@/components/ProfilePicture";
 import {tUser, users} from "@/types/user";
 import ProfileTab from "@/app/users/ProfileTab";

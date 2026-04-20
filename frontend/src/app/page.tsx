@@ -2,19 +2,17 @@
 
 import {movies} from "@/types/movie";
 import React, {useEffect, useState} from "react";
-import MovieCard from "@/components/MovieCard";
+import {MovieCard} from "@/components/MovieCard";
 import MoviesHero from "@/components/MovieHero";
 import {genres} from "@/types/genre";
-import GenreTag from "@/components/GenreTag";
 import {HypertubeLogo} from "@/components/Icon";
+import GenreTags from "@/components/GenreTags";
 
 export default function HomePage() {
     return (<div>
         <AnimateLogo />
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
-        <div className="flex gap-4 items-center justify-center w-full mt-4">
-            {genres.map((genre) => <GenreTag key={genre.id}>{genre.name}</GenreTag>)}
-        </div>
+        <GenreTags genres={genres} className="items-center justify-center w-full mt-4"/>
         <div className="grid grid-cols-3 gap-4 mt-4 px-4">
             {movies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
         </div>

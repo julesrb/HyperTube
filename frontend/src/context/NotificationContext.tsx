@@ -13,10 +13,7 @@ export interface tNotification {
 
 interface NotificationContextType {
     notifications: tNotification[];
-    addNotification: (
-        message: string,
-        type?: tNotificationType
-    ) => void;
+    addNotification: (message: string, type?: tNotificationType) => void;
     removeNotification: (id: string) => void;
 }
 

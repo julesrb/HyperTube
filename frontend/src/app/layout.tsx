@@ -18,19 +18,19 @@ export default function RootLayout({children,}: { children: React.ReactNode; }) 
 
     <AuthProvider>
         <NotificationProvider>
+            <ModalProvider>
+                <NotificationList/>
 
-            <NotificationList/>
+                <Navbar/>
 
-            <Navbar/>
-
-            <SigninModal/>
-            <RegisterModal/>
-            <GenreModal/>
-            <FilterGenreModal/>
+                <SigninModal/>
+                <RegisterModal/>
+                <GenreModal/>
+                <FilterGenreModal/>
                 <ForgotPassword/>
 
-            {children}
-
+                {children}
+            </ModalProvider>
         </NotificationProvider>
     </AuthProvider>
 

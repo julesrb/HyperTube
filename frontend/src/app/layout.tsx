@@ -2,7 +2,7 @@ import Navbar from "@/components/nav/Navbar";
 import {ModalProvider} from "@/context/ModalContext";
 import SigninModal from "@/components/modal/Signin";
 import RegisterModal from "@/components/modal/Register";
-import GenreModal from "@/components/modal/Genre";
+import {GenreModal, FilterGenreModal} from "@/components/modal/Genre";
 import "./fonts.css";
 import "./globals.css";
 import {NotificationProvider} from "@/context/NotificationContext";
@@ -24,6 +24,7 @@ export default function RootLayout({children,}: { children: React.ReactNode; }) 
             <SigninModal/>
             <RegisterModal/>
             <GenreModal/>
+            <FilterGenreModal/>
 
             {children}
 

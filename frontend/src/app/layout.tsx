@@ -8,13 +8,14 @@ import "./globals.css";
 import {NotificationProvider} from "@/context/NotificationContext";
 import {NotificationList} from "@/components/NotificationList";
 import React from "react";
+import {AuthProvider} from "@/context/AuthContext";
 
 
 export default function RootLayout({children,}: { children: React.ReactNode; }) {
     return (<html>
     <body>
 
-    <ModalProvider>
+    <AuthProvider>
         <NotificationProvider>
 
             <NotificationList/>
@@ -29,7 +30,7 @@ export default function RootLayout({children,}: { children: React.ReactNode; }) 
             {children}
 
         </NotificationProvider>
-    </ModalProvider>
+    </AuthProvider>
 
     </body>
     </html>);

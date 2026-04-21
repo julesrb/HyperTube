@@ -24,18 +24,9 @@ function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) =
     const [lastname, setLastname] = useState("");
     const [username, setUsername] = useState("");
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const handleChange = (newValue: string, setter: (value: string) => void) => {
         const newUser = structuredClone(user);
-        const newValue = e.target.value.trim();
-
-        if (key === "profile-email")
-            setEmail(newValue);
-        else if (key === "profile-firstname")
-            setFirstname(newValue);
-        else if (key === "profile-lastname")
-            setLastname(newValue);
-        else if (key === "profile-username")
-            setUsername(newValue);
+        setter(newValue);
         setUser(newUser);
     }
 
@@ -69,14 +60,22 @@ function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) =
     }
 
     return (<div className="flex flex-col gap-4 items-start">
-        <Input id="profile-email" type="email" placeholder="Email" value={email} onChange={handleChange}></Input>
+        <Input id="profile-email" type="email" placeholder="Email" value={email} onChange={(newValue) => {
+            handleChange(newValue, setEmail);
+        }}></Input>
 
         <div className="flex gap-2 w-full">
-            <Input id="profile-firstname" type="firstname" placeholder="Firstname" value={firstname} onChange={handleChange}></Input>
-            <Input id="profile-lastname" type="lastname" placeholder="Lastname" value={lastname} onChange={handleChange}></Input>
+            <Input id="profile-firstname" type="firstname" placeholder="Firstname" value={firstname} onChange={(newValue) => {
+                handleChange(newValue, setFirstname);
+            }}></Input>
+            <Input id="profile-lastname" type="lastname" placeholder="Lastname" value={lastname} onChange={(newValue) => {
+                handleChange(newValue, setLastname);
+            }}></Input>
         </div>
 
-        <Input id="profile-username" type="username" placeholder="Username" value={username} onChange={handleChange} className={"max-w-3/5"}></Input>
+        <Input id="profile-username" type="username" placeholder="Username" value={username} onChange={(newValue) => {
+            handleChange(newValue, setUsername);
+        }} className={"max-w-3/5"}></Input>
 
         <Button className="h-8" onClick={saveChange}>Save Changes</Button>
     </div>);

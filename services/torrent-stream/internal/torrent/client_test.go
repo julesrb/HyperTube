@@ -96,7 +96,7 @@ func TestPickMainVideoFile(t *testing.T) {
 	})
 }
 
-// TestClientAdd covers only the orchestration added in iteration two.
+// TestClientAdd covers the orchestration and cleanup behavior added so far.
 // The opener, torrent and files are stubs on purpose so the tests stay fast,
 // deterministic and independent from a real torrent backend.
 func TestClientAdd(t *testing.T) {
@@ -135,15 +135,29 @@ func TestClientAdd(t *testing.T) {
 		}
 	})
 
-	t.Run("returns an error when no main video file exists", func(t *testing.T) {
+	t.Run("returns an error when the opener returns a nil torrent handle", func(t *testing.T) {
+		client := Client{
+			opener: &stubOpener{},
+		}
+
+		_, err := client.Add("magnet:?xt=urn:btih:test")
+		if !errors.Is(err, errNilTorrentHandle) {
+			t.Fatalf("expected errNilTorrentHandle, got %v", err)
+		}
+	})
+
+	t.Run("returns an error when no main video file exists and includes close failures", func(t *testing.T) {
+		closeErr := errors.New("close handle")
+		torrent := &stubTorrent{
+			closeErr: closeErr,
+			files: []torrentFile{
+				&stubFile{path: "poster.jpg", size: 4_096},
+				&stubFile{path: "notes.nfo", size: 1_024},
+			},
+		}
 		client := Client{
 			opener: &stubOpener{
-				torrent: &stubTorrent{
-					files: []torrentFile{
-						&stubFile{path: "poster.jpg", size: 4_096},
-						&stubFile{path: "notes.nfo", size: 1_024},
-					},
-				},
+				torrent: torrent,
 			},
 		}
 
@@ -151,18 +165,26 @@ func TestClientAdd(t *testing.T) {
 		if !errors.Is(err, errNoMainVideoFile) {
 			t.Fatalf("expected errNoMainVideoFile, got %v", err)
 		}
+
+		if !errors.Is(err, closeErr) {
+			t.Fatalf("expected returned error to include %v, got %v", closeErr, err)
+		}
+
+		if torrent.closeCalls != 1 {
+			t.Fatalf("expected torrent handle to be closed once, got %d closes", torrent.closeCalls)
+		}
 	})
 
 	t.Run("returns the selected main video reader", func(t *testing.T) {
 		sample := &stubFile{
 			path:   "movie/Movie.Sample.mkv",
 			size:   2_000_000_000,
-			reader: strings.NewReader("sample"),
+			reader: &stubReadCloser{reader: strings.NewReader("sample")},
 		}
 		feature := &stubFile{
 			path:   "movie/Movie.1080p.mkv",
 			size:   1_400_000_000,
-			reader: strings.NewReader("feature"),
+			reader: &stubReadCloser{reader: strings.NewReader("feature")},
 		}
 
 		opener := &stubOpener{
@@ -199,24 +221,155 @@ func TestClientAdd(t *testing.T) {
 		}
 	})
 
-	t.Run("propagates reader errors", func(t *testing.T) {
-		wantErr := errors.New("open reader")
+	t.Run("closing the returned stream closes the selected reader and torrent handle", func(t *testing.T) {
+		reader := &stubReadCloser{reader: strings.NewReader("feature")}
+		torrent := &stubTorrent{}
+		feature := &stubFile{
+			path:   "movie/Movie.1080p.mkv",
+			size:   1_400_000_000,
+			reader: reader,
+		}
+		torrent.files = []torrentFile{feature}
+
+		client := Client{
+			opener: &stubOpener{torrent: torrent},
+		}
+
+		stream, err := client.Add("magnet:?xt=urn:btih:test")
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		if err := stream.Close(); err != nil {
+			t.Fatalf("expected close to succeed, got %v", err)
+		}
+
+		if reader.closeCalls != 1 {
+			t.Fatalf("expected reader to be closed once, got %d closes", reader.closeCalls)
+		}
+
+		if torrent.closeCalls != 1 {
+			t.Fatalf("expected torrent handle to be closed once, got %d closes", torrent.closeCalls)
+		}
+	})
+
+	t.Run("propagates reader errors and closes the torrent handle", func(t *testing.T) {
+		openErr := errors.New("open reader")
 		feature := &stubFile{
 			path: "movie/Movie.1080p.mkv",
 			size: 1_400_000_000,
-			err:  wantErr,
+			err:  openErr,
+		}
+		torrent := &stubTorrent{
+			files: []torrentFile{feature},
 		}
 		client := Client{
 			opener: &stubOpener{
-				torrent: &stubTorrent{
-					files: []torrentFile{feature},
-				},
+				torrent: torrent,
 			},
 		}
 
 		_, err := client.Add("magnet:?xt=urn:btih:test")
-		if !errors.Is(err, wantErr) {
-			t.Fatalf("expected %v, got %v", wantErr, err)
+		if !errors.Is(err, openErr) {
+			t.Fatalf("expected %v, got %v", openErr, err)
+		}
+
+		if torrent.closeCalls != 1 {
+			t.Fatalf("expected torrent handle to be closed once, got %d closes", torrent.closeCalls)
+		}
+	})
+
+	t.Run("returns an error when the selected reader is nil", func(t *testing.T) {
+		torrent := &stubTorrent{}
+		feature := &stubFile{
+			path: "movie/Movie.1080p.mkv",
+			size: 1_400_000_000,
+		}
+		torrent.files = []torrentFile{feature}
+
+		client := Client{
+			opener: &stubOpener{torrent: torrent},
+		}
+
+		_, err := client.Add("magnet:?xt=urn:btih:test")
+		if !errors.Is(err, errNilTorrentReader) {
+			t.Fatalf("expected errNilTorrentReader, got %v", err)
+		}
+
+		if torrent.closeCalls != 1 {
+			t.Fatalf("expected torrent handle to be closed once, got %d closes", torrent.closeCalls)
+		}
+	})
+
+	t.Run("close returns both reader and handle close errors", func(t *testing.T) {
+		readerCloseErr := errors.New("close reader")
+		handleCloseErr := errors.New("close handle")
+		reader := &stubReadCloser{
+			reader:   strings.NewReader("feature"),
+			closeErr: readerCloseErr,
+		}
+		torrent := &stubTorrent{
+			closeErr: handleCloseErr,
+		}
+		feature := &stubFile{
+			path:   "movie/Movie.1080p.mkv",
+			size:   1_400_000_000,
+			reader: reader,
+		}
+		torrent.files = []torrentFile{feature}
+
+		client := Client{
+			opener: &stubOpener{torrent: torrent},
+		}
+
+		stream, err := client.Add("magnet:?xt=urn:btih:test")
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		err = stream.Close()
+		if !errors.Is(err, readerCloseErr) {
+			t.Fatalf("expected close error to include %v, got %v", readerCloseErr, err)
+		}
+
+		if !errors.Is(err, handleCloseErr) {
+			t.Fatalf("expected close error to include %v, got %v", handleCloseErr, err)
+		}
+	})
+
+	t.Run("closing the returned stream twice only closes resources once", func(t *testing.T) {
+		reader := &stubReadCloser{reader: strings.NewReader("feature")}
+		torrent := &stubTorrent{}
+		feature := &stubFile{
+			path:   "movie/Movie.1080p.mkv",
+			size:   1_400_000_000,
+			reader: reader,
+		}
+		torrent.files = []torrentFile{feature}
+
+		client := Client{
+			opener: &stubOpener{torrent: torrent},
+		}
+
+		stream, err := client.Add("magnet:?xt=urn:btih:test")
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		if err := stream.Close(); err != nil {
+			t.Fatalf("expected first close to succeed, got %v", err)
+		}
+
+		if err := stream.Close(); err != nil {
+			t.Fatalf("expected second close to succeed, got %v", err)
+		}
+
+		if reader.closeCalls != 1 {
+			t.Fatalf("expected reader to be closed once, got %d closes", reader.closeCalls)
+		}
+
+		if torrent.closeCalls != 1 {
+			t.Fatalf("expected torrent handle to be closed once, got %d closes", torrent.closeCalls)
 		}
 	})
 }
@@ -242,17 +395,24 @@ func (o *stubOpener) Open(magnetURI string) (torrentHandle, error) {
 }
 
 type stubTorrent struct {
-	files []torrentFile
+	files      []torrentFile
+	closeErr   error
+	closeCalls int
 }
 
 func (t *stubTorrent) Files() []torrentFile {
 	return t.files
 }
 
+func (t *stubTorrent) Close() error {
+	t.closeCalls++
+	return t.closeErr
+}
+
 type stubFile struct {
 	path      string
 	size      int64
-	reader    io.Reader
+	reader    io.ReadCloser
 	err       error
 	openCalls int
 }
@@ -265,7 +425,7 @@ func (f *stubFile) Size() int64 {
 	return f.size
 }
 
-func (f *stubFile) NewReader() (io.Reader, error) {
+func (f *stubFile) NewReader() (io.ReadCloser, error) {
 	f.openCalls++
 
 	if f.err != nil {
@@ -273,4 +433,19 @@ func (f *stubFile) NewReader() (io.Reader, error) {
 	}
 
 	return f.reader, nil
+}
+
+type stubReadCloser struct {
+	reader     io.Reader
+	closeErr   error
+	closeCalls int
+}
+
+func (r *stubReadCloser) Read(p []byte) (int, error) {
+	return r.reader.Read(p)
+}
+
+func (r *stubReadCloser) Close() error {
+	r.closeCalls++
+	return r.closeErr
 }

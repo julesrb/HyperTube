@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"path/filepath"
+	"sync"
 	"strings"
 )
 
@@ -15,6 +16,8 @@ type Client struct {
 var errEmptyMagnetURI = errors.New("empty magnet uri")
 var errNoMagnetOpener = errors.New("no magnet opener configured")
 var errNoMainVideoFile = errors.New("no main video file found")
+var errNilTorrentHandle = errors.New("magnet opener returned nil torrent handle")
+var errNilTorrentReader = errors.New("torrent file returned nil reader")
 
 type fileCandidate struct {
 	Path string
@@ -22,15 +25,17 @@ type fileCandidate struct {
 }
 
 // magnetOpener is injected so Add can be tested without talking to a real
-// torrent library yet. This keeps the second iteration focused on orchestration.
+// torrent library yet. This keeps the current iteration focused on lifecycle
+// and cleanup semantics.
 type magnetOpener interface {
 	Open(magnetURI string) (torrentHandle, error)
 }
 
-// torrentHandle exposes only the data needed for this iteration: the list of
-// files discovered for a magnet.
+// torrentHandle exposes the discovered files and the cleanup hook needed once
+// a stream has been opened.
 type torrentHandle interface {
 	Files() []torrentFile
+	Close() error
 }
 
 // torrentFile is intentionally tiny so the selection logic can stay independent
@@ -38,12 +43,12 @@ type torrentHandle interface {
 type torrentFile interface {
 	Path() string
 	Size() int64
-	NewReader() (io.Reader, error)
+	NewReader() (io.ReadCloser, error)
 }
 
-// Add starts downloading a magnet link and returns an io.Reader over the
-// largest file in the torrent (assumed to be the video file).
-func (c *Client) Add(magnetURI string) (io.Reader, error) {
+// Add opens the main video file for the given magnet and returns a stream the
+// caller must close when streaming is finished.
+func (c *Client) Add(magnetURI string) (io.ReadCloser, error) {
 	// Reject empty input before we touch any external dependency.
 	if strings.TrimSpace(magnetURI) == "" {
 		return nil, errEmptyMagnetURI
@@ -58,13 +63,27 @@ func (c *Client) Add(magnetURI string) (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
+	if handle == nil {
+		return nil, errNilTorrentHandle
+	}
 
 	file, err := selectMainVideoFile(handle.Files())
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, handle.Close())
 	}
 
-	return file.NewReader()
+	reader, err := file.NewReader()
+	if err != nil {
+		return nil, errors.Join(err, handle.Close())
+	}
+	if reader == nil {
+		return nil, errors.Join(errNilTorrentReader, handle.Close())
+	}
+
+	return &openedStream{
+		reader: reader,
+		handle: handle,
+	}, nil
 }
 
 func pickMainVideoFile(files []fileCandidate) (fileCandidate, error) {
@@ -135,4 +154,25 @@ func selectMainVideoFile(files []torrentFile) (torrentFile, error) {
 	}
 
 	return nil, errNoMainVideoFile
+}
+
+// openedStream ties the selected file reader to the torrent handle so callers
+// can release both pieces through one Close call.
+type openedStream struct {
+	reader io.ReadCloser
+	handle torrentHandle
+	closeErr error
+	closeOnce sync.Once
+}
+
+func (s *openedStream) Read(p []byte) (int, error) {
+	return s.reader.Read(p)
+}
+
+func (s *openedStream) Close() error {
+	s.closeOnce.Do(func() {
+		s.closeErr = errors.Join(s.reader.Close(), s.handle.Close())
+	})
+
+	return s.closeErr
 }

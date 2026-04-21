@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"peerstream/torrent-stream/internal/stream"
 )
 
 func main() {
@@ -15,7 +17,7 @@ func main() {
 
 	// POST /stream  body: { "magnet": "magnet:?xt=..." }
 	// Starts downloading and streams transcoded video back to the caller.
-	mux.HandleFunc("POST /stream", nil)
+	mux.HandleFunc("POST /stream", stream.Stream)
 
 	addr := ":" + getEnv("PORT", "8081")
 	log.Printf("torrent-stream listening on %s", addr)

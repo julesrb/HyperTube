@@ -8,28 +8,31 @@ import "./globals.css";
 import {NotificationProvider} from "@/context/NotificationContext";
 import {NotificationList} from "@/components/NotificationList";
 import React from "react";
+import {AuthProvider} from "@/context/AuthContext";
+import ForgotPassword from "@/components/modal/ForgotPassword";
 
 
 export default function RootLayout({children,}: { children: React.ReactNode; }) {
     return (<html>
     <body>
 
-    <ModalProvider>
+    <AuthProvider>
         <NotificationProvider>
+            <ModalProvider>
+                <NotificationList/>
 
-            <NotificationList/>
+                <Navbar/>
 
-            <Navbar/>
+                <SigninModal/>
+                <RegisterModal/>
+                <GenreModal/>
+                <FilterGenreModal/>
+                <ForgotPassword/>
 
-            <SigninModal/>
-            <RegisterModal/>
-            <GenreModal/>
-            <FilterGenreModal/>
-
-            {children}
-
+                {children}
+            </ModalProvider>
         </NotificationProvider>
-    </ModalProvider>
+    </AuthProvider>
 
     </body>
     </html>);

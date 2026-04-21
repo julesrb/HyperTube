@@ -5,6 +5,7 @@ import LanguageDropdown from "@/components/nav/LanguageDropdown";
 import React, {useState} from "react";
 import Link from "next/link";
 import {ExitDoorIcon, HypertubeLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
+import {useAuth} from "@/context/AuthContext";
 
 type NavItem = {
     name: string
@@ -19,18 +20,16 @@ type NavItem = {
 
 export default function Navbar() {
     const {openModal} = useModal();
-    const [isLogin, setIsLogin] = useState(true);
+    const {user, logout} = useAuth();
 
-    const navItems: NavItem[] = isLogin ? [{
+    const navItems: NavItem[] = user !== null ? [{
         name: "", icon: HypertubeLogo, href: "/",
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {
         name: "Account", icon: UserIcon, href: "/users",
     }, {
-        name: "Logout", icon: ExitDoorIcon, action: () => {
-            setIsLogin(false);
-        },
+        name: "Logout", icon: ExitDoorIcon, action: logout,
     }, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },] : [{
@@ -38,9 +37,9 @@ export default function Navbar() {
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {
-        name: "Sign In", icon: UserIcon, action: () => openModal("signin"),
+        name: "Sign In", icon: UserIcon, action: () => openModal({type: "signin"}),
     }, {
-        name: "Create Account", icon: RegisterIcon, action: () => openModal("register"),
+        name: "Create Account", icon: RegisterIcon, action: () => openModal({type: "register"}),
     }, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },];

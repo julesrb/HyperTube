@@ -171,3 +171,19 @@ export function StarIcon({color = "yellow", size = 20}) {
             fill={fullColor}/>
     </svg>);
 }
+
+export function CheckFillIcon({className = "", size = 20}) {
+    return (<svg className={className} height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <path fill="var(--color-black)" d="M0 0h20v20H0z"></path>
+        <path d="m14.827 5.625-6.353 6.352-3.303-3.303-1.421 1.423 4.724 4.727 7.776-7.776-1.423-1.423Z" fill="#fff"></path>
+    </svg>);
+}
+
+export function FilterIcon({color = "", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+        <path d="M6.3 0v1.8H0v1.8h6.3v1.8H9V0H6.3Zm4.5 1.8v1.8H18V1.8h-7.2Zm0 4.5v1.8H0v1.8h10.8v1.8h2.7V6.3h-2.7Zm4.5 1.8v1.8H18V8.1h-2.7ZM1.8 12.6v1.8H0v1.8h1.8V18h2.7v-5.4H1.8Zm4.5 1.8v1.8H18v-1.8H6.3Z"
+            fill={fullColor}></path>
+    </svg>);
+}

@@ -8,7 +8,7 @@ import {CloseButton} from "@/components/Button";
 export const NotificationList = () => {
     const { notifications, removeNotification } = useNotification();
 
-    return (<div className="fixed top-5 right-5 z-50 flex flex-col gap-4">
+    return (<div className="fixed top-5 right-5 z-60 flex flex-col gap-4">
             {notifications.map((notification) => (
                 <NotificationItem
                     key={notification.id}

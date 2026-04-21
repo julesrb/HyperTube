@@ -9,6 +9,8 @@ import SmallButton from "@/components/SmallButton";
 import Pagination from "@/components/Pagination";
 import {Button} from "@/components/Button";
 import ProfilePicture from "@/components/ProfilePicture";
+import {useAuth} from "@/context/AuthContext";
+import {useModal} from "@/context/ModalContext";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
@@ -18,8 +20,9 @@ const MAX_COMMENT_SIZE = 300
 
 export default function CommentSection() {
     const [actualComments, setComments] = useState(comments);
-    const user = users[0];
+    const {user} = useAuth();
     const [index, setIndex] = useState(0);
+    const {openModal} = useModal();
 
     const addNewComment = (newComment: tComment) => {
         setComments([...actualComments, newComment]);
@@ -37,10 +40,10 @@ export default function CommentSection() {
         <Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
             <div className="flex flex-col-reverse gap-8 max-w-2xl">
                 {actualComments.map((comment, index) => (<Comment key={index} comment={comment}/>))}
-                <div className="flex gap-4 mb-2">
+                {user !== null ? <div className="flex gap-4 mb-2">
                     <ProfilePicture user={user}/>
                     <NewComment user={user} onSubmit={addNewComment}></NewComment>
-                </div>
+                </div> : <button onClick={() => openModal({type: "signin"})} className="hover:underline font-extralight">Connectez-vous pour pouvoir poster un commentaire</button>}
             </div>
         </Pagination>
     </div>);

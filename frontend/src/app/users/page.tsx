@@ -4,16 +4,20 @@ import React, {useState} from "react";
 import {movies} from "@/types/movie";
 import {MovieCard} from "@/components/MovieCard";
 import ProfilePicture from "@/components/ProfilePicture";
-import {tUser, users} from "@/types/user";
+import {tUser} from "@/types/user";
 import ProfileTab from "@/app/users/ProfileTab";
 import AuthTab from "@/app/users/AuthTab";
+import {useAuth} from "@/context/AuthContext";
 
 export default function Page() {
-    const [user, setUser] = useState(users[0]);
+    const {user} = useAuth();
+    if (!user)
+        return null;
+    const [currentUser, setUser] = useState(user);
     const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab};
     const [activeTab, setActiveTab] = useState<keyof typeof tabs>("profile");
     const ActiveTab = tabs[activeTab];
-    const date = new Date(user.joined_at);
+    const date = new Date(currentUser.joined_at);
 
     const switchTab = (tabName: keyof typeof tabs) => {
         if (activeTab !== tabName)
@@ -22,9 +26,9 @@ export default function Page() {
 
     return (<div className="px-4">
         <div className="flex items-center gap-4 justify-center mt-10 mb-16">
-            <ProfilePicture user={user} size={1}/>
+            <ProfilePicture user={currentUser} size={1}/>
             <div className="flex flex-col items-start">
-                <h2>{user.firstname} {user.lastname[0]}.</h2>
+                <h2>{currentUser.firstname} {currentUser.lastname[0]}.</h2>
                 <p className="uppercase">Member since {date.toLocaleDateString('fr-FR').replace(/\//g, '.')}</p>
             </div>
         </div>
@@ -36,8 +40,7 @@ export default function Page() {
                 onClick={() => switchTab(tabName)}><h4>{tabName}</h4></button>))}
             <div className="border-b w-full"></div>
         </div>
-        <ActiveTab user={user} setUser={setUser}/>
-
+        <ActiveTab user={currentUser} setUser={setUser}/>
     </div>);
 }
 

@@ -2,10 +2,14 @@
 
 import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/modal/Layout";
-import React from "react";
+import React, {useState} from "react";
 import Input from "@/components/Input";
 import {Button} from "@/components/Button";
 import SmallButton from "@/components/SmallButton";
+import {useAuth} from "@/context/AuthContext";
+import {tUser, users} from "@/types/user";
+import {tNotificationType, useNotification} from "@/context/NotificationContext";
+import {errorMessages} from "@/types/message";
 
 // export default function SigninModal() {
 //     const {activeModal, closeModal,} = useModal();
@@ -28,22 +32,46 @@ import SmallButton from "@/components/SmallButton";
 
 export default function Signin() {
     const {openModal, activeModal, closeModal,} = useModal();
+    const {login} = useAuth();
+    const {addNotification} = useNotification();
+    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
 
     if (activeModal.type !== "signin")
         return null;
 
     return (
         <ModalLayout onClose={closeModal} title="Signin">
-            <Input type="email" placeholder="Email"></Input>
-            <Input type="password" placeholder="Password"></Input>
+            <Input id="username-signin" value={username} onChange={setUsername} type="username" placeholder="Username"></Input>
+            <Input id="password-signin" value={password} onChange={setPassword} type="password" placeholder="Password"></Input>
             <div className="relative mb-4">
-                <SmallButton className="absolute bottom-1" onClick={() => openModal("forgot-password")}>Forgotten?</SmallButton>
+                <SmallButton className="absolute bottom-1" onClick={() => {
+                    closeModal();
+                    openModal({type: "forgot-password"});
+                }}>Forgotten?</SmallButton>
             </div>
-            <Button className="h-8" onClick={login}>Sign In</Button>
+            <Button className="h-8" onClick={() => handleLogin(login, addNotification, username, password, closeModal)}>Sign In</Button>
         </ModalLayout>
     );
 }
 
-function login() {
-
+function handleLogin(login: (user: tUser, token: string) => void, addNotification: (message: string, type?: tNotificationType) => void, username: string, password: string, closeModal: () => void) {
+    // const res = await fetch("/api/login", {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //         email,
+    //         password,
+    //     }),
+    // });
+    //
+    // const data = await res.json();
+    // login(data.user, data.token);
+    const findUser = users.filter(u => u.username === username);
+    console.log("findUser", findUser);
+    if (findUser.length > 0) {
+        login(findUser[0], "coucou");
+        closeModal();
+    }
+    else
+        addNotification(errorMessages.passwordIncorrect, "error");
 }

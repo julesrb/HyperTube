@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, {createContext, Dispatch, SetStateAction, useContext, useState} from "react";
 
 type ModalType = | "signin" | "register" | "genre" | "filter-genre" | "forgot-password" | null;
 
@@ -8,6 +8,7 @@ interface ModalState {
     type: ModalType;
     genres?: string[];
     filterGenre?: [filterGenre: string[], handleFilterGenre: (newGenres: string[]) => void];
+    setFilterGenre?: Dispatch<SetStateAction<string[]>>
 }
 
 interface ModalContextType {

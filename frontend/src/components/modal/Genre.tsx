@@ -11,12 +11,12 @@ import {Button} from "@/components/Button";
 export function GenreModal() {
     const {activeModal, closeModal,} = useModal();
 
-    if (activeModal.type !== "genre" || activeModal.genres === undefined)
+    if (activeModal.type !== "genre" || activeModal.genres === undefined || activeModal.setFilterGenre === undefined)
         return null;
 
     return (
         <ModalLayout onClose={closeModal} title="film genres">
-            <GenreTags genres={activeModal.genres}/>
+            <GenreTags genres={activeModal.genres} setFilterGenre={activeModal.setFilterGenre}/>
         </ModalLayout>
     );
 }

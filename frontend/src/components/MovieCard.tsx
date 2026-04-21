@@ -1,10 +1,11 @@
 import Image from "next/image";
 import {tMovie} from "@/types/movie";
 import Link from "next/link";
-import React from "react";
+import React, {Dispatch, SetStateAction} from "react";
 import {Button} from "@/components/Button";
 import {StarIcon} from "@/components/Icon";
 import GenreTags from "@/components/GenreTags";
+import {useRouter} from "next/navigation";
 
 
 // todo useRandomBackdrop ?
@@ -21,7 +22,8 @@ export function MovieCard({movie} : {movie: tMovie}) {
         </Link>);
 }
 
-export function ListMovieCard({movie} : {movie: tMovie}) {
+export function ListMovieCard({movie, setFilterGenre} : {movie: tMovie, setFilterGenre: Dispatch<SetStateAction<string[]>>}) {
+    const router = useRouter();
     let title = movie.title;
 
     if (title.length > 20)
@@ -43,7 +45,7 @@ export function ListMovieCard({movie} : {movie: tMovie}) {
             </td>
             <td className="w-0"></td>
             <td className="w-5/20">
-                <GenreTags genres={movie.genres} limit={3}/>
+                <GenreTags genres={movie.genres} limit={3} setFilterGenre={setFilterGenre}/>
             </td>
             <td className="w-1/20">
                 <div className="flex gap-1 items-center">
@@ -52,9 +54,7 @@ export function ListMovieCard({movie} : {movie: tMovie}) {
                 </div>
             </td>
             <td>
-                <Link href={"/movies/" + movie.id}>
-                    <Button>watch</Button>
-                </Link>
+                <Button onClick={() => router.push("/movies/" + movie.id)}>watch</Button>
             </td>
     </tr>);
 }

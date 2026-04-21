@@ -9,6 +9,7 @@ import {NotificationProvider} from "@/context/NotificationContext";
 import {NotificationList} from "@/components/NotificationList";
 import React from "react";
 import {AuthProvider} from "@/context/AuthContext";
+import ForgotPassword from "@/components/modal/ForgotPassword";
 
 
 export default function RootLayout({children,}: { children: React.ReactNode; }) {
@@ -26,6 +27,7 @@ export default function RootLayout({children,}: { children: React.ReactNode; }) 
             <RegisterModal/>
             <GenreModal/>
             <FilterGenreModal/>
+                <ForgotPassword/>
 
             {children}
 

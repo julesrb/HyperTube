@@ -9,7 +9,7 @@ export function Button({children, onClick, className, disabled=false}: {children
     >{children}</button>);
 }
 
-export function CloseButton({onClick, className, disabled=false}: {onClick: () => void, className?: string, disabled?: boolean}) {
+export function CloseButton({onClick, size = 30, className, disabled=false}: {onClick: () => void, size?: number, className?: string, disabled?: boolean}) {
     const [isHover, setIsHover] = React.useState(false);
     let color;
 
@@ -24,5 +24,5 @@ export function CloseButton({onClick, className, disabled=false}: {onClick: () =
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
         className={"text-nowrap " + className}
-    ><CrossIcon color={color} className={(isHover ? "stroke-2 stroke-black-hover" : "")}/></button>);
+    ><CrossIcon color={color} size={size} className={(isHover ? "stroke-2 stroke-black-hover" : "")}/></button>);
 }

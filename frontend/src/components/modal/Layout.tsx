@@ -5,12 +5,12 @@ export default function ModalLayout({children, onClose, title, defaultLayout = t
     if (!defaultLayout) return (<div onClick={onClose} className="fixed inset-0 z-50">{children}</div>);
     return (<div onClick={onClose} className="fixed inset-0 flex justify-center items-center z-50 bg-black/50">
             <div onClick={(e) => e.stopPropagation()} className="p-6 bg-white custom-shadow-m border min-w-90">
-                <div className="flex flex-col gap-2 items-start">
+                <div className="flex flex-col items-start">
                     <div className="flex justify-between mb-8 w-full">
                         <span className="uppercase font-wide font-bold font-8xl">{title}</span>
                         <CloseButton onClick={onClose} />
                     </div>
-                        {children}
+                    {children}
                 </div>
             </div>
         </div>);

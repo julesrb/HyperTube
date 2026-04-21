@@ -2,46 +2,36 @@
 
 import React, { createContext, useContext, useState } from "react";
 
-type ModalType =
-    | "signin"
-    | "register"
-    | "genre"
-    | null;
-
-type ModalData = | string[] | undefined;
+type ModalType = | "signin" | "register" | "genre" | "filter-genre" | "forgot-password" | null;
 
 interface ModalState {
     type: ModalType;
-    data?: ModalData;
+    genres?: string[];
+    filterGenre?: [filterGenre: string[], handleFilterGenre: (newGenres: string[]) => void];
 }
 
 interface ModalContextType {
     activeModal: ModalState;
-    openModal: (type: ModalType, data?: ModalData) => void;
+    openModal: (modal: ModalState) => void;
     closeModal: () => void;
 }
 
 const ModalContext = createContext<ModalContextType | null>(null);
 
 export function ModalProvider({ children, }: { children: React.ReactNode; }) {
-    const [activeModal, setActiveModal] = useState<ModalState>({type: null, data: undefined});
+    const [activeModal, setActiveModal] = useState<ModalState>({type: null});
 
-    const openModal = (type: ModalType, data?: ModalData) => setActiveModal({type, data});
-    const closeModal = () => setActiveModal({type: null, data: undefined});
+    const openModal = (modal: ModalState) => setActiveModal(modal);
+    const closeModal = () => setActiveModal({type: null});
 
-    return (
-        <ModalContext.Provider value={{activeModal, openModal, closeModal,}}>
-            {children}
-        </ModalContext.Provider>
-    );
+    return (<ModalContext.Provider value={{activeModal, openModal, closeModal,}}>
+        {children}
+    </ModalContext.Provider>);
 }
 
 export function useModal() {
     const context = useContext(ModalContext);
-
-    if (!context) {
+    if (!context)
         throw new Error("useModal must be used inside ModalProvider");
-    }
-
     return context;
 }

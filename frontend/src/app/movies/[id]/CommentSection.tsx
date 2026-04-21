@@ -7,7 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 import SmallButton from "@/components/SmallButton";
 import Pagination from "@/components/Pagination";
-import Button from "@/components/Button";
+import {Button} from "@/components/Button";
 import ProfilePicture from "@/components/ProfilePicture";
 
 dayjs.extend(relativeTime);

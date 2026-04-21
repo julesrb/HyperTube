@@ -1,7 +1,7 @@
 "use client";
 
 import {useModal} from "@/context/ModalContext";
-import LanguageDropdown from "@/components/LanguageDropdown";
+import LanguageDropdown from "@/components/nav/LanguageDropdown";
 import React, {useState} from "react";
 import Link from "next/link";
 import {ExitDoorIcon, HypertubeLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
@@ -50,9 +50,7 @@ export default function Navbar() {
     </nav>)
 }
 
-
-
-export function NavItemComponent({item,} : {item: NavItem}) {
+function NavItemComponent({item,} : {item: NavItem}) {
     const isLogoutBtn = "Logout" === item.name;
     const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
     const className = "uppercase flex items-center " + hoverColor;

@@ -9,6 +9,7 @@ export type tMovie = {
     directors: string[]
     stars: string[]
     length: string
+    rate: number
 };
 
 export const movies: tMovie[] = [{
@@ -21,7 +22,8 @@ export const movies: tMovie[] = [{
     genres: ["Science-Fiction", "Aventure"],
     directors: ["Denis Villeneuve"],
     stars: ["Timothée Chalamet", "Rebecca Ferguson", "Oscar Isaac", "Jason Momoa"],
-    length: "2h35"
+    length: "2h35",
+    rate: 7.8
 }, {
     id: 1,
     title: "Avatar: Fire and Ash",
@@ -32,7 +34,8 @@ export const movies: tMovie[] = [{
     genres: ["Science-Fiction", "Aventure", "Fantastique"],
     directors: ["Sam Worthington", "Zoe Saldaña", "Sigourney Weaver", "Stephen Lang"],
     stars: ["James Cameron"],
-    length: "3h18"
+    length: "3h18",
+    rate: 7.4
 }, {
     id: 2,
     title: "The Drama",
@@ -43,7 +46,8 @@ export const movies: tMovie[] = [{
     genres: ["Romance", "Comédie", "Drame"],
     directors: ["Kristoffer Borgli"],
     stars: ["Zendaya", "Robert Pattinson"],
-    length: "1h45"
+    length: "1h45",
+    rate: 7.0
 }, {
     id: 3,
     title: "Project Hail Mary",
@@ -54,7 +58,8 @@ export const movies: tMovie[] = [{
     genres: ["Science-Fiction", "Aventure"],
     directors: ["Phil Lord", "Christopher Miller"],
     stars: ["Ryan Gosling", "James Ortiz", "Sandra Hüller"],
-    length: "2h35"
+    length: "2h35",
+    rate: 8.2
 }, {
     id: 4,
     title: "The Super Mario Galaxy Movie",
@@ -65,7 +70,8 @@ export const movies: tMovie[] = [{
     genres: ["Familial", "Comédie", "Aventure", "Fantastique", "Animation"],
     directors: ["Michael Jelenic", "Aaron Horvath"],
     stars: ["Chris Pratt", "Charlie Day", "Anya Taylor-Joy"],
-    length: "1h40"
+    length: "1h40",
+    rate: 6.8
 }, {
     id: 5,
     title: "Hoppers",
@@ -76,7 +82,8 @@ export const movies: tMovie[] = [{
     genres: ["Animation", "Familial", "Science-Fiction", "Comédie", "Aventure"],
     directors: ["Daniel Chong"],
     stars: ["Piper Curda", "Bobby Moynihan", "Jon Hamm"],
-    length: "1h45"
+    length: "1h45",
+    rate: 7.6
 }, {
     id: 6,
     title: "The Bride!",
@@ -87,7 +94,8 @@ export const movies: tMovie[] = [{
     genres: ["Science-Fiction", "Horreur", "Fantastique"],
     directors: ["Maggie Gyllenhaal"],
     stars: ["Jessie Buckley", "Christian Bale"],
-    length: "2h07"
+    length: "2h07",
+    rate: 6.2
 }, {
     id: 7,
     title: "Send Help",
@@ -98,7 +106,8 @@ export const movies: tMovie[] = [{
     genres: ["Horreur", "Thriller", "Comédie"],
     directors: ["Sam Raimi"],
     stars: ["Rachel McAdams", "Dylan O'Brien"],
-    length: "1h53"
+    length: "1h53",
+    rate: 7
 }, {
     id: 8,
     title: "GOAT",
@@ -109,5 +118,6 @@ export const movies: tMovie[] = [{
     genres: ["Animation", "Comédie", "Familial"],
     directors: ["Tyree Dillihay"],
     stars: ["Caleb McLaughlin", "Gabrielle Union", "Stephen Curry"],
-    length: "1h40"
+    length: "1h40",
+    rate: 7.9
 }];

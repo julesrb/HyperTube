@@ -1,11 +1,13 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/nav/Navbar";
 import {ModalProvider} from "@/context/ModalContext";
-import SigninModal from "@/components/SigninModal";
-import RegisterModal from "@/components/RegisterModal";
+import SigninModal from "@/components/modal/Signin";
+import RegisterModal from "@/components/modal/Register";
+import {GenreModal, FilterGenreModal} from "@/components/modal/Genre";
 import "./fonts.css";
 import "./globals.css";
 import {NotificationProvider} from "@/context/NotificationContext";
 import {NotificationList} from "@/components/NotificationList";
+import React from "react";
 
 
 export default function RootLayout({children,}: { children: React.ReactNode; }) {
@@ -21,6 +23,8 @@ export default function RootLayout({children,}: { children: React.ReactNode; }) 
 
             <SigninModal/>
             <RegisterModal/>
+            <GenreModal/>
+            <FilterGenreModal/>
 
             {children}
 

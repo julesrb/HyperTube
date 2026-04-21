@@ -1,17 +1,16 @@
 "use client";
 
 import { useModal } from "@/context/ModalContext";
-import ModalLayout from "@/components/LayoutModal";
+import ModalLayout from "@/components/modal/Layout";
 import React from "react";
 import Input from "@/components/Input";
-import Button from "@/components/Button";
-import {CrossIcon} from "@/components/Icon";
+import {Button} from "@/components/Button";
 import SmallButton from "@/components/SmallButton";
 
 // export default function SigninModal() {
 //     const {activeModal, closeModal,} = useModal();
 //
-//     if (activeModal !== "signin")
+//     if (activeModal.type !== "signin")
 //         return null;
 //
 //     return (
@@ -27,20 +26,14 @@ import SmallButton from "@/components/SmallButton";
 //     );
 // }
 
-export default function SigninModal() {
+export default function Signin() {
     const {openModal, activeModal, closeModal,} = useModal();
 
-    if (activeModal !== "signin")
+    if (activeModal.type !== "signin")
         return null;
 
     return (
-        <ModalLayout onClose={closeModal}>
-            <div className="flex justify-between mb-8 w-full">
-                <h3 className="uppercase">Sign in</h3>
-                <button onClick={closeModal}>
-                    <CrossIcon />
-                </button>
-            </div>
+        <ModalLayout onClose={closeModal} title="Signin">
             <Input type="email" placeholder="Email"></Input>
             <Input type="password" placeholder="Password"></Input>
             <div className="relative mb-4">

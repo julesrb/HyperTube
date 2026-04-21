@@ -1,3 +1,137 @@
+"use client";
+
+import {movies} from "@/types/movie";
+import {ListMovieCard, MovieCard} from "@/components/MovieCard";
+import React, {useState} from "react";
+import {GridIcon, ListIcon} from "@/components/Icon";
+import {CloseButton} from "@/components/Button";
+import {useModal} from "@/context/ModalContext";
+
+type tViewType = | "grid" | "list";
+type tSort = "name" | "genre" | "grade" | "year";
+
+interface iSort {
+    type: tSort;
+    side: boolean;
+}
+
 export default function Page() {
-    return <h1>Movies</h1>;
+    const [searchValue, setSearchValue] = useState("");
+    const [viewType, setViewType] = useState<tViewType>("grid");
+    const [sort, setSort] = useState<iSort>({type: "name", side: true});
+
+    const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e === undefined ? "" : e.target.value.toLowerCase()
+        setSearchValue(newValue);
+    }
+    const handleSetViewType = (value: tViewType) => { setViewType(value); }
+    const changeSort = (type: tSort, side: boolean) => { setSort({type, side}); }
+
+    return (<div className="flex flex-col gap-4 mx-6">
+        <SearchBar searchValue={searchValue} onChange={handleSearchChange} />
+        <Filter viewType={viewType} onClick={handleSetViewType}/>
+        <Results searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort}/>
+    </div>);
+}
+
+function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?: React.ChangeEvent<HTMLInputElement>) => void}) {
+    return (<div className="flex items-center px-6">
+        <input type="search" placeholder="Rechercher un film..." value={searchValue} onChange={onChange}
+        className="w-full bg-white text-8xl font-condensed uppercase border-b focus:border-b-2"></input>
+        <CloseButton className="absolute right-10" onClick={() => onChange()} disabled={searchValue.length === 0}/>
+    </div>);
+}
+
+function Filter({viewType, onClick}: {viewType: tViewType, onClick: (value: tViewType) => void}) {
+    return (<div className="flex w-full justify-end gap-4 px-6">
+        <button onClick={() => onClick("grid")}><GridIcon color={viewType == "grid" ? "black" : "gray"}/></button>
+        <button onClick={() => onClick("list")}><ListIcon color={viewType == "list" ? "black" : "gray"}/></button>
+    </div>);
+}
+
+function Results({searchValue, viewType, sort, changeSort}: {searchValue: string, viewType: tViewType, sort: iSort, changeSort: (type: tSort, side: boolean) => void}) {
+    const {openModal} = useModal();
+    const [filterGenre, setFilterGenre] = useState<string[]>([])
+    const filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
+
+    if (filteredMovies.length === 0)
+        return (<p>Aucun film trouvé</p>);
+
+    if (viewType === "grid")
+        return (<div className="grid grid-cols-3 gap-4">
+            {filteredMovies.map((movie, index) => (<MovieCard key={index} movie={movie}/>))}
+        </div>);
+
+    const sortOptions: tSort[] = ["name", "year", "genre", "grade"];
+    let sortedMovies;
+    if (sort.type === "grade")
+        sortedMovies = filteredMovies.sort((a, b) => a.rate - b.rate);
+    else if (sort.type === "year")
+        sortedMovies = filteredMovies.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+    else if (sort.type === "genre")
+        sortedMovies = filteredMovies.sort((a, b) => a.id - b.id);
+    else
+        sortedMovies = filteredMovies.sort((a, b) => b.title.localeCompare(a.title));
+
+    if (sort.side)
+        sortedMovies = sortedMovies.reverse();
+
+    if (filterGenre.length > 0)
+        sortedMovies = sortedMovies.filter(m => {
+            for (let i = 0; i < filterGenre.length; i++) {
+                if (!m.genres.includes(filterGenre[i]))
+                    return false;
+            }
+            return true;
+        })
+
+    const widths = ["w-2/5 pl-3", "w-0", "w-5/20", "w-1/20"]
+
+    const handleSort = (sortOption: tSort) => {
+        if (sortOption === "genre")
+            openModal({type: "filter-genre", filterGenre: [filterGenre, setFilterGenre]})
+        else
+            changeSort(sortOption, sort.type === sortOption ? !sort.side : true)
+    }
+
+    const deleteGenre = (genre: string) => {
+        let newGenre = filterGenre.filter(g => g !== genre);
+        if (newGenre.length === filterGenre.length)
+            newGenre = filterGenre.slice(0, 2);
+        setFilterGenre(newGenre);
+    }
+
+    return (<table className="table-fixed w-full">
+        <thead>
+        <tr className="text-left">
+            <th className="w-1/5"></th>
+            {sortOptions.map((sortOption, i) =>
+                <th key={sortOption} className={widths[i]}>
+                    <button className={"relative capitalize text-nowrap hover:underline" + (sortOption === "year" ? " -left-30" : "")}
+                            onClick={() => handleSort(sortOption)}>
+                        {sortOption} {sortOption === sort.type && (sort.side ? "▾" : "▴")}
+                    </button>
+                    {sortOption === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
+                </th>
+            )}
+            <th></th>
+        </tr>
+        </thead>
+        <tbody className="">
+            {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie}/>))}
+        </tbody>
+    </table>);
+}
+
+function SelectedGenre({genres, deleteGenre}: {genres: string[], deleteGenre:(genre: string) => void}) {
+    const showGenres = genres.slice(0, 2);
+    if (genres.length > 2)
+        showGenres.push(`+ ${genres.length - 2} de plus`)
+    return (<div className="flex gap-2">
+        {showGenres.map((genre, index) => (<div key={index}
+        className="border flex items-center">
+            <span className="font-hairline tracking-wider text-sm px-2 text-nowrap">{genre}</span>
+            <CloseButton size={20} className="border-l px-1" onClick={() => deleteGenre(genre)} />
+        </div>))}
+    </div>);
 }

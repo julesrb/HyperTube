@@ -1,5 +1,6 @@
 import {tMovie} from "@/types/movie";
-import GenreTag from "@/components/GenreTag";
+import GenreTags from "@/components/GenreTags";
+import React from "react";
 
 export default function MovieInfoSection({movie} : {movie: tMovie}) {
     return (<div className="flex flex-col mt-3 gap-4 max-w-2/3 mx-auto">
@@ -11,9 +12,7 @@ export default function MovieInfoSection({movie} : {movie: tMovie}) {
     </InfoMovie>
 
     <InfoMovie name="Genre">
-        <div className="flex gap-4">
-            {movie.genres.map((genre) => (<GenreTag key={genre}>{genre}</GenreTag>))}
-        </div>
+        <GenreTags genres={movie.genres}/>
     </InfoMovie>
 
     <InfoPeoplesMovie name="Directeor" items={movie.directors}/>

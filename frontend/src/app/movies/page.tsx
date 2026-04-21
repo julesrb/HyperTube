@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import {GridIcon, ListIcon} from "@/components/Icon";
 import {CloseButton} from "@/components/Button";
 import {useModal} from "@/context/ModalContext";
+import {useSearchParams} from "next/navigation";
 
 type tViewType = | "grid" | "list";
 type tSort = "name" | "genre" | "grade" | "year";
@@ -16,10 +17,11 @@ interface iSort {
 }
 
 export default function Page() {
+    const searchParams = useSearchParams();
+    const genre = searchParams.get('genre');
     const [searchValue, setSearchValue] = useState("");
-    const [viewType, setViewType] = useState<tViewType>("grid");
+    const [viewType, setViewType] = useState<tViewType>(genre === undefined ? "grid" : "list");
     const [sort, setSort] = useState<iSort>({type: "name", side: true});
-
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e === undefined ? "" : e.target.value.toLowerCase()
         setSearchValue(newValue);
@@ -30,7 +32,7 @@ export default function Page() {
     return (<div className="flex flex-col gap-4 mx-6">
         <SearchBar searchValue={searchValue} onChange={handleSearchChange} />
         <Filter viewType={viewType} onClick={handleSetViewType}/>
-        <Results searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort}/>
+        <Results searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort} genre={genre}/>
     </div>);
 }
 
@@ -49,9 +51,9 @@ function Filter({viewType, onClick}: {viewType: tViewType, onClick: (value: tVie
     </div>);
 }
 
-function Results({searchValue, viewType, sort, changeSort}: {searchValue: string, viewType: tViewType, sort: iSort, changeSort: (type: tSort, side: boolean) => void}) {
+function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue: string, viewType: tViewType, sort: iSort, changeSort: (type: tSort, side: boolean) => void, genre: null | string}) {
     const {openModal} = useModal();
-    const [filterGenre, setFilterGenre] = useState<string[]>([])
+    const [filterGenre, setFilterGenre] = useState<string[]>(genre === null ? [] : [genre])
     const filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
 
     if (filteredMovies.length === 0)
@@ -118,7 +120,7 @@ function Results({searchValue, viewType, sort, changeSort}: {searchValue: string
         </tr>
         </thead>
         <tbody className="">
-            {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie}/>))}
+            {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie} setFilterGenre={setFilterGenre}/>))}
         </tbody>
     </table>);
 }

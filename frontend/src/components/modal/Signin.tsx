@@ -35,14 +35,14 @@ export default function Signin() {
     const {login} = useAuth();
     const {addNotification} = useNotification();
     const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
 
     if (activeModal.type !== "signin")
         return null;
 
     return (
         <ModalLayout onClose={closeModal} title="Signin">
-            <Input id="email-signin" value={email} onChange={setEmail} type="email" placeholder="Email"></Input>
+            <Input id="username-signin" value={username} onChange={setUsername} type="username" placeholder="Username"></Input>
             <Input id="password-signin" value={password} onChange={setPassword} type="password" placeholder="Password"></Input>
             <div className="relative mb-4">
                 <SmallButton className="absolute bottom-1" onClick={() => {
@@ -50,12 +50,12 @@ export default function Signin() {
                     openModal({type: "forgot-password"});
                 }}>Forgotten?</SmallButton>
             </div>
-            <Button className="h-8" onClick={() => handleLogin(login, addNotification, email, password, closeModal)}>Sign In</Button>
+            <Button className="h-8" onClick={() => handleLogin(login, addNotification, username, password, closeModal)}>Sign In</Button>
         </ModalLayout>
     );
 }
 
-function handleLogin(login: (user: tUser, token: string) => void, addNotification: (message: string, type?: tNotificationType) => void, email: string, password: string, closeModal: () => void) {
+function handleLogin(login: (user: tUser, token: string) => void, addNotification: (message: string, type?: tNotificationType) => void, username: string, password: string, closeModal: () => void) {
     // const res = await fetch("/api/login", {
     //     method: "POST",
     //     body: JSON.stringify({
@@ -66,7 +66,7 @@ function handleLogin(login: (user: tUser, token: string) => void, addNotificatio
     //
     // const data = await res.json();
     // login(data.user, data.token);
-    const findUser = users.filter(u => u.email === email);
+    const findUser = users.filter(u => u.username === username);
     console.log("findUser", findUser);
     if (findUser.length > 0) {
         login(findUser[0], "coucou");

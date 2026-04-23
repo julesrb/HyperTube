@@ -22,7 +22,7 @@ func (f *fakeStore) listFeatured(_ context.Context) ([]models.Movie, error) {
 
 func (f *fakeStore) findByID(_ context.Context, id string) (*models.Movie, error) {
 	for _, m := range f.movies {
-		if m.ID == id {
+		if m.ImdbID == id {
 			return &m, nil
 		}
 	}
@@ -32,8 +32,8 @@ func (f *fakeStore) findByID(_ context.Context, id string) (*models.Movie, error
 func TestGetMovies_OK(t *testing.T) {
 	h := &Handler{store: &fakeStore{
 		movies: []models.Movie{
-			{ID: "1", Title: "Dune: Part Two", PosterURL: "poster.jpg", BackdropURL: "backdrop.jpg"},
-			{ID: "2", Title: "Avatar", PosterURL: "poster2.jpg", BackdropURL: "backdrop2.jpg"},
+			{ImdbID: "1", Title: "Dune: Part Two", PosterURL: "poster.jpg", BackdropURL: "backdrop.jpg"},
+			{ImdbID: "2", Title: "Avatar", PosterURL: "poster2.jpg", BackdropURL: "backdrop2.jpg"},
 		},
 	}}
 
@@ -58,7 +58,7 @@ func TestGetMovies_OK(t *testing.T) {
 	if body.Meta.Total != 2 {
 		t.Errorf("expected total=2, got %d", body.Meta.Total)
 	}
-	if body.Data[0].ID != "1" || body.Data[1].ID != "2" {
+	if body.Data[0].ImdbID != "1" || body.Data[1].ImdbID != "2" {
 		t.Errorf("unexpected order: %+v", body.Data)
 	}
 }
@@ -117,7 +117,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 	h := &Handler{store: &fakeStore{
 		movies: []models.Movie{
 			{
-				ID:          "693134",
+				ImdbID:      "693134",
 				Title:       "Dune: Part Two",
 				Year:        "2024",
 				PosterURL:   "https://image.tmdb.org/t/p/original/rjmLNTt5tP1obYx4YFzLHpN7KcG.jpg",
@@ -132,7 +132,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Seeders:     1200,
 			},
 			{
-				ID:          "83533",
+				ImdbID:      "83533",
 				Title:       "Avatar: Fire and Ash",
 				Year:        "2025",
 				PosterURL:   "https://image.tmdb.org/t/p/original/lE9KpVwgeWHMwgwkNaeH5nEFh20.jpg",
@@ -173,8 +173,8 @@ func TestGetMoviesId_OK(t *testing.T) {
 func TestGetMoviesId_NotFound(t *testing.T) {
 	h := &Handler{store: &fakeStore{
 		movies: []models.Movie{
-			{ID: "1", Title: "Dune: Part Two"},
-			{ID: "2", Title: "Avatar"},
+			{ImdbID: "1", Title: "Dune: Part Two"},
+			{ImdbID: "2", Title: "Avatar"},
 		},
 	}}
 

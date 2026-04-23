@@ -21,8 +21,14 @@ func NewStore(db *pgxpool.Pool) *Store {
 
 func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
 	rows, err := s.db.Query(ctx, `
-		SELECT m.* FROM   movies m
-		JOIN   featured_movies f ON f.movie_id = m.id
+		SELECT m.imdbid, m.tmdbid, m.title, m.year,
+		       m.poster_url, m.backdrop_url,
+		       m.imdb_rating, m.genres,
+		       m.runtime_minutes, m.summary,
+		       m.director, m."cast",
+		       m.watched, m.progression, m.seeders
+		FROM   movies m
+		JOIN   featured_movies f ON f.movie_id = m.imdbid
 		ORDER  BY f.position
 	`)
 	if err != nil {
@@ -34,9 +40,9 @@ func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
 	for rows.Next() {
 		var m models.Movie
 		if err := rows.Scan(
-			&m.ID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
+			&m.ImdbID, &m.TmdbID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
 			&m.IMDbRating, &m.Genres, &m.Runtime, &m.Summary,
-			&m.Director, &m.Cast, &m.Watched, &m.Seeders,
+			&m.Director, &m.Cast, &m.Watched, &m.Progression, &m.Seeders,
 		); err != nil {
 			return nil, err
 		}
@@ -46,11 +52,18 @@ func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
 }
 
 func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) {
-	row := s.db.QueryRow(ctx, `SELECT * FROM movies WHERE id = $1`, id)
+	row := s.db.QueryRow(ctx, `
+		SELECT imdbid, tmdbid, title, year,
+		       poster_url, backdrop_url,
+		       imdb_rating, genres,
+		       runtime_minutes, summary,
+		       director, "cast",
+		       watched, progression, seeders
+		FROM movies WHERE imdbid = $1`, id)
 
 	var m models.Movie
 	if err := row.Scan(
-		&m.ID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
+		&m.ImdbID, &m.TmdbID, &m.Title, &m.Year, &m.PosterURL, &m.BackdropURL,
 		&m.IMDbRating, &m.Genres, &m.Runtime, &m.Summary,
 		&m.Director, &m.Cast, &m.Watched, &m.Progression, &m.Seeders,
 	); err != nil {

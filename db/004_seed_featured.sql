@@ -1,11 +1,11 @@
 INSERT INTO featured_movies (movie_id, position) VALUES
-('83533',   1),  -- Avatar: Fire and Ash
-('687163',  2),  -- Project Hail Mary
-('693134',  3),  -- Dune: Part Two
-('1226863', 4),  -- The Super Mario Galaxy Movie
-('1325734', 5),  -- The Drama
-('1327819', 6),  -- Hoppers
-('1159831', 7),  -- The Bride!
-('1198994', 8),  -- Send Help
-('1297842', 9)   -- GOAT
+('tt1757678',  1),  -- Avatar: Fire and Ash
+('tt12042730', 2),  -- Project Hail Mary
+('tt15239678', 3),  -- Dune: Part Two
+('tt28650488', 4),  -- The Super Mario Galaxy Movie
+('tt33071426', 5),  -- The Drama
+('tt26443616', 6),  -- Hoppers
+('tt30851137', 7),  -- The Bride!
+('tt8036976',  8),  -- Send Help
+('tt27613895', 9)   -- GOAT
 ON CONFLICT (movie_id) DO NOTHING;

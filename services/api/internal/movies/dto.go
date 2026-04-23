@@ -3,19 +3,19 @@ package movies
 import "hypertube/api/internal/models"
 
 type movieResponse struct {
-	ID          string `json:"id"`
+	ImdbID      string `json:"imdb_id"`
 	Title       string `json:"title"`
+	Year        string `json:"year"`
 	PosterURL   string `json:"poster_url"`
-	Year		string `json:"year"`	
 	BackdropURL string `json:"backdrop_url"`
 }
 
 func toMovieResponse(m models.Movie) movieResponse {
 	return movieResponse{
-		ID:          m.ID,
+		ImdbID:      m.ImdbID,
 		Title:       m.Title,
+		Year:        m.Year,
 		PosterURL:   m.PosterURL,
-		Year:		m.Year,
 		BackdropURL: m.BackdropURL,
 	}
 }

@@ -1,7 +1,8 @@
 package models
 
 type Movie struct {
-	ID          string   `json:"id"`
+	ImdbID      string   `json:"imdb_id"`
+	TmdbID      string   `json:"tmdb_id"`
 	Title       string   `json:"title"`
 	Year        string   `json:"year"`
 	PosterURL   string   `json:"poster_url"`
@@ -35,4 +36,18 @@ type ErrorBody struct {
 
 type ErrorResponse struct {
 	Error ErrorBody `json:"error"`
+}
+
+type Torrent struct {
+	URL      string `json:"url"`
+	Quality  string `json:"quality"`
+	Size     string `json:"size"`
+	Language string `json:"language"`
+	Seeds    string `json:"seeds"`
+	Source   string `json:"source"`
+}
+
+type MovieTorrents struct {
+	ImdbID   string    `json:"imdb_id"`
+	Torrents []Torrent `json:"torrent"`
 }

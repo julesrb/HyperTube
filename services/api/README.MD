@@ -43,7 +43,7 @@ Returns a selected list of movies available in the system.
 
 ## GET /movies/:id
 
-Returns full metadata for a single movie.
+Returns full metadata for a single movie already ingested in the system.
 
 ### Path parameters
 

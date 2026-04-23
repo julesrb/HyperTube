@@ -7,6 +7,7 @@ import {GridIcon, ListIcon} from "@/components/Icon";
 import {CloseButton} from "@/components/Button";
 import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
+import Pagination from "@/components/Pagination";
 
 type tViewType = | "grid" | "list";
 type tSort = "name" | "genre" | "grade" | "year";
@@ -20,19 +21,24 @@ export default function Page() {
     const searchParams = useSearchParams();
     const genre = searchParams.get('genre');
     const [searchValue, setSearchValue] = useState("");
-    const [viewType, setViewType] = useState<tViewType>(genre === undefined ? "grid" : "list");
+    const [viewType, setViewType] = useState<tViewType>(genre === null ? "grid" : "list");
     const [sort, setSort] = useState<iSort>({type: "name", side: true});
+    const [index, setIndex] = useState(0);
+
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e === undefined ? "" : e.target.value.toLowerCase()
         setSearchValue(newValue);
     }
     const handleSetViewType = (value: tViewType) => { setViewType(value); }
     const changeSort = (type: tSort, side: boolean) => { setSort({type, side}); }
+    const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     return (<div className="flex flex-col gap-4 mx-6">
         <SearchBar searchValue={searchValue} onChange={handleSearchChange} />
         <Filter viewType={viewType} onClick={handleSetViewType}/>
-        <Results searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort} genre={genre}/>
+        <Pagination currenIndex={index} totalPage={5} onClick={changeIndex} >
+            <Results searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort} genre={genre}/>
+        </Pagination>
     </div>);
 }
 

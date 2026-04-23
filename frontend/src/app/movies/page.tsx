@@ -20,7 +20,7 @@ export default function Page() {
     const searchParams = useSearchParams();
     const genre = searchParams.get('genre');
     const [searchValue, setSearchValue] = useState("");
-    const [viewType, setViewType] = useState<tViewType>(genre === undefined ? "grid" : "list");
+    const [viewType, setViewType] = useState<tViewType>(genre === null ? "grid" : "list");
     const [sort, setSort] = useState<iSort>({type: "name", side: true});
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e === undefined ? "" : e.target.value.toLowerCase()

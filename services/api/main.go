@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"hypertube/api/internal/movies"
+	"hypertube/api/internal/movies/yts"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -26,41 +28,43 @@ func main() {
 
 	// prepare dependencies for DB and torrent search clients
 	store := movies.NewStore(db)
-	// searchers := []movies.MovieSearcher{}
+	searchers := []movies.MovieSearcher{
+		yts.NewClient(),
+	}
 
 	//inject dependencies into handlers
-	moviesHandler := movies.NewHandler(store, nil)
+	moviesHandler := movies.NewHandler(store, searchers)
 
 	mux := http.NewServeMux()
 
 	// Health check
-	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/v1/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
 	// // Auth
-	// mux.HandleFunc("POST /oauth/token", nil)
-	// mux.HandleFunc("GET /oauth/callback/42", nil)
-	// mux.HandleFunc("GET /oauth/callback/github", nil)
+	// mux.HandleFunc("POST /api/v1/oauth/token", nil)
+	// mux.HandleFunc("GET /api/v1/oauth/callback/42", nil)
+	// mux.HandleFunc("GET /api/v1/oauth/callback/github", nil)
 
 	// // Users
-	// mux.HandleFunc("GET /users", nil)
-	// mux.HandleFunc("GET /users/{id}", nil)
-	// mux.HandleFunc("PATCH /users/{id}", nil)
+	// mux.HandleFunc("GET /api/v1/users", nil)
+	// mux.HandleFunc("GET /api/v1/users/{id}", nil)
+	// mux.HandleFunc("PATCH /api/v1/users/{id}", nil)
 
 	// Movies
-	mux.HandleFunc("GET /movies", moviesHandler.GetMovies)
-	// mux.HandleFunc("GET /movies/search", moviesHandler.SearchMovies)
-	mux.HandleFunc("GET /movies/{id}", moviesHandler.GetMoviesId)
-	// mux.HandleFunc("GET /movies/{id}/comments", moviesHandler.ListComments)
-	// mux.HandleFunc("POST /movies/{id}/comments", moviesHandler.CreateComment)
+	mux.HandleFunc("GET /api/v1/movies", moviesHandler.GetMovies)
+	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies)
+	mux.HandleFunc("GET /api/v1/movies/{id}", moviesHandler.GetMoviesId)
+	// mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.ListComments)
+	// mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.CreateComment)
 
 	// // Comments
-	// mux.HandleFunc("GET /comments", nil)
-	// mux.HandleFunc("GET /comments/{id}", nil)
-	// mux.HandleFunc("POST /comments", nil)
-	// mux.HandleFunc("PATCH /comments/{id}", nil)
-	// mux.HandleFunc("DELETE /comments/{id}", nil)
+	// mux.HandleFunc("GET /api/v1/comments", nil)
+	// mux.HandleFunc("GET /api/v1/comments/{id}", nil)
+	// mux.HandleFunc("POST /api/v1/comments", nil)
+	// mux.HandleFunc("PATCH /api/v1/comments/{id}", nil)
+	// mux.HandleFunc("DELETE /api/v1/comments/{id}", nil)
 
 	addr := ":" + getEnv("PORT", "8080")
 	log.Printf("api listening on %s", addr)

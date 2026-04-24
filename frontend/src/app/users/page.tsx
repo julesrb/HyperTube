@@ -46,5 +46,5 @@ export default function Page() {
 function MovieHistoryTab({user}: {user: tUser}) {
     if (user.watch_history.length === 0)
         return (<div className="flex justify-center pt-5"><p>You haven&#39;t seen any films yet.</p></div>);
-    return (<MoviesCard movies={user.watch_history.map(m => movies[m.movie_id])}/>);
+    return (<MoviesCard movieSets={user.watch_history.map(m => movies[m.movie_id])}/>);
 }

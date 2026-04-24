@@ -11,18 +11,17 @@ import {tUser} from "@/types/user";
 
 
 // todo useRandomBackdrop ?
-export function MoviesCard({movies, className} : {movies: tMovie[], className?: string}) {
+export function MoviesCard({movieSets, className} : {movieSets: tMovie[], className?: string}) {
     const {user} = useAuth();
     return (<div className={"grid grid-cols-3 gap-4 " + className}>
-        {movies.map((movie, index) => (<MovieCard key={index} movie={movie} user={user}/>))}
+        {movieSets.map((movie, index) => (<MovieCard key={index} movie={movie} user={user}/>))}
     </div>);
 }
 
 function MovieCard({movie, user} : {movie: tMovie, user: tUser | null}) {
     let watchingPercent = 0;
-    console.log(movie);
     if (user) {
-        const watchMovie = user.watch_history.find(m => m.movie_id === movie.id);
+        const watchMovie = user.watch_history.find(h => h.movie_id === movie.id);
         if (watchMovie)
             watchingPercent = watchMovie.watch_percent;
     }

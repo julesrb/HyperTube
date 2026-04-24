@@ -66,7 +66,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
         return (<p>Aucun film trouvé</p>);
 
     if (viewType === "grid")
-        return (<MoviesCard movies={filteredMovies}/>);
+        return (<MoviesCard movieSets={filteredMovies}/>);
 
     const sortOptions: tSort[] = ["name", "year", "genre", "grade"];
     let sortedMovies;

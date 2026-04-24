@@ -1,19 +1,46 @@
 "use client";
 
-import {movies} from "@/types/movie";
+import {movies, tMovie} from "@/types/movie";
 import React, {useEffect, useState} from "react";
 import {MoviesCard} from "@/components/MovieCard";
 import MoviesHero from "@/components/MovieHero";
 import {genres} from "@/types/genre";
 import {HypertubeLogo} from "@/components/Icon";
 import GenreTags from "@/components/GenreTags";
+import Section from "@/components/Section";
+import {useAuth} from "@/context/AuthContext";
+import {tUser} from "@/types/user";
 
 export default function HomePage() {
+    const {user} = useAuth();
+    const moviesSets = user ? filterAlreadyWatch(user, movies) : movies;
+    const popular = structuredClone(moviesSets);
+    const mostRated = structuredClone(moviesSets).sort((a, b) => b.rate - a.rate);
+    let continueWatching;
+
+    if (user) {
+        continueWatching = user.watch_history
+            .filter(h => h.watch_percent < 100)
+            .map(m => movies.find(mSearch => mSearch.id === m.movie_id))
+            .filter(m => m !== undefined);
+    }
     return (<div>
         <AnimateLogo />
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
         <GenreTags genres={genres} className="items-center justify-center w-full mt-4"/>
-        <MoviesCard className="mt-4" movies={movies} />
+
+        {continueWatching &&
+        <Section title="Continue to watch" href="/movies/">
+            <MoviesCard movieSets={continueWatching.slice(0, 3)} />
+        </Section>}
+
+        <Section title="Popular" href="/movies/">
+            <MoviesCard movieSets={popular.slice(0, 3)} />
+        </Section>
+
+        <Section title="Most rated" href="/movies/">
+            <MoviesCard movieSets={mostRated.slice(0, 3)} />
+        </Section>
 
         <div className="flex w-full mt-5">
             <div className="h-4 w-full bg-yellow-hover"></div>
@@ -67,4 +94,14 @@ function AnimateLogo() {
             ))}
         </div>
     </div>);
+}
+
+function filterAlreadyWatch(user: tUser, movies: tMovie[]) {
+    return movies.filter(m => {
+        for (let i = 0; i < user.watch_history.length; i++) {
+            if (user.watch_history[i].movie_id === m.id)
+                return false;
+        }
+        return true;
+    });
 }

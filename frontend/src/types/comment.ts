@@ -12,7 +12,7 @@ export type tComment = {
 
 export const comments: tComment[] = [{
     id: 0,
-    author_id: 2,
+    author_id: 0,
     author_username: "fguirama",
     author_firstname: "fguirama",
     author_lastname: "fguirama",
@@ -82,7 +82,7 @@ export const comments: tComment[] = [{
     created_at: 1730364000
 }, {
     id: 7,
-    author_id: 2,
+    author_id: 0,
     author_username: "fguirama",
     author_firstname: "fguirama",
     author_lastname: "fguirama",

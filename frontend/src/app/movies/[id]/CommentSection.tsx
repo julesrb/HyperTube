@@ -1,5 +1,5 @@
 import {comments, tComment} from "@/types/comment";
-import {tUser, users} from "@/types/user";
+import {tUser} from "@/types/user";
 import React, {useState} from "react";
 
 import dayjs from "dayjs";
@@ -24,13 +24,8 @@ export default function CommentSection() {
     const [index, setIndex] = useState(0);
     const {openModal} = useModal();
 
-    const addNewComment = (newComment: tComment) => {
-        setComments([...actualComments, newComment]);
-    }
-
-    const changeIndex = (newIndex: number) => {
-        setIndex(newIndex);
-    }
+    const addNewComment = (newComment: tComment) => {setComments([...actualComments, newComment]);}
+    const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     return (<div className="mt-14 flex flex-col items-center mx-auto py-4 gap-4">
         <div className="border-b-5 border-b-yellow w-full mb-6">
@@ -39,7 +34,7 @@ export default function CommentSection() {
 
         <Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
             <div className="flex flex-col-reverse gap-8 max-w-2xl">
-                {actualComments.map((comment, index) => (<Comment key={index} comment={comment}/>))}
+                {actualComments.map((comment, index) => (<Comment key={index} currentUser={user} comment={comment}/>))}
                 {user !== null ? <div className="flex gap-4 mb-2">
                     <ProfilePicture user={user}/>
                     <NewComment user={user} onSubmit={addNewComment}></NewComment>
@@ -49,15 +44,20 @@ export default function CommentSection() {
     </div>);
 }
 
-function Comment({comment}: { comment: tComment }) {
-    const user = users[comment.user];
+function Comment({comment, currentUser}: { comment: tComment, currentUser: tUser | null }) {
+    let user: Partial<tUser>;
+
+    if (currentUser && currentUser.id === comment.author_id)
+        user = currentUser;
+    else
+        user = {id: comment.author_id, username: comment.author_username, firstname: comment.author_firstname, lastname: comment.author_lastname, profile_picture: comment.author_profile_pictures, color: comment.author_color};
     const [isCommentExpend, setIsExpendComment] = useState(false);
 
     return (<div className="w-full">
         <div className="flex gap-4">
             <ProfilePicture user={user}/>
             <div>
-                <span className="text-bold">{user.firstname} {user.lastname[0]}.</span>
+                <span className="text-bold">{user.username}</span>
                 <p className="text-sm font-normal text-gray leading-4 mb-2">{dayjs.unix(comment.created_at).fromNow()}</p>
                 <p className={isCommentExpend ? "" : "line-clamp-3"}>
                     {comment.comment}
@@ -86,7 +86,12 @@ function NewComment({user, onSubmit}: { user: tUser, onSubmit: (value: tComment)
 
         const newComment: tComment = {
             id: Math.floor(Date.now() / 1000),
-            user: user.id,
+            author_id: user.id,
+            author_username: user.username,
+            author_firstname: user.firstname,
+            author_lastname: user.lastname,
+            author_profile_pictures: user.profile_picture,
+            author_color: user.color,
             comment: comment,
             created_at: Math.floor(Date.now() / 1000)
         }

@@ -6,15 +6,34 @@ import {Button} from "@/components/Button";
 import {StarIcon} from "@/components/Icon";
 import GenreTags from "@/components/GenreTags";
 import {useRouter} from "next/navigation";
+import {useAuth} from "@/context/AuthContext";
+import {tUser} from "@/types/user";
 
 
 // todo useRandomBackdrop ?
-export function MovieCard({movie} : {movie: tMovie}) {
+export function MoviesCard({movieSets, className} : {movieSets: tMovie[], className?: string}) {
+    const {user} = useAuth();
+    return (<div className={"grid grid-cols-3 gap-4 " + className}>
+        {movieSets.map((movie, index) => (<MovieCard key={index} movie={movie} user={user}/>))}
+    </div>);
+}
+
+function MovieCard({movie, user} : {movie: tMovie, user: tUser | null}) {
+    let watchingPercent = 0;
+    if (user) {
+        const watchMovie = user.watch_history.find(h => h.movie_id === movie.id);
+        if (watchMovie)
+            watchingPercent = watchMovie.watch_percent;
+    }
     return (
         <Link href={"/movies/" + movie.id} className="relative aspect-824/560 overflow-hidden group border">
             <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
+            {watchingPercent > 0 && <div className={`absolute bottom-0 h-1 bg-${user ? user.color : "red"} z-10`} style={{width: `${watchingPercent}%`}}></div>}
             <div className="absolute inset-0 p-4 flex items-end">
-                <div className="bg-gradient"></div>
+                {watchingPercent === 100 ?
+                    <div className="size-full absolute inset-0 bg-black/60"></div> :
+                    <div className="bg-gradient"></div>
+                }
                 <h3 className="relative text-white hover:underline decoration-2 underline-offset-3 z-10 mx-auto">{movie.title}
                     <span className="absolute -right-11 font-hairline text-lg tracking-normal">{movie.year}</span>
                 </h3>

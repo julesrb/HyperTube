@@ -2,7 +2,7 @@ import {tUser} from "@/types/user";
 import React from "react";
 import Image from "next/image";
 
-export default function ProfilePicture({user, onClick, size = 0, color, className}: { user: tUser, onClick?: () => void, size?: 0 | 1 | 2, color?: string, className?: string }) {
+export default function ProfilePicture({user, onClick, size = 0, color, className}: { user: tUser | Partial<tUser>, onClick?: () => void, size?: 0 | 1 | 2, color?: string, className?: string }) {
     const sizes = ["size-10", "size-22", "size-45"];
     let children;
 

@@ -6,7 +6,7 @@ export type tUser = {
     email: string
     color: string
     profile_picture: null | string
-    film_history: number[]
+    watch_history: {movie_id: number, watch_percent: number}[]
     joined_at: number
 };
 
@@ -19,7 +19,16 @@ export const users: tUser[] = [
         email: "florian.guiramand@example.com",
         color: "purple",
         profile_picture: "/images/profile_pictures.jpeg",
-        film_history: [0, 1, 2, 3, 4, 5, 6, 7],
+        watch_history: [
+            { movie_id: 0, watch_percent: 34 },
+            { movie_id: 1, watch_percent: 100 },
+            { movie_id: 2, watch_percent: 100 },
+            { movie_id: 3, watch_percent: 15 },
+            { movie_id: 4, watch_percent: 25 },
+            { movie_id: 5, watch_percent: 75 },
+            { movie_id: 6, watch_percent: 55 },
+            { movie_id: 7, watch_percent: 100 },
+        ],
         joined_at: 1746764800
     },
     {
@@ -30,7 +39,7 @@ export const users: tUser[] = [
         email: "emma.bernard@example.com",
         color: "pink",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1748851200
     },
     {
@@ -41,7 +50,7 @@ export const users: tUser[] = [
         email: "hugo.dubois@example.com",
         color: "pink",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1748937600
     },
     {
@@ -52,7 +61,7 @@ export const users: tUser[] = [
         email: "chloe.moreau@example.com",
         color: "blue",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749024000
     },
     {
@@ -63,7 +72,7 @@ export const users: tUser[] = [
         email: "nathan.laurent@example.com",
         color: "yellow",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749110400
     },
     {
@@ -74,7 +83,7 @@ export const users: tUser[] = [
         email: "sarah.simon@example.com",
         color: "purple",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749196800
     },
     {
@@ -85,7 +94,7 @@ export const users: tUser[] = [
         email: "thomas.michel@example.com",
         color: "blue",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749283200
     },
     {
@@ -96,7 +105,7 @@ export const users: tUser[] = [
         email: "julie.garcia@example.com",
         color: "red",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749369600
     },
     {
@@ -107,7 +116,7 @@ export const users: tUser[] = [
         email: "alexandre.roux@example.com",
         color: "green",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749456000
     },
     {
@@ -118,7 +127,7 @@ export const users: tUser[] = [
         email: "manon.fournier@example.com",
         color: "purple",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: 1749542400
     }
 ];

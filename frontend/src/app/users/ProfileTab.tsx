@@ -8,27 +8,19 @@ import {useNotification} from "@/context/NotificationContext";
 import {successMessages} from "@/types/message";
 
 
-export default function ProfileTab({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
-    return (
-        <div className="flex gap-30 max-w-2/3 w-full justify-center items-center mx-auto">
-            <ProfileSection user={user} setUser={setUser} />
-            <AvatarSection user={user} setUser={setUser} />
-        </div>
-    );
+export default function ProfileTab({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
+    return (<div className="flex gap-30 max-w-2/3 w-full justify-center items-center mx-auto">
+        <ProfileSection user={user} updateUser={updateUser} />
+        <AvatarSection user={user} updateUser={updateUser} />
+    </div>);
 }
 
-function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
+function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
     const { addNotification } = useNotification();
     const [email, setEmail] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [username, setUsername] = useState("");
-
-    const handleChange = (newValue: string, setter: (value: string) => void) => {
-        const newUser = structuredClone(user);
-        setter(newValue);
-        setUser(newUser);
-    }
 
     const saveChange = () => {
         const newUser = structuredClone(user);
@@ -37,71 +29,50 @@ function ProfileSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) =
         if (email && email != user.email) {
             newUser.email = email;
             addNotification(successMessages.emailChanged, "warning");
+            setEmail("");
         }
         if (firstname && firstname != user.firstname) {
             isInfoChanged = true;
             newUser.firstname = firstname;
+            setFirstname("");
         }
         if (lastname && lastname != user.lastname) {
             isInfoChanged = true;
             newUser.lastname = lastname;
+            setLastname("");
         }
         if (username && username != user.username) {
             isInfoChanged = true;
             newUser.username = username;
+            setUsername("");
         }
-        setEmail("");
-        setFirstname("");
-        setLastname("");
-        setUsername("");
-        setUser(newUser);
-        if (isInfoChanged)
+        if (isInfoChanged) {
+            updateUser(newUser);
             addNotification(successMessages.infoChanged, "success");
+        }
     }
 
     return (<div className="flex flex-col gap-4 items-start">
-        <Input id="profile-email" type="email" placeholder="Email" value={email} onChange={(newValue) => {
-            handleChange(newValue, setEmail);
-        }}></Input>
+        <Input id="profile-email" type="email" placeholder="Email" value={email} onChange={(newValue) => setEmail(newValue)}></Input>
 
         <div className="flex gap-2 w-full">
-            <Input id="profile-firstname" type="firstname" placeholder="Firstname" value={firstname} onChange={(newValue) => {
-                handleChange(newValue, setFirstname);
-            }}></Input>
-            <Input id="profile-lastname" type="lastname" placeholder="Lastname" value={lastname} onChange={(newValue) => {
-                handleChange(newValue, setLastname);
-            }}></Input>
+            <Input id="profile-firstname" type="firstname" placeholder="Firstname" value={firstname} onChange={(newValue) => setFirstname(newValue)}></Input>
+            <Input id="profile-lastname" type="lastname" placeholder="Lastname" value={lastname} onChange={(newValue) => setLastname(newValue)}></Input>
         </div>
 
-        <Input id="profile-username" type="username" placeholder="Username" value={username} onChange={(newValue) => {
-            handleChange(newValue, setUsername);
-        }} className={"max-w-3/5"}></Input>
+        <Input id="profile-username" type="username" placeholder="Username" value={username} onChange={(newValue) => setUsername(newValue)} className={"max-w-3/5"}></Input>
 
         <Button className="h-8" onClick={saveChange}>Save Changes</Button>
     </div>);
 }
 
 
-function AvatarSection({user, setUser}: {user: tUser, setUser: (tUser: tUser) => void}) {
+function AvatarSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
     const colors = ["yellow", "pink", "green", "purple", "blue", "red"];
 
-    const handleNewPP = (newPP: string | null) => {
-        const newUser = structuredClone(user);
-
-        newUser.profile_picture = newPP;
-        setUser(newUser);
-    }
-
-    const handleSwitchColors = (newColor: string) => {
-        const newUser = structuredClone(user);
-
-        newUser.color = newColor;
-        setUser(newUser);
-    }
-
-    const uploadNewPP = () => {
-        handleNewPP("/images/profile_pictures.jpeg");
-    }
+    const handleNewPP = (newPP: string | null) => {updateUser({profile_picture: newPP});}
+    const handleSwitchColors = (newColor: string) => {updateUser({color: newColor});}
+    const uploadNewPP = () => {handleNewPP("/images/profile_pictures.jpeg");}
 
     return (<div className="flex flex-col gap-2 items-center justify-center">
         <ProfilePicture user={user} size={2} className="mb-6" onClick={uploadNewPP}/>

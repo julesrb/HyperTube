@@ -8,6 +8,7 @@ type AuthContextType = {
     login: (user: tUser, token: string) => void;
     logout: () => void;
     loading: boolean;
+    updateUser: (patch: Partial<tUser>) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,8 +39,19 @@ export function AuthProvider({children,}: { children: ReactNode; }) {
         setUser(null);
     };
 
+    const updateUser = (patch: Partial<tUser>) => {
+        setUser((prev) => {
+            if (!prev)
+                return prev;
+            const updatedUser = {...prev, ...patch,};
+
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            return updatedUser;
+        });
+    };
+
     return (<AuthContext.Provider
-        value={{user, login, logout, loading,}}>
+        value={{user, login, logout, loading, updateUser}}>
         {children}
     </AuthContext.Provider>);
 }

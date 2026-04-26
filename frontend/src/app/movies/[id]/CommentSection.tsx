@@ -93,6 +93,7 @@ function NewComment({user, onSubmit}: { user: tUser, onSubmit: (value: tComment)
             author_profile_pictures: user.profile_picture,
             author_color: user.color,
             comment: comment,
+            edited: false,
             created_at: Math.floor(Date.now() / 1000)
         }
         onSubmit(newComment);

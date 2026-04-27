@@ -27,7 +27,7 @@ export default function HomePage() {
     return (<div>
         <AnimateLogo />
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
-        <GenreTags genres={genres} className="items-center justify-center w-full mt-4"/>
+        <GenreTags genres={genres.slice(0, 7)} className="items-center justify-center w-full my-8"/>
 
         {continueWatching &&
         <Section title="Continue to watch" href="/users?tab=history">

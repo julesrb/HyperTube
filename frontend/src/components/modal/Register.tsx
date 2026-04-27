@@ -6,10 +6,10 @@ import React, {useState} from "react";
 import Input from "@/components/Input";
 import {tUser} from "@/types/user";
 import {useAuth} from "@/context/AuthContext";
-import {Button} from "@/components/Buttons";
+import {Button, SmallButton} from "@/components/Buttons";
 
 export default function Register() {
-    const {activeModal, closeModal} = useModal();
+    const {openModal, activeModal, closeModal} = useModal();
     const {login} = useAuth();
     const [email, setEmail] = useState("");
     const [firstname, setFirstname] = useState("");
@@ -35,6 +35,14 @@ export default function Register() {
             <Button className="h-8 mt-2" onClick={() =>
                 handleRegister(login, username, email, firstname, lastname, password, closeModal)
             }>Sign Up</Button>
+
+            <div className="flex gap-2 mt-5">
+                <span className="text-sm">Vous avez déjà un compte?</span>
+                <SmallButton onClick={() => {
+                    closeModal();
+                    openModal({type: "signin"});
+                }}>Connectez-vous</SmallButton>
+            </div>
         </ModalLayout>
     );
 }

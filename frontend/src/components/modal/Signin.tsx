@@ -50,6 +50,13 @@ export default function Signin() {
                 }}>Forgotten?</SmallButton>
             </div>
             <Button className="h-8" onClick={() => handleLogin(login, addNotification, username, password, closeModal)}>Sign In</Button>
+            <div className="flex gap-2 mt-5">
+                <span className="text-sm">Pas encore de compte?</span>
+                <SmallButton onClick={() => {
+                    closeModal();
+                    openModal({type: "register"});
+                }}>Inscrivez-vous</SmallButton>
+            </div>
         </ModalLayout>
     );
 }

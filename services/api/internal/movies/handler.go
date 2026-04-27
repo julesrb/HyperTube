@@ -67,6 +67,7 @@ func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO OPTI look for preexisting data in db
 	details, err := h.tmdb.GetMovieDetails(r.Context(), movie.TmdbID)
 	if err != nil {
 		log.Printf("TMDB details error for TmdbID %s: %v", movie.TmdbID, err)

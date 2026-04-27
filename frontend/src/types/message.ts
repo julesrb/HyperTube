@@ -4,6 +4,7 @@ export const successMessages = {
     emailResetPassword: "Un e-mail vient de vous être envoyé pour réinitialiser votre mot de passe.",
     infoChanged: "Vos informations ont bien été mis à jour.",
     login: "Vous êtes maintenant connecté avec succès.",
+    commentChange: "La modification de votre commentaire a bien été mis à jour."
 };
 
 export const errorMessages = {

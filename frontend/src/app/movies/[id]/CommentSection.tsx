@@ -13,6 +13,8 @@ import {useModal} from "@/context/ModalContext";
 import {EditIcon, TrashIcon} from "@/components/Icons";
 import {movies, tMovie} from "@/types/movie";
 import {MovieCard} from "@/components/MovieCard";
+import {useNotification} from "@/context/NotificationContext";
+import {successMessages} from "@/types/message";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
@@ -20,6 +22,7 @@ dayjs.locale("fr");
 
 export function CommentSection({movie}: {movie: tMovie}) {
     const {user} = useAuth();
+    const {addNotification} = useNotification();
     const {openModal} = useModal();
     const [actualComments, setComments] = useState(comments);
     const addNewComment = (newComment: tComment) => {setComments([...actualComments, newComment]);}
@@ -34,6 +37,7 @@ export function CommentSection({movie}: {movie: tMovie}) {
             else
                 return comment;
         }));
+        addNotification(successMessages.commentChange, "success");
     }
     const deleteComment = (commentId: number) => {setComments(actualComments.filter(c => c.id !== commentId));}
 

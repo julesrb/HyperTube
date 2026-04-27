@@ -62,8 +62,8 @@ export default function HomePage() {
 }
 
 function AnimateLogo() {
-    const maxHeight = 400;
-    const minHeight = 40;
+    const maxHeight = 300;
+    const minHeight = 50;
     const [logoHeight, setLogoHeight] = useState(maxHeight);
 
     useEffect(() => {

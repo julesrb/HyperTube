@@ -18,27 +18,29 @@ export function MoviesCard({movieSets, className} : {movieSets: tMovie[], classN
     </div>);
 }
 
-function MovieCard({movie, user} : {movie: tMovie, user: tUser | null}) {
+export function MovieCard({movie, user, className, showTitle = true} : {movie: tMovie, user: tUser | null, className?: string, showTitle?: boolean}) {
     let watchingPercent = 0;
     if (user) {
         const watchMovie = user.watch_history.find(h => h.movie_id === movie.id);
         if (watchMovie)
             watchingPercent = watchMovie.watch_percent;
     }
-    return (
-        <Link href={"/movies/" + movie.id} className="relative aspect-824/560 overflow-hidden group border">
-            <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
-            {watchingPercent > 0 && <div className={`absolute bottom-0 h-1 bg-${user ? user.color : "red"} z-10`} style={{width: `${watchingPercent}%`}}></div>}
-            <div className="absolute inset-0 p-4 flex items-end">
-                {watchingPercent === 100 ?
-                    <div className="size-full absolute inset-0 bg-black/60"></div> :
-                    <div className="bg-gradient"></div>
-                }
+    return (<Link href={"/movies/" + movie.id} className={"relative aspect-824/560 overflow-hidden group border " + className}>
+        <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
+        {watchingPercent > 0 && <div className={`absolute bottom-0 h-1 bg-${user ? user.color : "red"} z-10`} style={{width: `${watchingPercent}%`}}></div>}
+        <div className="absolute inset-0 p-4 flex items-end">
+            {watchingPercent === 100 ?
+                <div className="size-full absolute inset-0 bg-black/60"></div> :
+                <div className="bg-gradient"></div>
+            }
+            {
+                showTitle &&
                 <h3 className="relative text-white hover:underline decoration-2 underline-offset-3 z-10 mx-auto">{movie.title}
                     <span className="absolute -right-11 font-hairline text-lg tracking-normal">{movie.year}</span>
                 </h3>
-            </div>
-        </Link>);
+            }
+        </div>
+    </Link>);
 }
 
 export function ListMovieCard({movie, setFilterGenre} : {movie: tMovie, setFilterGenre: Dispatch<SetStateAction<string[]>>}) {

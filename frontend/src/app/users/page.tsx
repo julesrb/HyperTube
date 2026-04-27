@@ -7,14 +7,17 @@ import ProfilePicture from "@/components/ProfilePicture";
 import {tUser} from "@/types/user";
 import ProfileTab from "@/app/users/ProfileTab";
 import AuthTab from "@/app/users/AuthTab";
+import {Comments} from "@/app/movies/[id]/CommentSection";
 import {useAuth} from "@/context/AuthContext";
+import {comments} from "@/types/comment";
+import Pagination from "@/components/Pagination";
 
 export default function Page() {
     const {user, updateUser} = useAuth();
+    const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab, comments: CommentsTab};
     const [activeTab, setActiveTab] = useState<keyof typeof tabs>("profile");
     if (!user)
         return null;
-    const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab};
     const ActiveTab = tabs[activeTab];
     const date = new Date(user.joined_at);
 
@@ -44,7 +47,20 @@ export default function Page() {
 }
 
 function MovieHistoryTab({user}: {user: tUser}) {
+    const [index, setIndex] = useState(0);
+    const changeIndex = (newIndex: number) => {setIndex(newIndex);}
+
     if (user.watch_history.length === 0)
         return (<div className="flex justify-center pt-5"><p>You haven&#39;t seen any films yet.</p></div>);
-    return (<MoviesCard movieSets={user.watch_history.map(m => movies[m.movie_id])}/>);
+    return (<Pagination currenIndex={index} onClick={changeIndex} totalPage={3}>
+        <MoviesCard movieSets={user.watch_history.map(m => movies[m.movie_id])}/>
+    </Pagination>);
+}
+
+function CommentsTab({user}: {user: tUser}) {
+    const allComments = comments.filter(comment => comment.author_id === user.id);
+
+    return (<div className="max-w-3xl w-full mx-auto">
+        <Comments user={user} comments={allComments}/>
+    </div>);
 }

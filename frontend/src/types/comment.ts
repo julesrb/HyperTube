@@ -1,5 +1,6 @@
 export type tComment = {
     id: number
+    movie_id: number
     author_id: number
     author_username: string
     author_firstname: string
@@ -13,6 +14,7 @@ export type tComment = {
 
 export const comments: tComment[] = [{
     id: 0,
+    movie_id: 0,
     author_id: 0,
     author_username: "fguirama",
     author_firstname: "fguirama",
@@ -24,6 +26,7 @@ export const comments: tComment[] = [{
     created_at: 1765142400
 }, {
     id: 1,
+    movie_id: 2,
     author_id: 2,
     author_username: "codewizard",
     author_firstname: "codewizard",
@@ -35,6 +38,7 @@ export const comments: tComment[] = [{
     created_at: 1720346000
 }, {
     id: 2,
+    movie_id: 2,
     author_id: 2,
     author_username: "nightcoder",
     author_firstname: "nightcoder",
@@ -46,6 +50,7 @@ export const comments: tComment[] = [{
     created_at: 1750349600
 }, {
     id: 3,
+    movie_id: 2,
     author_id: 2,
     author_username: "designqueen",
     author_firstname: "designqueen",
@@ -57,6 +62,7 @@ export const comments: tComment[] = [{
     created_at: 1760353200
 }, {
     id: 4,
+    movie_id: 2,
     author_id: 2,
     author_username: "bugslayer",
     author_firstname: "bugslayer",
@@ -68,6 +74,7 @@ export const comments: tComment[] = [{
     created_at: 1768356800
 }, {
     id: 5,
+    movie_id: 2,
     author_id: 2,
     author_username: "fastdeploy",
     author_firstname: "fastdeploy",
@@ -79,6 +86,7 @@ export const comments: tComment[] = [{
     created_at: 1760360400
 }, {
     id: 6,
+    movie_id: 2,
     author_id: 2,
     author_username: "terminalguru",
     author_firstname: "terminalguru",
@@ -90,6 +98,7 @@ export const comments: tComment[] = [{
     created_at: 1730364000
 }, {
     id: 7,
+    movie_id: 2,
     author_id: 0,
     author_username: "fguirama",
     author_firstname: "fguirama",

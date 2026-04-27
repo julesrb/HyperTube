@@ -180,7 +180,7 @@ function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComme
                   onInput={autoResize}
                   className="w-full resize-none font-sans"
                   onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
+                      if (e.key === "Enter" && !e.shiftKey && newEditedComment.trim().length > 0 && newEditedComment.trim() !== comment.comment) {
                           e.preventDefault();
                           saveChange();
                       }

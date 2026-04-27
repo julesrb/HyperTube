@@ -4,9 +4,9 @@ import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/modal/Layout";
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import {Button} from "@/components/Button";
 import {useNotification} from "@/context/NotificationContext";
 import {successMessages} from "@/types/message";
+import {Button} from "@/components/Buttons";
 
 export default function ForgotPassword() {
     const { activeModal, closeModal, } = useModal();

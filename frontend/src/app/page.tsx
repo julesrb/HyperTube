@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {MoviesCard} from "@/components/MovieCard";
 import MoviesHero from "@/components/MovieHero";
 import {genres} from "@/types/genre";
-import {HypertubeLogo} from "@/components/Icon";
+import {HypertubeLogo} from "@/components/Icons";
 import GenreTags from "@/components/GenreTags";
 import Section from "@/components/Section";
 import {useAuth} from "@/context/AuthContext";

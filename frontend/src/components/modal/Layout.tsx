@@ -1,5 +1,5 @@
 import React from "react";
-import {CloseButton} from "@/components/Button";
+import {CloseButton} from "@/components/Buttons";
 
 export default function ModalLayout({children, onClose, title, defaultLayout = true}: { children: React.ReactNode, onClose: () => void, title: string, defaultLayout?: boolean }) {
     if (!defaultLayout) return (<div onClick={onClose} className="fixed inset-0 z-50">{children}</div>);

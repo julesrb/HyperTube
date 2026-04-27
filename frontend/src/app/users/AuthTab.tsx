@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {Button} from "@/components/Button";
 import Input from "@/components/Input";
 import {useNotification} from "@/context/NotificationContext";
 import {errorMessages, successMessages} from "@/types/message";
+import {Button} from "@/components/Buttons";
 
 export default function AuthTab() {
     const { addNotification } = useNotification();

@@ -179,11 +179,29 @@ export function CheckFillIcon({className = "", size = 20}) {
     </svg>);
 }
 
-export function FilterIcon({color = "", size = 20}) {
+export function FilterIcon({color = "black", size = 20}) {
     const fullColor = `var(--color-${color})`;
 
     return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
         <path d="M6.3 0v1.8H0v1.8h6.3v1.8H9V0H6.3Zm4.5 1.8v1.8H18V1.8h-7.2Zm0 4.5v1.8H0v1.8h10.8v1.8h2.7V6.3h-2.7Zm4.5 1.8v1.8H18V8.1h-2.7ZM1.8 12.6v1.8H0v1.8h1.8V18h2.7v-5.4H1.8Zm4.5 1.8v1.8H18v-1.8H6.3Z"
             fill={fullColor}></path>
+    </svg>);
+}
+
+export function EditIcon({color = "black", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg width={size} height={size} viewBox="0 0 19 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.06218 24.2846L1.53109 25.1327L0 20.7846L12 0L18.0622 3.5L6.06218 24.2846ZM10.1085 6.87582L1.97274 20.9673L2.71664 23.0793L4.91756 22.6675L13.0533 8.57601L10.1085 6.87582ZM11.0089 5.31629L13.9537 7.01649L15.6036 4.15877L12.6588 2.45858L11.0089 5.31629Z" fill={fullColor}/>
+    </svg>);
+}
+
+export function TrashIcon({color = "red", size = 20}) {
+    const fullColor = `var(--color-${color})`;
+
+    return (<svg width={size} height={size} viewBox="0 0 23 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21.9375 4.80042L18.2373 26.9996H4.7627L1.0625 4.80042H21.9375Z" stroke={fullColor} strokeWidth="1.8"/>
+        <path d="M2 9.90002L21 9.90002" stroke={fullColor} strokeWidth="1.8"/>
+        <path d="M15 3.90002V0.900024H7V3.90002" stroke={fullColor} strokeWidth="1.8"/>
     </svg>);
 }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
 import Link from "next/link";
-import {Button} from "@/components/Button";
+import {Button} from "@/components/Buttons";
 
 export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] | string[], movie: tMovie, onClick?: () => void }) {
     const [index, setIndex] = useState(0);

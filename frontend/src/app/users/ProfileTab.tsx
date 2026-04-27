@@ -1,11 +1,10 @@
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import {Button} from "@/components/Button";
 import {tUser} from "@/types/user";
 import ProfilePicture from "@/components/ProfilePicture";
-import SmallButton from "@/components/SmallButton";
 import {useNotification} from "@/context/NotificationContext";
 import {successMessages} from "@/types/message";
+import {Button, SmallButton} from "@/components/Buttons";
 
 
 export default function ProfileTab({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {

@@ -5,8 +5,8 @@ import ModalLayout from "@/components/modal/Layout";
 import React, {useState} from "react";
 import GenreTags from "@/components/GenreTags";
 import {genres} from "@/types/genre";
-import {CheckFillIcon} from "@/components/Icon";
-import {Button} from "@/components/Button";
+import {CheckFillIcon} from "@/components/Icons";
+import {Button} from "@/components/Buttons";
 
 export function GenreModal() {
     const {activeModal, closeModal,} = useModal();

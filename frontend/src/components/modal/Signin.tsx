@@ -4,12 +4,11 @@ import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/modal/Layout";
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import {Button} from "@/components/Button";
-import SmallButton from "@/components/SmallButton";
 import {useAuth} from "@/context/AuthContext";
 import {tUser, users} from "@/types/user";
 import {tNotificationType, useNotification} from "@/context/NotificationContext";
 import {errorMessages} from "@/types/message";
+import {Button, SmallButton} from "@/components/Buttons";
 
 // export default function SigninModal() {
 //     const {activeModal, closeModal,} = useModal();

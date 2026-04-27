@@ -2,8 +2,8 @@
 
 import React from "react";
 import {tNotification, useNotification} from "@/context/NotificationContext";
-import {CheckIcon} from "@/components/Icon";
-import {CloseButton} from "@/components/Button";
+import {CheckIcon} from "@/components/Icons";
+import {CloseButton} from "./Buttons";
 
 export const NotificationList = () => {
     const { notifications, removeNotification } = useNotification();

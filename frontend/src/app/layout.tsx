@@ -10,6 +10,7 @@ import {NotificationList} from "@/components/NotificationList";
 import React from "react";
 import {AuthProvider} from "@/context/AuthContext";
 import ForgotPassword from "@/components/modal/ForgotPassword";
+import {DeleteCommentModal} from "@/components/modal/DeleteComment";
 
 
 export default function RootLayout({children,}: { children: React.ReactNode; }) {
@@ -28,6 +29,7 @@ export default function RootLayout({children,}: { children: React.ReactNode; }) 
                 <GenreModal/>
                 <FilterGenreModal/>
                 <ForgotPassword/>
+                <DeleteCommentModal/>
 
                 {children}
             </ModalProvider>

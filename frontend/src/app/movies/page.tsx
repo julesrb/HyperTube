@@ -3,8 +3,8 @@
 import {movies} from "@/types/movie";
 import {ListMovieCard, MoviesCard} from "@/components/MovieCard";
 import React, {useState} from "react";
-import {GridIcon, ListIcon} from "@/components/Icon";
-import {CloseButton} from "@/components/Button";
+import {GridIcon, ListIcon} from "@/components/Icons";
+import {CloseButton} from "../../components/Buttons";
 import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
 import Pagination from "@/components/Pagination";

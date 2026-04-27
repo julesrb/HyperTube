@@ -4,9 +4,9 @@ import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/modal/Layout";
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import {Button} from "@/components/Button";
 import {tUser} from "@/types/user";
 import {useAuth} from "@/context/AuthContext";
+import {Button} from "@/components/Buttons";
 
 export default function Register() {
     const {activeModal, closeModal} = useModal();
@@ -61,7 +61,7 @@ function handleRegister(login: (user: tUser, token: string) => void, username: s
         email: email,
         color: "purple",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: Date.now(),
     };
     login(user, "coucou");

@@ -3,7 +3,7 @@
 import {useParams} from "next/navigation";
 import {movies} from "@/types/movie";
 import React from "react";
-import CommentSection from "@/app/movies/[id]/CommentSection";
+import {CommentSection} from "@/app/movies/[id]/CommentSection";
 import MovieInfoSection from "@/app/movies/[id]/MovieInfoSection";
 import MoviesHero from "@/components/MovieHero";
 
@@ -16,6 +16,6 @@ export default function MoviePage() {
     return (<div className="mx-4">
         <MoviesHero movie={movie} items={movie.backdrops} onClick={() => console.log('play movie')} />
         <MovieInfoSection movie={movie} />
-        <CommentSection />
+        <CommentSection movie={movie} />
     </div>);
 }

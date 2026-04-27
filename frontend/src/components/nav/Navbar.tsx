@@ -4,7 +4,7 @@ import {useModal} from "@/context/ModalContext";
 import LanguageDropdown from "@/components/nav/LanguageDropdown";
 import React, {useState} from "react";
 import Link from "next/link";
-import {ExitDoorIcon, HypertubeLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icon";
+import {ExitDoorIcon, HypertubeLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icons";
 import {useAuth} from "@/context/AuthContext";
 
 type NavItem = {

@@ -46,10 +46,16 @@ export function CommentSection({movie}: {movie: tMovie}) {
             <h6 className="text-8xl">Comment</h6>
         </div>
         <div className="max-w-2xl w-full">
-            {user !== null ? <div className="flex gap-4 mb-8 w-full">
-                <ProfilePicture user={user}/>
-                <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
-            </div> : <button onClick={() => openModal({type: "signin"})} className="hover:underline font-extralight">Connectez-vous pour pouvoir poster un commentaire</button>}
+            <div className="mb-8 w-full text-center">
+                {
+                    user !== null ?
+                    <div className="flex gap-4">
+                        <ProfilePicture user={user}/>
+                        <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
+                    </div> :
+                    <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
+                }
+            </div>
             <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
         </div>
     </div>);

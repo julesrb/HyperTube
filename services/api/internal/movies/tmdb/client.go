@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"hypertube/api/internal/models"
 	"io"
 	"net/http"
 	"os"
@@ -29,16 +30,6 @@ func NewClient() *Client {
 
 const tmdbImageBase = "https://image.tmdb.org/t/p/w500"
 
-type MovieResult struct {
-	ImdbID      string
-	Title       string
-	Year        string
-	PosterURL   string
-	BackdropURL string
-	Genre       []int
-	Note        float32
-}
-
 type findResponse struct {
 	MovieResults []struct {
 		ID           int     `json:"id"`
@@ -51,12 +42,12 @@ type findResponse struct {
 	} `json:"movie_results"`
 }
 
-func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (MovieResult, error) {
+func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (models.Movie, error) {
 	url := "https://api.themoviedb.org/3/find/" + imdbID + "?external_source=imdb_id&language=en-US"
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return MovieResult{}, err
+		return models.Movie{}, err
 	}
 
 	req.Header.Add("accept", "application/json")
@@ -64,22 +55,22 @@ func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (MovieResult, 
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		return MovieResult{}, err
+		return models.Movie{}, err
 	}
 
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return MovieResult{}, err
+		return models.Movie{}, err
 	}
 
 	var result findResponse
 	if err := json.Unmarshal(body, &result); err != nil {
-		return MovieResult{}, err
+		return models.Movie{}, err
 	}
 
 	if len(result.MovieResults) == 0 {
-		return MovieResult{}, fmt.Errorf("no TMDB movie found for IMDb ID %s", imdbID)
+		return models.Movie{}, fmt.Errorf("no TMDB movie found for IMDb ID %s", imdbID)
 	}
 
 	m := result.MovieResults[0]
@@ -88,7 +79,7 @@ func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (MovieResult, 
 		year = m.ReleaseDate[:4]
 	}
 
-	return MovieResult{
+	return models.Movie{
 		ImdbID:      fmt.Sprintf("%d", m.ID),
 		Title:       m.Title,
 		Year:        year,

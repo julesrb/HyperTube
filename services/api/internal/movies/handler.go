@@ -17,7 +17,7 @@ type movieStore interface {
 }
 
 type MovieSearcher interface {
-	SearchByTitle(ctx context.Context, title string) ([]models.MovieTorrents, error)
+	SearchByTitle(ctx context.Context, title string) ([]models.MovieSource, error)
 }
 
 type Handler struct {
@@ -39,11 +39,11 @@ func (h *Handler) GetMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := make([]movieResponse, len(movies))
+	movieResponse := make([]movieResponse, len(movies))
 	for i, m := range movies {
-		response[i] = toMovieResponse(m)
+		movieResponse[i] = toMovieResponse(m)
 	}
-	respond.List(w, http.StatusOK, response, len(response))
+	respond.List(w, http.StatusOK, movieResponse, len(movieResponse))
 }
 
 // Get returns metadata for a single movie.
@@ -59,31 +59,34 @@ func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	//TODO retrieve the source of the movie and crawl for links. if no match exit
+	//TODO a full tmdb fetch to get the actual details
+	//TODO fetch torrent info
 	respond.Item(w, http.StatusOK, movie)
 }
 
 func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Query().Get("title")
-	log.Printf("searching for movies with title: %s", title)
 	if title == "" {
 		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "title query parameter is required")
 		return
 	}
-	moviesAndTorrents, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO add the second torrent source
+	moviesSources, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
+	log.Printf("searching for movies with title: %s", title)
 	if err != nil {
 		log.Println("search err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
 		return
 	}
-	moviesAndTorrents = moviesAndTorrents[:11] // Limit to first 10 results MANUAL SAFE LIMIT FOR TMDB 
-	movies := make([]tmdb.MovieResult, 0)
-	for _, movieTorrents := range moviesAndTorrents {
-		movie, err := h.tmdb.FindByIMDBID(r.Context(), movieTorrents.ImdbID)
+	//TODO store each source URL to DB
+	movies := make([]movieResponse, 0, 11) // Limit to first 10 results MANUAL SAFE LIMIT FOR TMDB
+	for _, moviesSource := range moviesSources {
+		movie, err := h.tmdb.FindByIMDBID(r.Context(), moviesSource.ImdbID)
 		if err != nil {
-			log.Printf("TMDB lookup error for IMDb ID %s: %v", movieTorrents.ImdbID, err)
+			log.Printf("TMDB lookup error for IMDb ID %s: %v", moviesSource.ImdbID, err)
 			continue
 		}
-		movies = append(movies, movie)
+		movies = append(movies, toMovieResponse(movie))
 	}
 	respond.List(w, http.StatusOK, movies, len(movies))
 }

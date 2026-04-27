@@ -5,11 +5,11 @@ package movies
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

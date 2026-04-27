@@ -51,7 +51,7 @@ function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movi
                         <h1 className="relative hover:underline decoration-3 underline-offset-3">{movie.title}
                             <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
                         </h1> :
-                        <SecondaryButton className="my-4 font-semibold text-xl h-12" onClick={() => console.log("watch movie")}>Watch</SecondaryButton>
+                        <SecondaryButton className="my-4 font-bold text-xl h-12" onClick={() => console.log("watch movie")}>Watch</SecondaryButton>
                     }
                 </Link>
             </div>

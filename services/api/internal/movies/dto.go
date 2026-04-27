@@ -21,22 +21,20 @@ func toMovieResponse(m models.Movie) movieResponse {
 }
 
 type movieDetailResponse struct {
-	ImdbID      string            `json:"imdb_id"`
-	TmdbID      string            `json:"tmdb_id"`
-	Title       string            `json:"title"`
-	Year        string            `json:"year"`
-	PosterURL   string            `json:"poster_url"`
-	BackdropURL string            `json:"backdrop_url"`
-	IMDbRating  float32           `json:"imdb_rating"`
-	Genre       []int             `json:"genres"`
-	Runtime     int               `json:"runtime_minutes"`
-	Summary     string            `json:"summary"`
-	Director    string            `json:"director"`
-	Cast        []string          `json:"cast"`
-	Watched     bool              `json:"watched"`
-	Progression float32           `json:"progression"`
-	Torrents    []models.Torrent  `json:"torrent"`
-	Subtitles   []models.Subtitle `json:"subtitles"`
+	ImdbID      string   `json:"imdb_id"`
+	TmdbID      string   `json:"tmdb_id"`
+	Title       string   `json:"title"`
+	Year        string   `json:"year"`
+	PosterURL   string   `json:"poster_url"`
+	BackdropURL string   `json:"backdrop_url"`
+	Note        float32  `json:"note"`
+	Genre       []int    `json:"genres"`
+	Runtime     int      `json:"runtime_minutes"`
+	Summary     string   `json:"summary"`
+	Director    string   `json:"director"`
+	Cast        []string `json:"cast"`
+	Watched     bool     `json:"watched"`
+	Progression float32  `json:"progression"`
 }
 
 func toMovieDetailResponse(m models.Movie) movieDetailResponse {
@@ -47,7 +45,7 @@ func toMovieDetailResponse(m models.Movie) movieDetailResponse {
 		Year:        m.Year,
 		PosterURL:   m.PosterURL,
 		BackdropURL: m.BackdropURL,
-		IMDbRating:  m.IMDbRating,
+		Note:        m.Note,
 		Genre:       m.Genre,
 		Runtime:     m.Runtime,
 		Summary:     m.Summary,
@@ -55,7 +53,5 @@ func toMovieDetailResponse(m models.Movie) movieDetailResponse {
 		Cast:        m.Cast,
 		Watched:     m.Watched,
 		Progression: m.Progression,
-		Torrents:    m.Torrents,
-		Subtitles:   m.Subtitles,
 	}
 }

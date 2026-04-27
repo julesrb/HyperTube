@@ -37,6 +37,16 @@ func (f *fakeStore) upsertMovie(ctx context.Context, m models.Movie) error {
 	return nil
 }
 
+type fakeTMDB struct{}
+
+func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie, error) {
+	return models.Movie{ImdbID: imdbID}, nil
+}
+
+func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string) (models.MovieDetails, error) {
+	return models.MovieDetails{}, nil
+}
+
 func TestGetMovies_OK(t *testing.T) {
 	h := &Handler{store: &fakeStore{
 		movies: []models.Movie{
@@ -122,7 +132,7 @@ func TestGetMovies_StoreError(t *testing.T) {
 }
 
 func TestGetMoviesId_OK(t *testing.T) {
-	h := &Handler{store: &fakeStore{
+	h := &Handler{tmdb: &fakeTMDB{}, store: &fakeStore{
 		movies: []models.Movie{
 			{
 				ImdbID:      "693134",
@@ -130,7 +140,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Year:        "2024",
 				PosterURL:   "https://image.tmdb.org/t/p/original/rjmLNTt5tP1obYx4YFzLHpN7KcG.jpg",
 				BackdropURL: "https://image.tmdb.org/t/p/original/oBCR7ShGq9ZdnHMK8SGOckGpEgo.jpg",
-				IMDbRating:  8.1,
+				Note:        8.1,
 				Genre:       []int{878, 12, 18},
 				Runtime:     167,
 				Summary:     "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a path of revenge against the conspirators who destroyed his family.",
@@ -144,7 +154,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Year:        "2025",
 				PosterURL:   "https://image.tmdb.org/t/p/original/lE9KpVwgeWHMwgwkNaeH5nEFh20.jpg",
 				BackdropURL: "https://image.tmdb.org/t/p/original/u8DU5fkLoM5tTRukzPC31oGPxaQ.jpg",
-				IMDbRating:  7.4,
+				Note:        7.4,
 				Genre:       []int{878, 12, 14},
 				Runtime:     197,
 				Summary:     "Following a devastating conflict with the RDA and the death of their eldest son, Jake Sully and Neytiri face a new threat on Pandora.",

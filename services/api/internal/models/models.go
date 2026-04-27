@@ -1,23 +1,20 @@
 package models
 
 type Movie struct {
-	ImdbID      string     `json:"imdb_id"`
-	TmdbID      string     `json:"tmdb_id"`
-	Title       string     `json:"title"`
-	Year        string     `json:"year"`
-	PosterURL   string     `json:"poster_url"`
-	BackdropURL string     `json:"backdrop_url"`
-	IMDbRating  float32    `json:"imdb_rating"`
-	Genre       []int      `json:"genres"`
-	Runtime     int        `json:"runtime_minutes"`
-	Note        float32    `json:"note"`
-	Summary     string     `json:"summary"`
-	Director    string     `json:"director"`
-	Cast        []string   `json:"cast"`
-	Watched     bool       `json:"watched"`
-	Progression float32    `json:"progression"`
-	Torrents    []Torrent  `json:"torrent"`
-	Subtitles   []Subtitle `json:"subtitles"`
+	ImdbID      string   `json:"imdb_id"`
+	TmdbID      string   `json:"tmdb_id"`
+	Title       string   `json:"title"`
+	Year        string   `json:"year"`
+	PosterURL   string   `json:"poster_url"`
+	BackdropURL string   `json:"backdrop_url"`
+	Genre       []int    `json:"genres"`
+	Runtime     int      `json:"runtime_minutes"`
+	Note        float32  `json:"note"`
+	Summary     string   `json:"summary"`
+	Director    string   `json:"director"`
+	Cast        []string `json:"cast"`
+	Watched     bool     `json:"watched"`
+	Progression float32  `json:"progression"`
 }
 
 type Torrent struct {
@@ -32,6 +29,12 @@ type Torrent struct {
 type Subtitle struct {
 	URL      string `json:"url"`
 	Language string `json:"language"`
+}
+
+type MovieDetails struct {
+	Summary  string   `json:"summary"`
+	Director string   `json:"director"`
+	Cast     []string `json:"cast"`
 }
 
 type TrackerSource struct {

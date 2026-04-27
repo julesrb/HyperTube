@@ -22,10 +22,15 @@ type MovieSearcher interface {
 	SearchByTitle(ctx context.Context, title string) ([]models.TrackerSource, error)
 }
 
+type tmdbClient interface {
+	FindByIMDBID(ctx context.Context, imdbID string) (models.Movie, error)
+	GetMovieDetails(ctx context.Context, tmdbID string) (models.MovieDetails, error)
+}
+
 type Handler struct {
 	store     movieStore
 	searchers []MovieSearcher
-	tmdb      *tmdb.Client
+	tmdb      tmdbClient
 }
 
 func NewHandler(store movieStore, searchers []MovieSearcher) *Handler {
@@ -61,10 +66,20 @@ func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	details, err := h.tmdb.GetMovieDetails(r.Context(), movie.TmdbID)
+	if err != nil {
+		log.Printf("TMDB details error for TmdbID %s: %v", movie.TmdbID, err)
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to fetch movie details")
+		return
+	}
+	movie.Summary = details.Summary
+	movie.Director = details.Director
+	movie.Cast = details.Cast
+
 	//TODO retrieve the source of the movie and crawl for links. if no match exit
-	//TODO a full tmdb fetch to get the actual details
 	//TODO fetch torrent info
-	respond.Item(w, http.StatusOK, movie)
+	respond.Item(w, http.StatusOK, toMovieDetailResponse(*movie))
 }
 
 func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
@@ -86,8 +101,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		if i >= 10 { // Protect TMDB api call per second limit
 			break
 		}
-		// TODO look for preexisting data in db 
-		// TODO fetch the summary. director and cast 
+		// TODO OPTI look for preexisting data in db
 		movie, err := h.tmdb.FindByIMDBID(r.Context(), trackerSource.ImdbID)
 		if err != nil {
 			log.Printf("TMDB lookup error for IMDb ID %s: %v", trackerSource.ImdbID, err)

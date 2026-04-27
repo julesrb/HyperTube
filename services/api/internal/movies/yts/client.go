@@ -39,14 +39,14 @@ type ytsMovie struct {
 }
 
 // Orchestrates the search flow: queries YTS, fetches movie details, and return the matching IMDD IDs.
-func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.MovieSource, error) {
+func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.TrackerSource, error) {
 	response, err := c.searchMovies(ctx, title)
 	if err != nil {
 		return nil, err
 	}
 	var ytsMovies []ytsMovie = response.Data
 
-	movieSources := make([]models.MovieSource, 0)
+	TrackerSources := make([]models.TrackerSource, 0)
 	for _, m := range ytsMovies {
 		movieURL := c.baseURL + m.URL
 		log.Printf("Fetching movie details from URL: %s", movieURL)
@@ -59,13 +59,14 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Movi
 
 		imdbID := extractIMDbID(body)
 
-		movieSources = append(movieSources, models.MovieSource{
+		TrackerSources = append(TrackerSources, models.TrackerSource{
 			ImdbID: imdbID,
+			Source: "YTS",
 			URL:    movieURL,
 		})
 	}
 
-	return movieSources, nil
+	return TrackerSources, nil
 }
 
 // searchMovies queries the YTS search endpoint and decodes the JSON response.

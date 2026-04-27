@@ -14,10 +14,12 @@ import (
 type movieStore interface {
 	listFeatured(ctx context.Context) ([]models.Movie, error)
 	findByID(ctx context.Context, id string) (*models.Movie, error)
+	upsertMovie(ctx context.Context, m models.Movie) error
+	upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error
 }
 
 type MovieSearcher interface {
-	SearchByTitle(ctx context.Context, title string) ([]models.MovieSource, error)
+	SearchByTitle(ctx context.Context, title string) ([]models.TrackerSource, error)
 }
 
 type Handler struct {
@@ -71,20 +73,35 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "title query parameter is required")
 		return
 	}
-	moviesSources, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
 	log.Printf("searching for movies with title: %s", title)
+	trackerSources, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
 	if err != nil {
 		log.Println("search err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
 		return
 	}
-	//TODO store each source URL to DB
-	movies := make([]movieResponse, 0, 11) // Limit to first 10 results MANUAL SAFE LIMIT FOR TMDB
-	for _, moviesSource := range moviesSources {
-		movie, err := h.tmdb.FindByIMDBID(r.Context(), moviesSource.ImdbID)
+
+	movies := make([]movieResponse, 0)
+	for i, trackerSource := range trackerSources {
+		if i >= 10 { // Protect TMDB api call per second limit
+			break
+		}
+		// TODO look for preexisting data in db 
+		// TODO fetch the summary. director and cast 
+		movie, err := h.tmdb.FindByIMDBID(r.Context(), trackerSource.ImdbID)
 		if err != nil {
-			log.Printf("TMDB lookup error for IMDb ID %s: %v", moviesSource.ImdbID, err)
+			log.Printf("TMDB lookup error for IMDb ID %s: %v", trackerSource.ImdbID, err)
 			continue
+		}
+		if err = h.store.upsertMovie(r.Context(), movie); err != nil {
+			log.Println("db err:", err)
+			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
+			return
+		}
+		if err = h.store.upsertTrackerSource(r.Context(), trackerSource); err != nil {
+			log.Println("db err:", err)
+			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store tracker source")
+			return
 		}
 		movies = append(movies, toMovieResponse(movie))
 	}

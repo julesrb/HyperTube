@@ -34,7 +34,8 @@ type Subtitle struct {
 	Language string `json:"language"`
 }
 
-type MovieSource struct {
-	ImdbID string `json:"imdb_id"`
-	URL    string `json:"url"`
+type TrackerSource struct {
+	ImdbID string
+	Source string
+	URL    string
 }

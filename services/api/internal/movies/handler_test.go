@@ -29,6 +29,14 @@ func (f *fakeStore) findByID(_ context.Context, id string) (*models.Movie, error
 	return nil, ErrNotFound
 }
 
+func (f *fakeStore) upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error {
+	return nil
+}
+
+func (f *fakeStore) upsertMovie(ctx context.Context, m models.Movie) error {
+	return nil
+}
+
 func TestGetMovies_OK(t *testing.T) {
 	h := &Handler{store: &fakeStore{
 		movies: []models.Movie{

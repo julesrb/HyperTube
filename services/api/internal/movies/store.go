@@ -97,3 +97,23 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 	m := toMovie(r)
 	return &m, nil
 }
+
+func (s *Store) upsertMovie(ctx context.Context, m models.Movie) error {
+	_, err := s.db.Exec(ctx, `
+		INSERT INTO movies (imdbid, tmdbid, title, year, poster_url, backdrop_url, note, genre, runtime_minutes, summary, director, "cast")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		ON CONFLICT (imdbid) DO NOTHING
+	`, m.ImdbID, m.TmdbID, m.Title, m.Year, m.PosterURL, m.BackdropURL, m.Note, m.Genre, m.Runtime, m.Summary, m.Director, m.Cast)
+	return err
+}
+
+func (s *Store) upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error {
+	_, err := s.db.Exec(ctx, `
+		INSERT INTO tracker_sources (imdbid, source, url)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (imdbid, source) DO UPDATE SET
+			url = EXCLUDED.url
+		WHERE tracker_sources.url IS DISTINCT FROM EXCLUDED.url
+	`, ts.ImdbID, ts.Source, ts.URL)
+	return err
+}

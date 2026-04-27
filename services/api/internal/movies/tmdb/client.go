@@ -80,7 +80,8 @@ func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (models.Movie,
 	}
 
 	return models.Movie{
-		ImdbID:      fmt.Sprintf("%d", m.ID),
+		ImdbID:      imdbID,
+		TmdbID:      fmt.Sprintf("%d", m.ID),
 		Title:       m.Title,
 		Year:        year,
 		PosterURL:   tmdbImageBase + m.PosterPath,

@@ -10,7 +10,15 @@ CREATE TABLE IF NOT EXISTS movies (
     runtime_minutes INTEGER     NOT NULL,
     summary         TEXT        NOT NULL,
     director        TEXT        NOT NULL,
-    "cast"          TEXT[]      NOT NULL
+    "cast"          TEXT[]      
+);
+
+CREATE TABLE IF NOT EXISTS tracker_sources (
+    id      SERIAL PRIMARY KEY,
+    imdbid  TEXT NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    source  TEXT NOT NULL,
+    url     TEXT NOT NULL,
+    UNIQUE (imdbid, source)
 );
 
 CREATE TABLE IF NOT EXISTS torrents (

@@ -41,23 +41,29 @@ export function CommentSection({movie}: {movie: tMovie}) {
     }
     const deleteComment = (commentId: number) => {setComments(actualComments.filter(c => c.id !== commentId));}
 
-    return (<div className="mt-14 flex flex-col items-center py-4 gap-4">
-        <div className="border-b-5 border-b-yellow w-full mb-6">
-            <h6 className="text-8xl">Comment</h6>
-        </div>
-        <div className="max-w-2xl w-full">
-            <div className="mb-8 w-full text-center">
-                {
-                    user !== null ?
-                    <div className="flex gap-4">
-                        <ProfilePicture user={user}/>
-                        <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
-                    </div> :
-                    <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
-                }
+    return (<div className="mx-auto max-w-2xl flex flex-col items-center gap-7">
+        <div className="w-full">
+            <h1 className="text-center">Comments</h1>
+            <div className="flex h-4 w-full">
+                <div className="h-full w-full bg-yellow"></div>
+                <div className="h-full w-full bg-pink"></div>
+                <div className="h-full w-full bg-green"></div>
+                <div className="h-full w-full bg-purple"></div>
+                <div className="h-full w-full bg-blue"></div>
+                <div className="h-full w-full bg-red"></div>
             </div>
-            <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
         </div>
+        <div className="w-full text-center">
+            {
+                user !== null ?
+                <div className="flex gap-4">
+                    <ProfilePicture user={user}/>
+                    <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
+                </div> :
+                <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
+            }
+        </div>
+        <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
     </div>);
 }
 

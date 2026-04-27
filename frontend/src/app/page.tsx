@@ -30,7 +30,7 @@ export default function HomePage() {
         <GenreTags genres={genres} className="items-center justify-center w-full mt-4"/>
 
         {continueWatching &&
-        <Section title="Continue to watch" href="/movies/">
+        <Section title="Continue to watch" href="/users?tab=history">
             <MoviesCard movieSets={continueWatching.slice(0, 3)} />
         </Section>}
 
@@ -38,7 +38,7 @@ export default function HomePage() {
             <MoviesCard movieSets={popular.slice(0, 3)} />
         </Section>
 
-        <Section title="Most rated" href="/movies/">
+        <Section title="Most rated" href="/movies?sort=most_rated">
             <MoviesCard movieSets={mostRated.slice(0, 3)} />
         </Section>
 

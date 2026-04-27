@@ -20,9 +20,10 @@ interface iSort {
 export default function Page() {
     const searchParams = useSearchParams();
     const genre = searchParams.get('genre');
+    const mostRated = searchParams.get('sort');
     const [searchValue, setSearchValue] = useState("");
-    const [viewType, setViewType] = useState<tViewType>(genre === null ? "grid" : "list");
-    const [sort, setSort] = useState<iSort>({type: "name", side: true});
+    const [viewType, setViewType] = useState<tViewType>(genre === null && mostRated === null ? "grid" : "list");
+    const [sort, setSort] = useState<iSort>({type: mostRated ? "grade" : "name", side: true});
     const [index, setIndex] = useState(0);
 
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {

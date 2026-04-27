@@ -3,6 +3,7 @@ export const successMessages = {
     emailChanged: "Votre adresse e-mail a été modifiée. Un e-mail de confirmation vient de vous être envoyé pour valider ce changement.",
     emailResetPassword: "Un e-mail vient de vous être envoyé pour réinitialiser votre mot de passe.",
     infoChanged: "Vos informations ont bien été mis à jour.",
+    login: "Vous êtes maintenant connecté avec succès.",
 };
 
 export const errorMessages = {

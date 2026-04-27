@@ -7,7 +7,7 @@ import Input from "@/components/Input";
 import {useAuth} from "@/context/AuthContext";
 import {tUser, users} from "@/types/user";
 import {tNotificationType, useNotification} from "@/context/NotificationContext";
-import {errorMessages} from "@/types/message";
+import {errorMessages, successMessages} from "@/types/message";
 import {Button, SmallButton} from "@/components/Buttons";
 
 // export default function SigninModal() {
@@ -70,6 +70,7 @@ function handleLogin(login: (user: tUser, token: string) => void, addNotificatio
     if (findUser.length > 0) {
         login(findUser[0], "coucou");
         closeModal();
+        addNotification(successMessages.login, "success");
     }
     else
         addNotification(errorMessages.passwordIncorrect, "error");

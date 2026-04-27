@@ -139,6 +139,14 @@ var languageRe = regexp.MustCompile(`icon-volume-medium"></span>\s*([^<]+)`)
 // Extracts seed/peer count from each tech-spec-info block.
 var seedsRe = regexp.MustCompile(`tech-peers-seeds">P/S</span>\s*([^\s<]+)`)
 
+func (c *Client) FetchTorrents(ctx context.Context, pageURL string) ([]models.Torrent, error) {
+	body, err := c.fetchMovieDetails(ctx, pageURL)
+	if err != nil {
+		return nil, err
+	}
+	return extractTorrents(body), nil
+}
+
 func extractTorrents(body []byte) []models.Torrent {
 	modalMatches := torrentBlockRe.FindAllSubmatch(body, -1)
 	langMatches := languageRe.FindAllSubmatch(body, -1)

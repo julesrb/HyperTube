@@ -107,6 +107,23 @@ func (s *Store) upsertMovie(ctx context.Context, m models.Movie) error {
 	return err
 }
 
+func (s *Store) findTrackerSource(ctx context.Context, imdbID string) (*models.TrackerSource, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT imdbid, source, url FROM tracker_sources WHERE imdbid = $1 LIMIT 1
+	`, imdbID)
+	if err != nil {
+		return nil, err
+	}
+	ts, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.TrackerSource])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return &ts, nil
+}
+
 func (s *Store) upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error {
 	_, err := s.db.Exec(ctx, `
 		INSERT INTO tracker_sources (imdbid, source, url)

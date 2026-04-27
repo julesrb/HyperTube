@@ -38,7 +38,7 @@ type MovieDetails struct {
 }
 
 type TrackerSource struct {
-	ImdbID string
-	Source string
-	URL    string
+	ImdbID string `db:"imdbid"`
+	Source string `db:"source"`
+	URL    string `db:"url"`
 }

@@ -28,12 +28,11 @@ func main() {
 
 	// prepare dependencies for DB and torrent search clients
 	store := movies.NewStore(db)
-	searchers := []movies.MovieSearcher{
-		yts.NewClient(),
-	}
+	ytsClient := yts.NewClient()
+	searchers := []movies.MovieSearcher{ytsClient}
+	fetchers := []movies.TorrentFetcher{ytsClient}
 
-	//inject dependencies into handlers
-	moviesHandler := movies.NewHandler(store, searchers)
+	moviesHandler := movies.NewHandler(store, searchers, fetchers)
 
 	mux := http.NewServeMux()
 
@@ -56,6 +55,7 @@ func main() {
 	mux.HandleFunc("GET /api/v1/movies", moviesHandler.GetMovies)
 	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies)
 	mux.HandleFunc("GET /api/v1/movies/{id}", moviesHandler.GetMoviesId)
+	mux.HandleFunc("GET /api/v1/movies/{id}/torrents", moviesHandler.GetMovieTorrents)
 	// mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.ListComments)
 	// mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.CreateComment)
 

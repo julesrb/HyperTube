@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
@@ -12,6 +12,12 @@ export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] |
 
     const slideLeft = () => setIndex((prev) => (prev - 1 + items.length) % items.length);
     const slideRight = () => setIndex((prev) => (prev + 1) % items.length);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % items.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [items.length]);
 
     return (<div className="overflow-hidden w-full">
         <div className="flex transition-transform duration-600 ease-out"

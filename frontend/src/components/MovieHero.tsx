@@ -3,7 +3,7 @@ import Image from "next/image";
 import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
 import Link from "next/link";
-import {Button} from "@/components/Buttons";
+import {SecondaryButton} from "@/components/Buttons";
 
 export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] | string[], movie: tMovie, onClick?: () => void }) {
     const [index, setIndex] = useState(0);
@@ -39,11 +39,14 @@ function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movi
                  onClick={onClickRight}></div>
             <div className="absolute inset-0 text-white flex items-end justify-center text-center mx-auto">
                 <div className="bg-gradient"></div>
-                <Link href={"/movies/" + movie.id} className="z-10 max-w-2/3 p-6">
-                    <h1 className="relative hover:underline decoration-3 underline-offset-3">{movie.title}
-                        <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
-                    </h1>
-                    {backdrop === undefined && <Button className="my-4" onClick={() => console.log("watch movie")}>Watch</Button>}
+                <Link href={"/movies/" + movie.id} className="z-40 max-w-2/3 p-6">
+                    {
+                        backdrop === undefined ?
+                        <h1 className="relative hover:underline decoration-3 underline-offset-3">{movie.title}
+                            <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
+                        </h1> :
+                        <SecondaryButton className="my-4 font-semibold text-xl h-12" onClick={() => console.log("watch movie")}>Watch</SecondaryButton>
+                    }
                 </Link>
             </div>
         </div>

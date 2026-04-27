@@ -8,7 +8,7 @@ export default function ProfilePicture({user, onClick, size = 0, color, classNam
 
     if (user.profile_picture)
         children = <Image className="w-full h-full object-cover" height={200} width={200} src={user.profile_picture} alt="profile picture" />;
-    else {
+    else if (user.firstname && user.lastname){
         const initial = user.firstname[0] + user.lastname[0];
 
         if (color === undefined)

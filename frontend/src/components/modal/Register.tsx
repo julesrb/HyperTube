@@ -61,7 +61,7 @@ function handleRegister(login: (user: tUser, token: string) => void, username: s
         email: email,
         color: "purple",
         profile_picture: null,
-        film_history: [],
+        watch_history: [],
         joined_at: Date.now(),
     };
     login(user, "coucou");

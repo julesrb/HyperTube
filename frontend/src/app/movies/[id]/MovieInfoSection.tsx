@@ -3,9 +3,9 @@ import GenreTags from "@/components/GenreTags";
 import React from "react";
 
 export default function MovieInfoSection({movie} : {movie: tMovie}) {
-    return (<div className="flex flex-col mt-3 gap-4 max-w-2/3 mx-auto">
-        <h1 className="relative mx-auto mb-6 text-center">{movie.title}
-        <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
+    return (<div className="flex flex-col mt-8 gap-4 max-w-2/3 mx-auto">
+        <h1 className="relative mx-auto mb-2 text-center">{movie.title}
+            <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
     </h1>
     <InfoMovie name="Length">
         <p>{movie.length}</p>

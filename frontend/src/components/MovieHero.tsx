@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
 import Link from "next/link";
-import {Button} from "@/components/Buttons";
+import {SecondaryButton} from "@/components/Buttons";
 
 export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] | string[], movie: tMovie, onClick?: () => void }) {
     const [index, setIndex] = useState(0);
@@ -12,6 +12,12 @@ export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] |
 
     const slideLeft = () => setIndex((prev) => (prev - 1 + items.length) % items.length);
     const slideRight = () => setIndex((prev) => (prev + 1) % items.length);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % items.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [items.length]);
 
     return (<div className="overflow-hidden w-full">
         <div className="flex transition-transform duration-600 ease-out"
@@ -39,11 +45,14 @@ function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movi
                  onClick={onClickRight}></div>
             <div className="absolute inset-0 text-white flex items-end justify-center text-center mx-auto">
                 <div className="bg-gradient"></div>
-                <Link href={"/movies/" + movie.id} className="z-10 max-w-2/3 p-6">
-                    <h1 className="relative hover:underline decoration-3 underline-offset-3">{movie.title}
-                        <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
-                    </h1>
-                    {backdrop === undefined && <Button className="my-4" onClick={() => console.log("watch movie")}>Watch</Button>}
+                <Link href={"/movies/" + movie.id} className="z-40 max-w-2/3 p-6">
+                    {
+                        backdrop === undefined ?
+                        <h1 className="relative hover:underline decoration-3 underline-offset-3">{movie.title}
+                            <span className="absolute -right-18 font-hairline text-3xl tracking-normal">{movie.year}</span>
+                        </h1> :
+                        <SecondaryButton className="my-4 font-bold text-xl h-12" onClick={() => console.log("watch movie")}>Watch</SecondaryButton>
+                    }
                 </Link>
             </div>
         </div>

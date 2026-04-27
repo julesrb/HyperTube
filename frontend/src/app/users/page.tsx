@@ -11,11 +11,17 @@ import {Comments} from "@/app/movies/[id]/CommentSection";
 import {useAuth} from "@/context/AuthContext";
 import {comments} from "@/types/comment";
 import Pagination from "@/components/Pagination";
+import {useSearchParams} from "next/navigation";
 
 export default function Page() {
-    const {user, updateUser} = useAuth();
     const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab, comments: CommentsTab};
-    const [activeTab, setActiveTab] = useState<keyof typeof tabs>("profile");
+    type tTab = keyof typeof tabs;
+
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get("tab");
+    const initialTab: tTab = tabParam && tabParam in tabs ? (tabParam as tTab) : "profile"
+    const {user, updateUser} = useAuth();
+    const [activeTab, setActiveTab] = useState<tTab>(initialTab);
     if (!user)
         return null;
     const ActiveTab = tabs[activeTab];

@@ -2,7 +2,7 @@
 
 import {movies} from "@/types/movie";
 import {ListMovieCard, MoviesCard} from "@/components/MovieCard";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {GridIcon, ListIcon} from "@/components/Icons";
 import {CloseButton} from "../../components/Buttons";
 import {useModal} from "@/context/ModalContext";
@@ -20,9 +20,10 @@ interface iSort {
 export default function Page() {
     const searchParams = useSearchParams();
     const genre = searchParams.get('genre');
+    const mostRated = searchParams.get('sort');
     const [searchValue, setSearchValue] = useState("");
-    const [viewType, setViewType] = useState<tViewType>(genre === null ? "grid" : "list");
-    const [sort, setSort] = useState<iSort>({type: "name", side: true});
+    const [viewType, setViewType] = useState<tViewType>(genre === null && mostRated === null ? "grid" : "list");
+    const [sort, setSort] = useState<iSort>({type: mostRated ? "grade" : "name", side: true});
     const [index, setIndex] = useState(0);
 
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +44,15 @@ export default function Page() {
 }
 
 function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?: React.ChangeEvent<HTMLInputElement>) => void}) {
+    const inputRef = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+        const el = inputRef.current;
+        if (!el) return;
+        el.focus();
+    }, []);
+
     return (<div className="flex items-center px-6">
-        <input type="search" placeholder="Rechercher un film..." value={searchValue} onChange={onChange}
+        <input ref={inputRef} type="search" placeholder="Rechercher un film..." value={searchValue} onChange={onChange}
         className="w-full bg-white text-8xl font-condensed uppercase border-b focus:border-b-2"></input>
         <CloseButton className="absolute right-10" onClick={() => onChange()} disabled={searchValue.length === 0}/>
     </div>);

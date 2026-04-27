@@ -13,7 +13,7 @@ export default function MoviePage() {
 
     if (!movie) return <p>Movie not found</p>;
 
-    return (<div className="mx-4">
+    return (<div className="flex flex-col gap-10">
         <MoviesHero movie={movie} items={movie.backdrops} onClick={() => console.log('play movie')} />
         <MovieInfoSection movie={movie} />
         <CommentSection movie={movie} />

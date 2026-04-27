@@ -13,6 +13,8 @@ import {useModal} from "@/context/ModalContext";
 import {EditIcon, TrashIcon} from "@/components/Icons";
 import {movies, tMovie} from "@/types/movie";
 import {MovieCard} from "@/components/MovieCard";
+import {useNotification} from "@/context/NotificationContext";
+import {successMessages} from "@/types/message";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
@@ -20,6 +22,7 @@ dayjs.locale("fr");
 
 export function CommentSection({movie}: {movie: tMovie}) {
     const {user} = useAuth();
+    const {addNotification} = useNotification();
     const {openModal} = useModal();
     const [actualComments, setComments] = useState(comments);
     const addNewComment = (newComment: tComment) => {setComments([...actualComments, newComment]);}
@@ -34,20 +37,33 @@ export function CommentSection({movie}: {movie: tMovie}) {
             else
                 return comment;
         }));
+        addNotification(successMessages.commentChange, "success");
     }
     const deleteComment = (commentId: number) => {setComments(actualComments.filter(c => c.id !== commentId));}
 
-    return (<div className="mt-14 flex flex-col items-center py-4 gap-4">
-        <div className="border-b-5 border-b-yellow w-full mb-6">
-            <h6 className="text-8xl">Comment</h6>
+    return (<div className="mx-auto max-w-2xl flex flex-col items-center gap-7">
+        <div className="w-full">
+            <h1 className="text-center">Comments</h1>
+            <div className="flex h-4 w-full">
+                <div className="h-full w-full bg-yellow"></div>
+                <div className="h-full w-full bg-pink"></div>
+                <div className="h-full w-full bg-green"></div>
+                <div className="h-full w-full bg-purple"></div>
+                <div className="h-full w-full bg-blue"></div>
+                <div className="h-full w-full bg-red"></div>
+            </div>
         </div>
-        <div className="max-w-2xl w-full">
-            {user !== null ? <div className="flex gap-4 mb-8 w-full">
-                <ProfilePicture user={user}/>
-                <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
-            </div> : <button onClick={() => openModal({type: "signin"})} className="hover:underline font-extralight">Connectez-vous pour pouvoir poster un commentaire</button>}
-            <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
+        <div className="w-full text-center">
+            {
+                user !== null ?
+                <div className="flex gap-4">
+                    <ProfilePicture user={user}/>
+                    <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
+                </div> :
+                <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
+            }
         </div>
+        <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
     </div>);
 }
 
@@ -170,7 +186,7 @@ function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComme
                   onInput={autoResize}
                   className="w-full resize-none font-sans"
                   onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
+                      if (e.key === "Enter" && !e.shiftKey && newEditedComment.trim().length > 0 && newEditedComment.trim() !== comment.comment) {
                           e.preventDefault();
                           saveChange();
                       }

@@ -27,10 +27,10 @@ export default function HomePage() {
     return (<div>
         <AnimateLogo />
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
-        <GenreTags genres={genres} className="items-center justify-center w-full mt-4"/>
+        <GenreTags genres={genres.slice(0, 7)} className="items-center justify-center w-full my-8"/>
 
         {continueWatching &&
-        <Section title="Continue to watch" href="/movies/">
+        <Section title="Continue to watch" href="/users?tab=history">
             <MoviesCard movieSets={continueWatching.slice(0, 3)} />
         </Section>}
 
@@ -38,32 +38,24 @@ export default function HomePage() {
             <MoviesCard movieSets={popular.slice(0, 3)} />
         </Section>
 
-        <Section title="Most rated" href="/movies/">
+        <Section title="Most rated" href="/movies?sort=most_rated">
             <MoviesCard movieSets={mostRated.slice(0, 3)} />
         </Section>
 
-        <div className="flex w-full mt-5">
-            <div className="h-4 w-full bg-yellow-hover"></div>
-            <div className="h-4 w-full bg-pink-hover"></div>
-            <div className="h-4 w-full bg-green-hover"></div>
-            <div className="h-4 w-full bg-purple-hover"></div>
-            <div className="h-4 w-full bg-blue-hover"></div>
-            <div className="h-4 w-full bg-red-hover"></div>
-        </div>
         <div className="flex w-full">
-            <div className="h-4 w-full bg-yellow"></div>
-            <div className="h-4 w-full bg-pink"></div>
-            <div className="h-4 w-full bg-green"></div>
-            <div className="h-4 w-full bg-purple"></div>
-            <div className="h-4 w-full bg-blue"></div>
-            <div className="h-4 w-full bg-red"></div>
+            <div className="h-4 w-full bg-yellow hover:bg-yellow-hover"></div>
+            <div className="h-4 w-full bg-pink hover:bg-pink-hover"></div>
+            <div className="h-4 w-full bg-green hover:bg-green-hover"></div>
+            <div className="h-4 w-full bg-purple hover:bg-purple-hover"></div>
+            <div className="h-4 w-full bg-blue hover:bg-blue-hover"></div>
+            <div className="h-4 w-full bg-red hover:bg-red-hover"></div>
         </div>
     </div>);
 }
 
 function AnimateLogo() {
-    const maxHeight = 400;
-    const minHeight = 40;
+    const maxHeight = 300;
+    const minHeight = 50;
     const [logoHeight, setLogoHeight] = useState(maxHeight);
 
     useEffect(() => {

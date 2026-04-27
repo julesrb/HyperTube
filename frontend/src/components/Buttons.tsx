@@ -29,14 +29,14 @@ export function CloseButton({onClick, size = 30, className, disabled=false}: {on
 
 export function SecondaryButton({children, onClick, className} : {children: string, onClick: () => void, className?: string}) {
     return (<button
-        className={"uppercase bg-white text-black hover:underline hover:underline-gray " + className}
+        className={"uppercase text-nowrap px-5 h-10 bg-white text-black " + className}
         onClick={onClick}
     >{children}</button>);
 }
 
 export function SmallButton({children, onClick, className} : {children: string, onClick: () => void, className?: string}) {
     return (<button
-        className={"text-sm text-gray hover:underline hover:underline-gray " + className}
+        className={"text-sm font-extralight text-gray hover:underline hover:underline-gray " + className}
         onClick={onClick}
     >{children}</button>);
 }

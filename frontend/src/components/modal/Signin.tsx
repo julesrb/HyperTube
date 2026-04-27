@@ -7,7 +7,7 @@ import Input from "@/components/Input";
 import {useAuth} from "@/context/AuthContext";
 import {tUser, users} from "@/types/user";
 import {tNotificationType, useNotification} from "@/context/NotificationContext";
-import {errorMessages} from "@/types/message";
+import {errorMessages, successMessages} from "@/types/message";
 import {Button, SmallButton} from "@/components/Buttons";
 
 // export default function SigninModal() {
@@ -50,6 +50,13 @@ export default function Signin() {
                 }}>Forgotten?</SmallButton>
             </div>
             <Button className="h-8" onClick={() => handleLogin(login, addNotification, username, password, closeModal)}>Sign In</Button>
+            <div className="flex gap-2 mt-5">
+                <span className="text-sm">Pas encore de compte?</span>
+                <SmallButton onClick={() => {
+                    closeModal();
+                    openModal({type: "register"});
+                }}>Inscrivez-vous</SmallButton>
+            </div>
         </ModalLayout>
     );
 }
@@ -70,6 +77,7 @@ function handleLogin(login: (user: tUser, token: string) => void, addNotificatio
     if (findUser.length > 0) {
         login(findUser[0], "coucou");
         closeModal();
+        addNotification(successMessages.login, "success");
     }
     else
         addNotification(errorMessages.passwordIncorrect, "error");

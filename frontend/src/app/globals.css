@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* --------------------------------------------------- VARIABELES --------------------------------------------------- */
+@theme {
+    --color-black: #191919;
+    --color-black-hover: #383838;
+    --color-gray: #878787;
+
+    --color-yellow: #FFD600;
+    --color-pink: #FFA5F5;
+    --color-green: #00F475;
+    --color-purple: #747AF5;
+    --color-blue: #AEF0FF;
+    --color-red: #FF4742;
+
+    --color-yellow-hover: #FFE45C;
+    --color-pink-hover: #FFCEFD;
+    --color-green-hover: #5CFB9B;
+    --color-purple-hover: #A5AAFE;
+    --color-blue-hover: #BEF7FF;
+    --color-red-hover: #FF787E;
+
+    --cursor-left: url("/svg/left-cursor.svg") 25 25, auto;
+    --cursor-right: url("/svg/right-cursor.svg") 25 25, auto;
+    --cursor-play: url("/svg/play-cursor.svg") 25 25, auto;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+    --font-body: "FT Calhern", sans-serif;
+    --font-wide: "FT Calhern Wide", sans-serif;
+    --font-hairline: "FT Calhern Hairline", sans-serif;
+    --font-condensed: "FT Calhern Condensed", sans-serif;
+    --font-sans: "FT Calhern Light", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body { font-family: var(--font-body), sans-serif; background-color: var(--color-white); color: var(--color-black); }
+h1, h2, h3, h4, h5, h6, .custom-condensed { @apply font-condensed uppercase; }
+h1 { @apply text-8xl; }
+h2 { @apply text-6xl; }
+h3 { @apply text-5xl; }
+h4 { @apply text-4xl; }
+h5 { @apply text-3xl; }
+p { @apply font-sans; }
+input:focus, textarea:focus { outline: none; }
+input[type="search"]::-webkit-search-cancel-button {-webkit-appearance: none; appearance: none;}
+button:hover, Link:hover { @apply cursor-pointer; }
+
+/* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
+.bg-gradient { @apply size-full absolute inset-0 bg-linear-to-t from-black via-transparent via-40% to-transparent opacity-90; }
+
+.custom-underline:hover {
+    text-decoration: underline var(--color-black);
+    text-decoration-thickness: 0.07rem;
+    text-underline-offset: 0.2rem;
+}
+.custom-underline-red:hover {
+    text-decoration: underline var(--color-red);
+    text-decoration-thickness: 0.07rem;
+    text-underline-offset: 0.2rem;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.custom-no-underline { text-decoration: none !important; }
+
+.custom-cursor-left:hover { cursor: var(--cursor-left); }
+.custom-cursor-right:hover { cursor: var(--cursor-right); }
+.custom-cursor-play:hover { cursor: var(--cursor-play); }
+
+.custom-shadow-s { box-shadow: 8px 7px 0 var(--color-black); }
+.custom-shadow-m { box-shadow: 14px 14px 0 var(--color-black); }
+.custom-shadow-l { box-shadow: 26px 26px 0 var(--color-black); }
+
+.custom-btn { transition: all 0.2s ease; }
+.custom-btn:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 4px 4px 0 var(--color-black);
+    border: 1px solid var(--color-black);
 }
+
+/* --------------------------------------------------- ANIMATION ---------------------------------------------------- */
+@keyframes marquee {
+    from {transform: translateX(0);}
+    to {transform: translateX(-100%);}
+}
+.animate-marquee {animation: marquee 10s linear infinite;}

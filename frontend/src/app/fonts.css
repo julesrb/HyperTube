@@ -1,0 +1,620 @@
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-BlackItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-BlackItalic.woff') format('woff');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Black.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Bold.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-BoldItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedBlack.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedBlack.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedBold.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedBold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedBoldItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedBoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Book';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedBook.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedBook.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Book';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedBookItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedBookItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Hairline';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedHairline.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedHairline.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Hairline';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedHairlineItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedHairlineItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedHeavy.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedHeavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedHeavyItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedHeavyItalic.woff') format('woff');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedLight.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedLight.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedLightItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedLightItalic.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedMedium.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedMedium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedMediumItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedMediumItalic.woff') format('woff');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedRegular.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedRegularItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedRegularItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedSemibold.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedSemibold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedSemiboldItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedSemiboldItalic.woff') format('woff');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Skeleton';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedSkeletonItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedSkeletonItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedThin.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedThin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedThinItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedThinItalic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedUltralight.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedUltralight.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedUltralightItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedUltralightItalic.woff') format('woff');
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Ultrathin';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedUltrathin.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedUltrathin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Condensed Ultrathin';
+    src: url('/fonts/FTCalhern/FTCalhern-CondensedUltrathinItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-CondensedUltrathinItalic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Hairline';
+    src: url('/fonts/FTCalhern/FTCalhern-Hairline.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Hairline.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Hairline';
+    src: url('/fonts/FTCalhern/FTCalhern-HairlineItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-HairlineItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Heavy.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Heavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-HeavyItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-HeavyItalic.woff') format('woff');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Light.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-LightItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-LightItalic.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Medium.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-MediumItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-MediumItalic.woff') format('woff');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-RegularItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-RegularItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Semibold.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Semibold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-SemiboldItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-SemiboldItalic.woff') format('woff');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Thin.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Thin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-ThinItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-ThinItalic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-Ultralight.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Ultralight.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern';
+    src: url('/fonts/FTCalhern/FTCalhern-UltralightItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-UltralightItalic.woff') format('woff');
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Ultrathin';
+    src: url('/fonts/FTCalhern/FTCalhern-Ultrathin.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-Ultrathin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Ultrathin';
+    src: url('/fonts/FTCalhern/FTCalhern-UltrathinItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-UltrathinItalic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideBlack.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideBlack.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideBlack.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideBlack.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideBlackItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideBlackItalic.woff') format('woff');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideBold.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideBold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideBoldItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideBoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide Hairline';
+    src: url('/fonts/FTCalhern/FTCalhern-WideHairline.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideHairline.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide Hairline';
+    src: url('/fonts/FTCalhern/FTCalhern-WideHairlineItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideHairlineItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideHeavyItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideHeavyItalic.woff') format('woff');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideHeavy.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideHeavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideLight.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideLight.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideLightItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideLightItalic.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideMedium.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideMedium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideMediumItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideMediumItalic.woff') format('woff');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideRegular.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideRegularItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideRegularItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideSemibold.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideSemibold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideSemiboldItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideSemiboldItalic.woff') format('woff');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideThin.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideThin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideThinItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideThinItalic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideUltralight.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideUltralight.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide';
+    src: url('/fonts/FTCalhern/FTCalhern-WideUltralightItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideUltralightItalic.woff') format('woff');
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide Ultrathin';
+    src: url('/fonts/FTCalhern/FTCalhern-WideUltrathin.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideUltrathin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FT Calhern Wide Ultrathin';
+    src: url('/fonts/FTCalhern/FTCalhern-WideUltrathinItalic.woff2') format('woff2'),
+    url('/fonts/FTCalhern/FTCalhern-WideUltrathinItalic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}

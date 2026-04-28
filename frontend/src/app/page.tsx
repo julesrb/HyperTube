@@ -1,65 +1,99 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+import {movies, tMovie} from "@/types/movie";
+import React, {useEffect, useState} from "react";
+import {MoviesCard} from "@/components/MovieCard";
+import MoviesHero from "@/components/MovieHero";
+import {genres} from "@/types/genre";
+import {HypertubeLogo} from "@/components/Icons";
+import GenreTags from "@/components/GenreTags";
+import Section from "@/components/Section";
+import {useAuth} from "@/context/AuthContext";
+import {tUser} from "@/types/user";
+
+export default function HomePage() {
+    const {user} = useAuth();
+    const moviesSets = user ? filterAlreadyWatch(user, movies) : movies;
+    const popular = structuredClone(moviesSets);
+    const mostRated = structuredClone(moviesSets).sort((a, b) => b.rate - a.rate);
+    let continueWatching;
+
+    if (user) {
+        continueWatching = user.watch_history
+            .filter(h => h.watch_percent < 100)
+            .map(m => movies.find(mSearch => mSearch.id === m.movie_id))
+            .filter(m => m !== undefined);
+    }
+    return (<div>
+        <AnimateLogo />
+        <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
+        <GenreTags genres={genres.slice(0, 7)} className="items-center justify-center w-full my-8"/>
+
+        {continueWatching &&
+        <Section title="Continue to watch" href="/users?tab=history">
+            <MoviesCard movieSets={continueWatching.slice(0, 3)} />
+        </Section>}
+
+        <Section title="Popular" href="/movies/">
+            <MoviesCard movieSets={popular.slice(0, 3)} />
+        </Section>
+
+        <Section title="Most rated" href="/movies?sort=most_rated">
+            <MoviesCard movieSets={mostRated.slice(0, 3)} />
+        </Section>
+
+        <div className="flex w-full">
+            <div className="h-4 w-full bg-yellow hover:bg-yellow-hover"></div>
+            <div className="h-4 w-full bg-pink hover:bg-pink-hover"></div>
+            <div className="h-4 w-full bg-green hover:bg-green-hover"></div>
+            <div className="h-4 w-full bg-purple hover:bg-purple-hover"></div>
+            <div className="h-4 w-full bg-blue hover:bg-blue-hover"></div>
+            <div className="h-4 w-full bg-red hover:bg-red-hover"></div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+    </div>);
+}
+
+function AnimateLogo() {
+    const maxHeight = 300;
+    const minHeight = 50;
+    const [logoHeight, setLogoHeight] = useState(maxHeight);
+
+    useEffect(() => {
+        let virtualScroll = 0;
+
+        const handleWheel = (e: WheelEvent) => {
+            const isAtMin = virtualScroll >= (maxHeight - minHeight);
+            const isAtTop = window.scrollY === 0;
+
+            if (!isAtMin || (isAtTop && e.deltaY < 0)) {
+                e.preventDefault();
+
+                virtualScroll += e.deltaY;
+                virtualScroll = Math.max(0, Math.min(virtualScroll, maxHeight));
+                setLogoHeight(maxHeight - virtualScroll);
+            }
+        };
+
+        window.addEventListener("wheel", handleWheel, {passive: false,});
+
+        return () => {window.removeEventListener("wheel", handleWheel);};
+    }, []);
+
+    return (<div className="overflow-hidden w-full mb-4">
+        <div className="flex gap-8">
+            {[...Array(2)].map((_, i) => (
+                <HypertubeLogo key={i} className="animate-marquee min-w-full" width={window.innerWidth} height={logoHeight} />
+            ))}
         </div>
-      </main>
-    </div>
-  );
+    </div>);
+}
+
+function filterAlreadyWatch(user: tUser, movies: tMovie[]) {
+    return movies.filter(m => {
+        for (let i = 0; i < user.watch_history.length; i++) {
+            if (user.watch_history[i].movie_id === m.id)
+                return false;
+        }
+        return true;
+    });
 }

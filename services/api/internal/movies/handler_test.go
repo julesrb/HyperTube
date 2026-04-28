@@ -37,6 +37,10 @@ func (f *fakeStore) upsertMovie(ctx context.Context, m models.Movie) error {
 	return nil
 }
 
+func (f *fakeStore) findTrackerSource(ctx context.Context, infoHash string) (*models.TrackerSource, error) {
+	return nil, nil
+}
+
 type fakeTMDB struct{}
 
 func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie, error) {

@@ -13,23 +13,17 @@ CREATE TABLE IF NOT EXISTS movies (
     "cast"          TEXT[]      
 );
 
-CREATE TABLE IF NOT EXISTS tracker_sources (
-    id      SERIAL PRIMARY KEY,
-    imdbid  TEXT NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
-    source  TEXT NOT NULL,
-    url     TEXT NOT NULL,
-    UNIQUE (imdbid, source)
-);
-
 CREATE TABLE IF NOT EXISTS torrents (
     id          SERIAL PRIMARY KEY,
     imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    title       TEXT    NOT NULL,
     source      TEXT    NOT NULL,
     url         TEXT    NOT NULL,
     quality     TEXT    NOT NULL,
-    size        FLOAT   NOT NULL,
+    size        FLOAT    NOT NULL,
     language    TEXT    NOT NULL,
-    seeds       INTEGER NOT NULL
+    seeds       TEXT    NOT NULL,
+    UNIQUE (imdbid, url)
 );
 
 CREATE TABLE IF NOT EXISTS featured_movies (

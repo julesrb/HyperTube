@@ -107,30 +107,28 @@ func (s *Store) upsertMovie(ctx context.Context, m models.Movie) error {
 	return err
 }
 
-func (s *Store) findTrackerSource(ctx context.Context, imdbID string) (*models.TrackerSource, error) {
+func (s *Store) findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error) {
 	rows, err := s.db.Query(ctx, `
-		SELECT imdbid, source, url FROM tracker_sources WHERE imdbid = $1 LIMIT 1
+		SELECT * FROM torrents WHERE imdbid = $1
 	`, imdbID)
 	if err != nil {
 		return nil, err
 	}
-	ts, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.TrackerSource])
+	torrents, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Torrent])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
 		}
 		return nil, err
 	}
-	return &ts, nil
+	return torrents, nil
 }
 
-func (s *Store) upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error {
+func (s *Store) upsertTorrent(ctx context.Context, ts models.Torrent) error {
 	_, err := s.db.Exec(ctx, `
-		INSERT INTO tracker_sources (imdbid, source, url)
-		VALUES ($1, $2, $3)
-		ON CONFLICT (imdbid, source) DO UPDATE SET
-			url = EXCLUDED.url
-		WHERE tracker_sources.url IS DISTINCT FROM EXCLUDED.url
-	`, ts.ImdbID, ts.Source, ts.URL)
+		INSERT INTO torrents (imdbid, source, title, url, quality, size, language, seeds)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		ON CONFLICT (imdbid, url) DO NOTHING
+	`, ts.ImdbID, ts.Source, ts.Title, ts.URL, ts.Quality, ts.Size, ts.Language, ts.Seeds)
 	return err
 }

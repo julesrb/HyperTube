@@ -29,7 +29,7 @@ func (f *fakeStore) findByID(_ context.Context, id string) (*models.Movie, error
 	return nil, ErrNotFound
 }
 
-func (f *fakeStore) upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error {
+func (f *fakeStore) upsertTorrent(ctx context.Context, ts models.Torrent) error {
 	return nil
 }
 
@@ -37,7 +37,7 @@ func (f *fakeStore) upsertMovie(ctx context.Context, m models.Movie) error {
 	return nil
 }
 
-func (f *fakeStore) findTrackerSource(ctx context.Context, infoHash string) (*models.TrackerSource, error) {
+func (f *fakeStore) findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error) {
 	return nil, nil
 }
 

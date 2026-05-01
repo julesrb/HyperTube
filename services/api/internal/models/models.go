@@ -18,12 +18,15 @@ type Movie struct {
 }
 
 type Torrent struct {
+	Id       int    `json:"id"`
+	ImdbID   string `json:"imdb_id"`
+	Title    string `json:"title"`
+	Source   string `db:"source"`
 	URL      string `json:"url"`
 	Quality  string `json:"quality"`
-	Size     string `json:"size"`
+	Size     float64 `json:"size"`
 	Language string `json:"language"`
 	Seeds    string `json:"seeds"`
-	Source   string `json:"source"`
 }
 
 type Subtitle struct {
@@ -35,10 +38,4 @@ type MovieDetails struct {
 	Summary  string   `json:"summary"`
 	Director string   `json:"director"`
 	Cast     []string `json:"cast"`
-}
-
-type TrackerSource struct {
-	ImdbID string `db:"imdbid"`
-	Source string `db:"source"`
-	URL    string `db:"url"`
 }

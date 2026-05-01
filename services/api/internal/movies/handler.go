@@ -15,16 +15,16 @@ type movieStore interface {
 	listFeatured(ctx context.Context) ([]models.Movie, error)
 	findByID(ctx context.Context, id string) (*models.Movie, error)
 	upsertMovie(ctx context.Context, m models.Movie) error
-	upsertTrackerSource(ctx context.Context, ts models.TrackerSource) error
-	findTrackerSource(ctx context.Context, imdbID string) (*models.TrackerSource, error)
+	upsertTorrent(ctx context.Context, ts models.Torrent) error
+	findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error)
 }
 
-type TorrentFetcher interface {
-	FetchTorrents(ctx context.Context, pageURL string) ([]models.Torrent, error)
-}
+// type TorrentFetcher interface {
+// 	FetchTorrents(ctx context.Context, pageURL string) ([]models.Torrent, error)
+// }
 
 type MovieSearcher interface {
-	SearchByTitle(ctx context.Context, title string) ([]models.TrackerSource, error)
+	SearchByTitle(ctx context.Context, title string) ([]models.Torrent, error)
 }
 
 type tmdbClient interface {
@@ -35,12 +35,12 @@ type tmdbClient interface {
 type Handler struct {
 	store     movieStore
 	searchers []MovieSearcher
-	fetchers  []TorrentFetcher
+	// fetchers  []TorrentFetcher
 	tmdb      tmdbClient
 }
 
-func NewHandler(store movieStore, searchers []MovieSearcher, fetchers []TorrentFetcher) *Handler {
-	return &Handler{store: store, searchers: searchers, fetchers: fetchers, tmdb: tmdb.NewClient()}
+func NewHandler(store movieStore, searchers []MovieSearcher) *Handler {
+	return &Handler{store: store, searchers: searchers, tmdb: tmdb.NewClient()}
 }
 
 // GetMovies returns a list of movies.
@@ -119,9 +119,9 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
 			return
 		}
-		if err = h.store.upsertTrackerSource(r.Context(), trackerSource); err != nil {
+		if err = h.store.upsertTorrent(r.Context(), trackerSource); err != nil {
 			log.Println("db err:", err)
-			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store tracker source")
+			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store torrent")
 			return
 		}
 		movies = append(movies, toMovieResponse(movie))
@@ -130,8 +130,8 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-	source, err := h.store.findTrackerSource(r.Context(), id)
+	imdbid := r.PathValue("id")
+	torrents, err := h.store.findTorrent(r.Context(), imdbid)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			respond.Error(w, http.StatusNotFound, "NOT_FOUND", "no tracker source found for this movie")
@@ -139,16 +139,6 @@ func (h *Handler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
 			log.Println("db err:", err)
 			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to load tracker source")
 		}
-		return
-	}
-	if len(h.fetchers) == 0 {
-		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "no torrent fetcher configured")
-		return
-	}
-	torrents, err := h.fetchers[0].FetchTorrents(r.Context(), source.URL)
-	if err != nil {
-		log.Printf("torrent fetch error for %s: %v", source.URL, err)
-		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to fetch torrents")
 		return
 	}
 	respond.List(w, http.StatusOK, torrents, len(torrents))

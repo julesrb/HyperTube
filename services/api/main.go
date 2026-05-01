@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"hypertube/api/internal/movies"
-	"hypertube/api/internal/movies/yts"
+	"hypertube/api/internal/movies/c411"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -28,11 +28,10 @@ func main() {
 
 	// prepare dependencies for DB and torrent search clients
 	store := movies.NewStore(db)
-	ytsClient := yts.NewClient()
-	searchers := []movies.MovieSearcher{ytsClient}
-	fetchers := []movies.TorrentFetcher{ytsClient}
+	c411Client := c411.NewClient()
+	searchers := []movies.MovieSearcher{c411Client}
 
-	moviesHandler := movies.NewHandler(store, searchers, fetchers)
+	moviesHandler := movies.NewHandler(store, searchers)
 
 	mux := http.NewServeMux()
 

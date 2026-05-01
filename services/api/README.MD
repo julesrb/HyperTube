@@ -152,6 +152,7 @@ Returns available torrent sources for a movie. Sources are resolved by crawling 
 {
   "data": [
     {
+      "title": "string",
       "url": "string",
       "quality": "string",
       "size": "string",

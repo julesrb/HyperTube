@@ -1,5 +1,3 @@
-//go:build integration
-
 package movies
 
 import (
@@ -33,7 +31,7 @@ func setupTestServer(t *testing.T) *httptest.Server {
 	}
 
 	store := NewStore(db)
-	handler := NewHandler(store, nil, nil)
+	handler := NewHandler(store, nil)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /movies", handler.GetMovies)

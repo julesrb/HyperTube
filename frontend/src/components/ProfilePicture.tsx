@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 
 export default function ProfilePicture({user, onClick, size = 0, color, className}: { user: tUser | Partial<tUser>, onClick?: () => void, size?: 0 | 1 | 2, color?: string, className?: string }) {
-    const sizes = ["size-10", "size-22", "size-45"];
+    const sizes = ["size-10", "size-18 sm:size-24", "size-38 sm:size-45"];
     let children;
 
     if (user.profile_picture)
@@ -19,7 +19,7 @@ export default function ProfilePicture({user, onClick, size = 0, color, classNam
         else if (size === 1)
             children = <h3>{initial}</h3>;
         else
-            children = <h1>{initial}</h1>;
+            children = <h1 className="text-6xl">{initial}</h1>;
     }
 
     if (onClick !== undefined)

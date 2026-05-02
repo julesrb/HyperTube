@@ -25,7 +25,7 @@ export function MovieCard({movie, user, className, showTitle = true} : {movie: t
         if (watchMovie)
             watchingPercent = watchMovie.watch_percent;
     }
-    return (<Link href={"/movies/" + movie.id} className={"relative aspect-824/560 overflow-hidden group border " + className}>
+    return (<Link href={"/movies/" + movie.id} className={"relative aspect-10/7 overflow-hidden group border " + className}>
         <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
         {watchingPercent > 0 && <div className={`absolute bottom-0 h-1 bg-${user ? user.color : "red"} z-10`} style={{width: `${watchingPercent}%`}}></div>}
         <div className="absolute inset-0 p-4 flex items-end">

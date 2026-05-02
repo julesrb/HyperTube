@@ -27,7 +27,7 @@ export default function AuthTab() {
         }
     }
 
-    return (<div className="max-w-2/6 mx-auto flex flex-col items-start gap-4">
+    return (<div className="max-w-9/10 sm:max-w-1/2 xl:max-w-2/6 w-full mx-auto flex flex-col items-start gap-4">
         <Input id="old-password" type="password" value={oldPassword} onChange={setOldPassword} placeholder="Current password"></Input>
         <Input id="new-password" type="password" value={newPassword} onChange={setNewPassword} placeholder="New password"></Input>
         <Input id="confirm-new-password" type="password" value={confirmNewpassword} onChange={setConfirmNewPassword} placeholder="Confirm new password"></Input>

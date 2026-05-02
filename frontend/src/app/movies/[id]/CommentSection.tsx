@@ -72,7 +72,7 @@ export function Comments({user, comments, updateComment, deleteComment}: {user: 
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     return (<Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
-        <div className="flex flex-col-reverse gap-4 xl:gap-8">
+        <div className="flex flex-col-reverse gap-6">
             {comments.map((comment, index) => (<Comment key={index} currentUser={user} comment={comment} updateComment={updateComment} deleteComment={deleteComment}/>))}
         </div>
     </Pagination>);
@@ -94,8 +94,9 @@ function Comment({comment, currentUser, updateComment, deleteComment}: { comment
     return (<div className="w-full"
             onMouseEnter={() => setShowSettingBtn(true)}
             onMouseLeave={() => setShowSettingBtn(false)}>
-        <div className="flex gap-2 sm:gap-4">
-            {(!updateComment && movie) && <MovieCard user={currentUser} className="max-w-50" showTitle={false} movie={movie} />}
+        {(!updateComment && movie) && <div className="flex justify-center mb-3">
+            <MovieCard user={currentUser} className="aspect-21/9" showTitle={false} movie={movie} /></div>}
+        <div className={"flex gap-2 sm:gap-4" + ((!updateComment && movie) ? " flex-col sm:flex-row mx-4" : "")}>
             <ProfilePicture user={user}/>
             <div className="w-full">
                 <div className="flex justify-between w-full">

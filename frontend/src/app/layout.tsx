@@ -6,7 +6,7 @@ import {GenreModal, FilterGenreModal} from "@/components/modal/Genre";
 import "./fonts.css";
 import "./globals.css";
 import {NotificationProvider} from "@/context/NotificationContext";
-import {NotificationList} from "@/components/NotificationList";
+import {NotificationList} from "@/components/Notifications";
 import React from "react";
 import {AuthProvider} from "@/context/AuthContext";
 import ForgotPassword from "@/components/modal/ForgotPassword";

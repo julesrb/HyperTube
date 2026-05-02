@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* --------------------------------------------------- VARIABELES --------------------------------------------------- */
+/* -------------------------------------------------- DEFAULT VALUE ------------------------------------------------- */
 @theme {
     --color-black: #191919;
     --color-black-hover: #383838;
@@ -33,20 +33,21 @@
     --font-sans: "FT Calhern Light", sans-serif;
 }
 
-body { font-family: var(--font-body), sans-serif; background-color: var(--color-white); color: var(--color-black); }
-h1, h2, h3, h4, h5, h6, .custom-condensed { @apply font-condensed uppercase; }
-h1 { @apply text-8xl; }
-h2 { @apply text-6xl; }
-h3 { @apply text-5xl; }
-h4 { @apply text-4xl; }
-h5 { @apply text-3xl; }
-p { @apply font-sans; }
-input:focus, textarea:focus { outline: none; }
-input[type="search"]::-webkit-search-cancel-button {-webkit-appearance: none; appearance: none;}
-button:hover, Link:hover { @apply cursor-pointer; }
+@layer base {
+    body { @apply font-body bg-white text-black }
+    h1, h2, h3, h4, h5, h6, .custom-condensed { @apply uppercase font-condensed; }
+    h1 { @apply text-4xl sm:text-6xl xl:text-8xl; }
+    h2 { @apply text-4xl sm:text-6xl; }
+    h3 { @apply text-3xl sm:text-5xl; }
+    p { @apply font-sans text-sm sm:text-base; }
+    button:hover, Link:hover { @apply cursor-pointer; }
+    input:focus, textarea:focus { outline: none; }
+    input[type="search"]::-webkit-search-cancel-button {-webkit-appearance: none; appearance: none;}
+}
 
-/* ------------------------------------------------- CUSTOM VALUE --------------------------------------------------- */
+/* ------------------------------------------------- CUSTOM CLASS --------------------------------------------------- */
 .bg-gradient { @apply size-full absolute inset-0 bg-linear-to-t from-black via-transparent via-40% to-transparent opacity-90; }
+.responsive-text-hairline { @apply font-hairline text-xs sm:text-xl xl:text-3xl tracking-normal; }
 
 .custom-underline:hover {
     text-decoration: underline var(--color-black);
@@ -81,4 +82,4 @@ button:hover, Link:hover { @apply cursor-pointer; }
     from {transform: translateX(0);}
     to {transform: translateX(-100%);}
 }
-.animate-marquee {animation: marquee 10s linear infinite;}
+.animate-marquee {animation: marquee 8s linear infinite;}

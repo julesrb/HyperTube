@@ -65,7 +65,6 @@ function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Pa
     </div>);
 }
 
-
 function AvatarSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
     const colors = ["yellow", "pink", "green", "purple", "blue", "red"];
 

@@ -63,7 +63,7 @@ export function CommentSection({movie}: {movie: tMovie}) {
                 <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
             }
         </div>
-        <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
+        <Comments user={user} comments={actualComments} updateComment={updateComment} deleteComment={deleteComment}/>
     </div>);
 }
 

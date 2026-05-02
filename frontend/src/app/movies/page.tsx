@@ -4,10 +4,11 @@ import {movies} from "@/types/movie";
 import {ListMovieCard, MoviesCard} from "@/components/MovieCard";
 import React, {useEffect, useRef, useState} from "react";
 import {GridIcon, ListIcon} from "@/components/Icons";
-import {CloseButton} from "../../components/Buttons";
+import {CloseButton} from "@/components/Buttons";
 import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
 import Pagination from "@/components/Pagination";
+import {useResponsiveSize} from "@/script/utils";
 
 type tViewType = | "grid" | "list";
 type tSort = "name" | "genre" | "grade" | "year";
@@ -19,9 +20,10 @@ interface iSort {
 
 export default function Page() {
     const searchParams = useSearchParams();
-    const genre = searchParams.get('genre');
-    const mostRated = searchParams.get('sort');
-    const [searchValue, setSearchValue] = useState("");
+    const genre = searchParams.get("genre");
+    const mostRated = searchParams.get("sort");
+    const query = searchParams.get("q");
+    const [searchValue, setSearchValue] = useState(query === null ? "" : query);
     const [viewType, setViewType] = useState<tViewType>(genre === null && mostRated === null ? "grid" : "list");
     const [sort, setSort] = useState<iSort>({type: mostRated ? "grade" : "name", side: true});
     const [index, setIndex] = useState(0);
@@ -49,6 +51,7 @@ function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?:
         const el = inputRef.current;
         if (!el) return;
         el.focus();
+        el.setSelectionRange(el.value.length, el.value.length);
     }, []);
 
     return (<div className="flex items-center px-6">
@@ -69,9 +72,10 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     const {openModal} = useModal();
     const [filterGenre, setFilterGenre] = useState<string[]>(genre === null ? [] : [genre])
     const filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
+    const size = useResponsiveSize();
 
     if (filteredMovies.length === 0)
-        return (<p>Aucun film trouvé</p>);
+        return (<p className="text-center italic text-gray">Aucun film trouvé</p>);
 
     if (viewType === "grid")
         return (<MoviesCard movieSets={filteredMovies}/>);
@@ -90,7 +94,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     if (sort.side)
         sortedMovies = sortedMovies.reverse();
 
-    if (filterGenre.length > 0)
+    if (filterGenre.length > 0 && size === "xl")
         sortedMovies = sortedMovies.filter(m => {
             for (let i = 0; i < filterGenre.length; i++) {
                 if (!m.genres.includes(filterGenre[i]))

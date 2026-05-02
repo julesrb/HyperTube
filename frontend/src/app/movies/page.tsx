@@ -113,7 +113,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
         setFilterGenre(newGenre);
     }
 
-    const classNames = ["pl-1 sm:pl-3", "", "hidden lg:table-cell", "hidden sm:table-cell"]
+    const classNames = ["sm:pl-3", "", "hidden lg:table-cell", "hidden sm:table-cell"]
 
     return (<table className="table-fixed w-full overflow-hidden">
         <colgroup>

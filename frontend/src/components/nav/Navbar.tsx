@@ -4,8 +4,17 @@ import {useModal} from "@/context/ModalContext";
 import LanguageDropdown from "@/components/nav/LanguageDropdown";
 import React, {useState} from "react";
 import Link from "next/link";
-import {ExitDoorIcon, HypertubeLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icons";
+import {
+    ExitDoorIcon,
+    HypertubeLogo,
+    HypertubeSmallLogo,
+    LanguageIcon,
+    RegisterIcon,
+    SearchIcon,
+    UserIcon
+} from "@/components/Icons";
 import {useAuth} from "@/context/AuthContext";
+import {useResponsiveSize} from "@/script/utils";
 
 type NavItem = {
     name: string
@@ -21,9 +30,11 @@ type NavItem = {
 export default function Navbar() {
     const {openModal} = useModal();
     const {user, logout} = useAuth();
+    const size = useResponsiveSize();
+    const iconLogo = size === "xs" ? HypertubeSmallLogo : HypertubeLogo;
 
     const navItems: NavItem[] = user !== null ? [{
-        name: "", icon: HypertubeLogo, href: "/",
+        name: "", icon: iconLogo, href: "/",
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {
@@ -33,7 +44,7 @@ export default function Navbar() {
     }, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },] : [{
-        name: "", icon: HypertubeLogo, href: "/",
+        name: "", icon: iconLogo, href: "/",
     }, {
         name: "Search", icon: SearchIcon, href: "/movies",
     }, {
@@ -44,7 +55,7 @@ export default function Navbar() {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },];
 
-    return (<nav className="flex justify-between px-16 py-8">
+    return (<nav className="flex justify-between px-8 sm:px-12 xl:px-16 py-8">
         {navItems.map((item, index) => (<NavItemComponent key={index} item={item}/>))}
     </nav>)
 }
@@ -53,7 +64,7 @@ function NavItemComponent({item,} : {item: NavItem}) {
     const isLogoutBtn = "Logout" === item.name;
     const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
     const className = "uppercase flex items-center " + hoverColor;
-    const PName = item.name ? <span className="font-hairline pl-2 text-2xl">{item.name}</span> : null;
+    const PName = item.name ? <span className="font-hairline pl-2 text-2xl hidden xl:block">{item.name}</span> : null;
     const [isHover, setIsHover] = useState(false);
 
     if (item.href !== undefined) {

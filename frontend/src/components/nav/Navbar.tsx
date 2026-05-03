@@ -55,7 +55,7 @@ function NavItemComponent({item, selected}: {item: NavItem, selected: boolean}) 
     const isLogoutBtn = "Logout" === item.name;
     const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
     const className = "uppercase flex items-center " + hoverColor;
-    const PName = item.name ? <span className={"font-hairline pl-2 text-2xl hidden md:block " + (selected ? "font-black" : "")}>{item.name}</span> : null;
+    const PName = item.name ? <span className={"pl-2 text-2xl hidden md:block mb-1 " + (selected ? "font-base font-light" : "font-hairline")}>{item.name}</span> : null;
     const [isHover, setIsHover] = useState(false);
 
     if (item.href !== undefined) {

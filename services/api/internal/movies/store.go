@@ -98,7 +98,7 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 	return &m, nil
 }
 
-func (s *Store) upsertMovie(ctx context.Context, m models.Movie) error {
+func (s *Store) UpsertMovie(ctx context.Context, m models.Movie) error {
 	_, err := s.db.Exec(ctx, `
 		INSERT INTO movies (imdbid, tmdbid, title, year, poster_url, backdrop_url, note, genre, runtime_minutes, summary, director, "cast")
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
@@ -124,11 +124,20 @@ func (s *Store) findTorrent(ctx context.Context, imdbID string) ([]models.Torren
 	return torrents, nil
 }
 
-func (s *Store) upsertTorrent(ctx context.Context, ts models.Torrent) error {
+func (s *Store) UpsertTorrent(ctx context.Context, ts models.Torrent) error {
 	_, err := s.db.Exec(ctx, `
 		INSERT INTO torrents (imdbid, source, title, url, quality, size, language, seeds)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		ON CONFLICT (imdbid, url) DO NOTHING
 	`, ts.ImdbID, ts.Source, ts.Title, ts.URL, ts.Quality, ts.Size, ts.Language, ts.Seeds)
+	return err
+}
+
+func (s *Store) UpsertFeatured(ctx context.Context, imdbId string, position int) error {
+	_, err := s.db.Exec(ctx, `
+		INSERT INTO featured_movies (imdbid, position)
+		VALUES ($1, $2)
+		ON CONFLICT (imdbid, position) DO NOTHING
+	`, imdbId, position)
 	return err
 }

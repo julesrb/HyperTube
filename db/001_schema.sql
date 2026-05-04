@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS torrents (
 CREATE TABLE IF NOT EXISTS featured_movies (
     imdbid       TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     position INTEGER NOT NULL,
+    UNIQUE (position, imdbid),
     PRIMARY KEY (imdbid)
 );
 

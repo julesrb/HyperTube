@@ -29,11 +29,11 @@ func (f *fakeStore) findByID(_ context.Context, id string) (*models.Movie, error
 	return nil, ErrNotFound
 }
 
-func (f *fakeStore) upsertTorrent(ctx context.Context, ts models.Torrent) error {
+func (f *fakeStore) UpsertTorrent(ctx context.Context, ts models.Torrent) error {
 	return nil
 }
 
-func (f *fakeStore) upsertMovie(ctx context.Context, m models.Movie) error {
+func (f *fakeStore) UpsertMovie(ctx context.Context, m models.Movie) error {
 	return nil
 }
 

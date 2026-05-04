@@ -7,15 +7,14 @@ import (
 	"net/http"
 
 	"hypertube/api/internal/models"
-	"hypertube/api/internal/movies/tmdb"
 	"hypertube/api/internal/respond"
 )
 
 type movieStore interface {
 	listFeatured(ctx context.Context) ([]models.Movie, error)
 	findByID(ctx context.Context, id string) (*models.Movie, error)
-	upsertMovie(ctx context.Context, m models.Movie) error
-	upsertTorrent(ctx context.Context, ts models.Torrent) error
+	UpsertMovie(ctx context.Context, m models.Movie) error
+	UpsertTorrent(ctx context.Context, ts models.Torrent) error
 	findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error)
 }
 
@@ -25,6 +24,7 @@ type movieStore interface {
 
 type MovieSearcher interface {
 	SearchByTitle(ctx context.Context, title string) ([]models.Torrent, error)
+	GetTopMovies(ctx context.Context) ([]models.Torrent, error)
 }
 
 type tmdbClient interface {
@@ -36,11 +36,11 @@ type Handler struct {
 	store     movieStore
 	searchers []MovieSearcher
 	// fetchers  []TorrentFetcher
-	tmdb      tmdbClient
+	tmdb tmdbClient
 }
 
-func NewHandler(store movieStore, searchers []MovieSearcher) *Handler {
-	return &Handler{store: store, searchers: searchers, tmdb: tmdb.NewClient()}
+func NewHandler(store movieStore, searchers []MovieSearcher, tmdb tmdbClient) *Handler {
+	return &Handler{store: store, searchers: searchers, tmdb: tmdb}
 }
 
 // GetMovies returns a list of movies.
@@ -96,7 +96,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("searching for movies with title: %s", title)
-	trackerSources, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
+	Torrents, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
 	if err != nil {
 		log.Println("search err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
@@ -104,27 +104,34 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	movies := make([]movieResponse, 0)
-	for i, trackerSource := range trackerSources {
-		if i >= 10 { // Protect TMDB api call per second limit
+	imdbIdSeen := make(map[string]bool)
+	uniqueMovie := 0
+
+	for _, torrent := range Torrents {
+		if uniqueMovie >= 10 { // Protect TMDB api call per second limit
 			break
 		}
-		// TODO OPTI look for preexisting data in db
-		movie, err := h.tmdb.FindByIMDBID(r.Context(), trackerSource.ImdbID)
-		if err != nil {
-			log.Printf("TMDB lookup error for IMDb ID %s: %v", trackerSource.ImdbID, err)
-			continue
+		if !imdbIdSeen[torrent.ImdbID] {
+			// TODO OPTI look for preexisting data in db
+			movie, err := h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
+			if err != nil {
+				log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
+				continue
+			}
+			if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
+				log.Println("db err:", err)
+				respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
+				return
+			}
+			movies = append(movies, toMovieResponse(movie))
+			imdbIdSeen[torrent.ImdbID] = true
+			uniqueMovie++
 		}
-		if err = h.store.upsertMovie(r.Context(), movie); err != nil {
-			log.Println("db err:", err)
-			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
-			return
-		}
-		if err = h.store.upsertTorrent(r.Context(), trackerSource); err != nil {
+		if err = h.store.UpsertTorrent(r.Context(), torrent); err != nil {
 			log.Println("db err:", err)
 			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store torrent")
 			return
 		}
-		movies = append(movies, toMovieResponse(movie))
 	}
 	respond.List(w, http.StatusOK, movies, len(movies))
 }

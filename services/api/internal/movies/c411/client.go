@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -78,10 +79,9 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 	return c.fetch(ctx, queryURL)
 }
 
-// FetchTop retrieves the top `limit` torrents from C411 using a broad category search.
-// Use this at startup to seed featured movies.
+// FetchTop retrieves the top Lastest torrent registered on c411
 func (c *Client) FetchTop(ctx context.Context, limit int) ([]models.Torrent, error) {
-	params := url.Values{"t": {"search"}, "q": {""}, "cat": {"2000"}, "limit": {strconv.Itoa(limit)}, "apikey": {c.apiKey}}
+	params := url.Values{"t": {"movie"}, "q": {""}, "cat": {"2000"}, "limit": {strconv.Itoa(limit)}, "apikey": {c.apiKey}}
 	queryURL := c.baseURL + "torznab?" + params.Encode()
 	log.Printf("C411 top query: %s", queryURL)
 	return c.fetch(ctx, queryURL)
@@ -118,6 +118,33 @@ func (c *Client) fetch(ctx context.Context, queryURL string) ([]models.Torrent, 
 		})
 	}
 	return torrents, nil
+}
+
+func (c *Client) GetTopMovies(ctx context.Context) ([]models.Torrent, error) {
+	torrents, err := c.FetchTop(ctx, 100) // Get the 100 most recent torrent list
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Slice(torrents, func(i, j int) bool {
+		si, _ := strconv.Atoi(torrents[i].Seeds)
+		sj, _ := strconv.Atoi(torrents[j].Seeds)
+		return si > sj
+	})
+
+	seen := make(map[string]bool)
+	result := make([]models.Torrent, 0, 9)
+	for _, t := range torrents {
+		if seen[t.ImdbID] {
+			continue
+		}
+		seen[t.ImdbID] = true
+		result = append(result, t)
+		if len(result) == 9 {
+			break
+		}
+	}
+	return result, nil
 }
 
 func (c *Client) get(ctx context.Context, rawURL string) ([]byte, error) {

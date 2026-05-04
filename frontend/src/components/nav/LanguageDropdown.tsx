@@ -12,20 +12,18 @@ export default function LanguageDropdown(Icon: ({selected}: {selected: boolean})
         setIsOpen(false);
     }
 
-    return (
-        <div
-            className="flex items-center hover:cursor-pointer"
-            onMouseEnter={() => (setIsOpen(true))}
-            onMouseLeave={() => (setIsOpen(false))}>
+    return (<div
+        className="flex items-center hover:cursor-pointer"
+        onMouseEnter={() => (setIsOpen(true))}
+        onMouseLeave={() => (setIsOpen(false))}>
 
-            <Icon selected={isOpen} />
-            {isOpen && <div className="absolute top-10 right-10 z-50 p-8">
-                <div className="flex flex-col gap-1 items-start bg-white py-4 px-5 custom-shadow-s border">
-                    {languages.map((language, i) => (
-                        <button key={language} className={"custom-underline text-xl font-hairline" + (selectedLanguage[i] ? " font-black" : "")} onClick={() => handleSwitchLanguage(i)}>{language}</button>
-                    ))}
-                </div>
-            </div>}
-        </div>
-    );
+        <Icon selected={isOpen} />
+        {isOpen && <div className="absolute top-10 right-1/30 z-50 p-8">
+            <div className="flex flex-col gap-1 items-start bg-white py-4 px-5 custom-shadow-s border">
+                {languages.map((language, i) => (
+                    <button key={language} className={"custom-underline text-xl font-hairline" + (selectedLanguage[i] ? " font-black" : "")} onClick={() => handleSwitchLanguage(i)}>{language}</button>
+                ))}
+            </div>
+        </div>}
+    </div>);
 }

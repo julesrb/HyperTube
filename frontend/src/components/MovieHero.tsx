@@ -34,8 +34,8 @@ function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movi
     if (backdrop)
         randomBackdrop = backdrop;
 
-    return (<div className="px-4 min-w-full">
-        <div className="relative flex flex-col items-center gap-4 aspect-16/9 xl:aspect-21/9 border">
+    return (<div className="px-4 sm:px-6 min-w-full">
+        <div className="relative flex flex-col items-center gap-4 aspect-video xl:aspect-21/9 border">
             <Image className="size-full object-cover" width={5000} height={5000} loading="eager"
                    src={"/images/" + randomBackdrop} alt={"poster of movie " + movie.title}/>
             <div className="h-full w-50 z-30 absolute left-0 custom-cursor-left"

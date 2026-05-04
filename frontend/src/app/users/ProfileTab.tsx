@@ -8,7 +8,7 @@ import {Button, SmallButton} from "@/components/Buttons";
 
 
 export default function ProfileTab({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
-    return (<div className="flex gap-30 max-w-2/3 w-full justify-center items-center mx-auto">
+    return (<div className="mb-20 flex flex-col sm:flex-row gap-14 sm:gap-20 xl:gap-30 max-w-9/10 xl:max-w-2/3 w-full justify-center items-center mx-auto">
         <ProfileSection user={user} updateUser={updateUser} />
         <AvatarSection user={user} updateUser={updateUser} />
     </div>);
@@ -64,7 +64,6 @@ function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Pa
         <Button className="h-8" onClick={saveChange}>Save Changes</Button>
     </div>);
 }
-
 
 function AvatarSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
     const colors = ["yellow", "pink", "green", "purple", "blue", "red"];

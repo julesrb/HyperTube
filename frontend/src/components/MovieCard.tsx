@@ -13,7 +13,7 @@ import {tUser} from "@/types/user";
 // todo useRandomBackdrop ?
 export function MoviesCard({movieSets, className} : {movieSets: tMovie[], className?: string}) {
     const {user} = useAuth();
-    return (<div className={"grid grid-cols-3 gap-4 " + className}>
+    return (<div className={"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-4 " + className}>
         {movieSets.map((movie, index) => (<MovieCard key={index} movie={movie} user={user}/>))}
     </div>);
 }
@@ -25,7 +25,7 @@ export function MovieCard({movie, user, className, showTitle = true} : {movie: t
         if (watchMovie)
             watchingPercent = watchMovie.watch_percent;
     }
-    return (<Link href={"/movies/" + movie.id} className={"relative aspect-824/560 overflow-hidden group border " + className}>
+    return (<Link href={"/movies/" + movie.id} className={"relative aspect-10/7 overflow-hidden group border " + className}>
         <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
         {watchingPercent > 0 && <div className={`absolute bottom-0 h-1 bg-${user ? user.color : "red"} z-10`} style={{width: `${watchingPercent}%`}}></div>}
         <div className="absolute inset-0 p-4 flex items-end">
@@ -51,31 +51,31 @@ export function ListMovieCard({movie, setFilterGenre} : {movie: tMovie, setFilte
         title = title.slice(0, 18) + "...";
 
     return (<tr className="border-b group">
-            <td className="w-1/5 p-4">
+            <td className="p-2 xl:p-4">
                 <div className="border overflow-hidden">
                     <Link href={"/movies/" + movie.id}>
                         <Image className="object-cover size-full transition-transform duration-200 group-hover:scale-103" width={150} height={100} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
                     </Link>
                 </div>
             </td>
-            <td className="w-2/5">
-                <Link href={"/movies/" + movie.id} className="ml-2 flex gap-2 w-full">
+            <td className="sm:pl-3">
+                <Link href={"/movies/" + movie.id} className="flex gap-1 sm:gap-2">
                     <h1 className="hover:underline decoration-2 underline-offset-3 text-nowrap">{title}</h1>
-                    <span className="font-hairline text-lg tracking-normal">{movie.year}</span>
+                    <span className="responsive-text-hairline">{movie.year}</span>
                 </Link>
             </td>
-            <td className="w-0"></td>
-            <td className="w-5/20">
+            <td></td>
+            <td className="hidden lg:table-cell">
                 <GenreTags genres={movie.genres} limit={3} setFilterGenre={setFilterGenre}/>
             </td>
-            <td className="w-1/20">
+            <td className="hidden sm:table-cell">
                 <div className="flex gap-1 items-center">
                     <StarIcon />
                     <span className="font-medium">{movie.rate}</span>
                 </div>
             </td>
-            <td>
-                <Button onClick={() => router.push("/movies/" + movie.id)}>watch</Button>
+            <td className="text-right">
+                <Button className="px-3" onClick={() => router.push("/movies/" + movie.id)}>watch</Button>
             </td>
     </tr>);
 }

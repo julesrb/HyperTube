@@ -41,29 +41,29 @@ export function CommentSection({movie}: {movie: tMovie}) {
     }
     const deleteComment = (commentId: number) => {setComments(actualComments.filter(c => c.id !== commentId));}
 
-    return (<div className="mx-auto max-w-2xl flex flex-col items-center gap-7">
+    return (<div className="mx-auto max-w-2xl w-9/10 sm:w-full flex flex-col items-center gap-7">
         <div className="w-full">
             <h1 className="text-center">Comments</h1>
-            <div className="flex h-4 w-full">
-                <div className="h-full w-full bg-yellow"></div>
-                <div className="h-full w-full bg-pink"></div>
-                <div className="h-full w-full bg-green"></div>
-                <div className="h-full w-full bg-purple"></div>
-                <div className="h-full w-full bg-blue"></div>
-                <div className="h-full w-full bg-red"></div>
+            <div className="flex h-2 sm:h-4 mt-1 sm:mt-2 w-full">
+                <div className="size-full bg-yellow"></div>
+                <div className="size-full bg-pink"></div>
+                <div className="size-full bg-green"></div>
+                <div className="size-full bg-purple"></div>
+                <div className="size-full bg-blue"></div>
+                <div className="size-full bg-red"></div>
             </div>
         </div>
         <div className="w-full text-center">
             {
                 user !== null ?
-                <div className="flex gap-4">
+                <div className="flex gap-2 sm:gap-4">
                     <ProfilePicture user={user}/>
                     <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
                 </div> :
                 <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
             }
         </div>
-        <Comments user={user} comments={comments} updateComment={updateComment} deleteComment={deleteComment}/>
+        <Comments user={user} comments={actualComments} updateComment={updateComment} deleteComment={deleteComment}/>
     </div>);
 }
 
@@ -72,7 +72,7 @@ export function Comments({user, comments, updateComment, deleteComment}: {user: 
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     return (<Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
-        <div className="flex flex-col-reverse gap-8">
+        <div className="flex flex-col-reverse gap-6">
             {comments.map((comment, index) => (<Comment key={index} currentUser={user} comment={comment} updateComment={updateComment} deleteComment={deleteComment}/>))}
         </div>
     </Pagination>);
@@ -94,8 +94,9 @@ function Comment({comment, currentUser, updateComment, deleteComment}: { comment
     return (<div className="w-full"
             onMouseEnter={() => setShowSettingBtn(true)}
             onMouseLeave={() => setShowSettingBtn(false)}>
-        <div className="flex gap-4">
-            {(!updateComment && movie) && <MovieCard user={currentUser} className="max-w-50" showTitle={false} movie={movie} />}
+        {(!updateComment && movie) && <div className="flex justify-center mb-3">
+            <MovieCard user={currentUser} className="aspect-21/9" showTitle={false} movie={movie} /></div>}
+        <div className={"flex gap-2 sm:gap-4" + ((!updateComment && movie) ? " flex-col sm:flex-row mx-4" : "")}>
             <ProfilePicture user={user}/>
             <div className="w-full">
                 <div className="flex justify-between w-full">
@@ -121,10 +122,12 @@ function Comment({comment, currentUser, updateComment, deleteComment}: { comment
                         </div>
                     }
                 </div>
-                {editMode && updateComment ?
-                    <CommentTextEdit comment={comment} setEditMode={setEditMode} updateComment={updateComment}/>
-                    : <CommentText comment={comment}/>
-                }
+                <div className="leading-tight sm:leading-normal">
+                    {editMode && updateComment ?
+                        <CommentTextEdit comment={comment} setEditMode={setEditMode} updateComment={updateComment}/>
+                        : <CommentText comment={comment}/>
+                    }
+                </div>
             </div>
         </div>
     </div>);
@@ -193,10 +196,10 @@ function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComme
                   }}
                   onChange={(e) => setNewEditedComment(e.target.value)}></textarea>
         <div className="flex gap-2">
-            <Button
+            <Button className="xl:px-6"
                 disabled={newEditedComment.trim().length <= 0 || newEditedComment.trim() === comment.comment}
                 onClick={saveChange}>save change</Button>
-            <SecondaryButton className="w-40" onClick={() => {
+            <SecondaryButton className="w-30 xl:w-40" onClick={() => {
                 setEditMode(false);
                 setNewEditedComment(comment.comment);
             }}>cancel</SecondaryButton>

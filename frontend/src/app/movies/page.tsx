@@ -4,10 +4,11 @@ import {movies} from "@/types/movie";
 import {ListMovieCard, MoviesCard} from "@/components/MovieCard";
 import React, {useEffect, useRef, useState} from "react";
 import {GridIcon, ListIcon} from "@/components/Icons";
-import {CloseButton} from "../../components/Buttons";
+import {CloseButton} from "@/components/Buttons";
 import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
 import Pagination from "@/components/Pagination";
+import {useResponsiveSize} from "@/script/utils";
 
 type tViewType = | "grid" | "list";
 type tSort = "name" | "genre" | "grade" | "year";
@@ -19,9 +20,10 @@ interface iSort {
 
 export default function Page() {
     const searchParams = useSearchParams();
-    const genre = searchParams.get('genre');
-    const mostRated = searchParams.get('sort');
-    const [searchValue, setSearchValue] = useState("");
+    const genre = searchParams.get("genre");
+    const mostRated = searchParams.get("sort");
+    const query = searchParams.get("q");
+    const [searchValue, setSearchValue] = useState(query === null ? "" : query);
     const [viewType, setViewType] = useState<tViewType>(genre === null && mostRated === null ? "grid" : "list");
     const [sort, setSort] = useState<iSort>({type: mostRated ? "grade" : "name", side: true});
     const [index, setIndex] = useState(0);
@@ -34,7 +36,7 @@ export default function Page() {
     const changeSort = (type: tSort, side: boolean) => { setSort({type, side}); }
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
-    return (<div className="flex flex-col gap-4 mx-6">
+    return (<div className="flex flex-col gap-4 mx-2 md:mx-4 xl:mx-6">
         <SearchBar searchValue={searchValue} onChange={handleSearchChange} />
         <Filter viewType={viewType} onClick={handleSetViewType}/>
         <Pagination currenIndex={index} totalPage={5} onClick={changeIndex} >
@@ -49,11 +51,12 @@ function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?:
         const el = inputRef.current;
         if (!el) return;
         el.focus();
+        el.setSelectionRange(el.value.length, el.value.length);
     }, []);
 
     return (<div className="flex items-center px-6">
         <input ref={inputRef} type="search" placeholder="Rechercher un film..." value={searchValue} onChange={onChange}
-        className="w-full bg-white text-8xl font-condensed uppercase border-b focus:border-b-2"></input>
+        className="w-full bg-white text-5xl md:text-7xl xl:text-9xl font-condensed uppercase border-b focus:border-b-2"></input>
         <CloseButton className="absolute right-10" onClick={() => onChange()} disabled={searchValue.length === 0}/>
     </div>);
 }
@@ -69,9 +72,10 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     const {openModal} = useModal();
     const [filterGenre, setFilterGenre] = useState<string[]>(genre === null ? [] : [genre])
     const filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
+    const size = useResponsiveSize();
 
     if (filteredMovies.length === 0)
-        return (<p>Aucun film trouvé</p>);
+        return (<p className="text-center italic text-gray">Aucun film trouvé</p>);
 
     if (viewType === "grid")
         return (<MoviesCard movieSets={filteredMovies}/>);
@@ -90,7 +94,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     if (sort.side)
         sortedMovies = sortedMovies.reverse();
 
-    if (filterGenre.length > 0)
+    if (filterGenre.length > 0 && size === "xl")
         sortedMovies = sortedMovies.filter(m => {
             for (let i = 0; i < filterGenre.length; i++) {
                 if (!m.genres.includes(filterGenre[i]))
@@ -98,8 +102,6 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
             }
             return true;
         })
-
-    const widths = ["w-2/5 pl-3", "w-0", "w-5/20", "w-1/20"]
 
     const handleSort = (sortOption: tSort) => {
         if (sortOption === "genre")
@@ -115,23 +117,34 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
         setFilterGenre(newGenre);
     }
 
-    return (<table className="table-fixed w-full">
+    const classNames = ["sm:pl-3", "", "hidden lg:table-cell", "hidden sm:table-cell"]
+
+    return (<table className="table-fixed w-full overflow-hidden">
+        <colgroup>
+            <col className="w-30 sm:w-55 xl:w-80" />
+            <col />
+            <col className="w-0" />
+            <col className="w-1/4 hidden lg:table-column" />
+            <col className="w-15 hidden sm:table-column" />
+            <col className="w-25" />
+        </colgroup>
+
         <thead>
-        <tr className="text-left">
-            <th className="w-1/5"></th>
-            {sortOptions.map((sortOption, i) =>
-                <th key={sortOption} className={widths[i]}>
-                    <button className={"relative capitalize text-nowrap hover:underline" + (sortOption === "year" ? " -left-30" : "")}
-                            onClick={() => handleSort(sortOption)}>
-                        {sortOption} {sortOption === sort.type && (sort.side ? "▾" : "▴")}
-                    </button>
-                    {sortOption === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
-                </th>
-            )}
-            <th></th>
-        </tr>
+            <tr className="text-left align-top">
+                <th></th>
+                {sortOptions.map((sortOption, i) =>
+                    <th key={sortOption} className={classNames[i]}>
+                        <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption === "year" ? " -left-5 md:-left-30 xl:-left-45" : "")}
+                                onClick={() => handleSort(sortOption)}>
+                            {sortOption} {sortOption === sort.type && (sort.side ? "▾" : "▴")}
+                        </button>
+                        {sortOption === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
+                    </th>
+                )}
+                <th></th>
+            </tr>
         </thead>
-        <tbody className="">
+        <tbody>
             {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie} setFilterGenre={setFilterGenre}/>))}
         </tbody>
     </table>);

@@ -10,6 +10,7 @@ import GenreTags from "@/components/GenreTags";
 import Section from "@/components/Section";
 import {useAuth} from "@/context/AuthContext";
 import {tUser} from "@/types/user";
+import {useResponsiveSize} from "@/script/utils";
 
 export default function HomePage() {
     const {user} = useAuth();
@@ -17,6 +18,22 @@ export default function HomePage() {
     const popular = structuredClone(moviesSets);
     const mostRated = structuredClone(moviesSets).sort((a, b) => b.rate - a.rate);
     let continueWatching;
+    const size = useResponsiveSize();
+    let genreCount = 3;
+    if (size === "md")
+        genreCount = 5;
+    else if (size === "xl")
+        genreCount = 7;
+    let moviesCount = 3;
+    if (size === "md")
+        moviesCount = 4;
+    else if (size === "xs")
+        moviesCount = 2;
+    let heightAnimationLogo = 100;
+    if (size === "md")
+        heightAnimationLogo = 200;
+    else if (size === "xl")
+        heightAnimationLogo = 300;
 
     if (user) {
         continueWatching = user.watch_history
@@ -24,22 +41,23 @@ export default function HomePage() {
             .map(m => movies.find(mSearch => mSearch.id === m.movie_id))
             .filter(m => m !== undefined);
     }
+
     return (<div>
-        <AnimateLogo />
+        <AnimateLogo maxHeight={heightAnimationLogo} />
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
-        <GenreTags genres={genres.slice(0, 7)} className="items-center justify-center w-full my-8"/>
+        <GenreTags genres={genres.slice(0, genreCount)} className="justify-center w-full my-8" />
 
         {continueWatching &&
         <Section title="Continue to watch" href="/users?tab=history">
-            <MoviesCard movieSets={continueWatching.slice(0, 3)} />
+            <MoviesCard movieSets={continueWatching.slice(0, moviesCount)} />
         </Section>}
 
         <Section title="Popular" href="/movies/">
-            <MoviesCard movieSets={popular.slice(0, 3)} />
+            <MoviesCard movieSets={popular.slice(0, moviesCount)} />
         </Section>
 
         <Section title="Most rated" href="/movies?sort=most_rated">
-            <MoviesCard movieSets={mostRated.slice(0, 3)} />
+            <MoviesCard movieSets={mostRated.slice(0, moviesCount)} />
         </Section>
 
         <div className="flex w-full">
@@ -53,10 +71,10 @@ export default function HomePage() {
     </div>);
 }
 
-function AnimateLogo() {
-    const maxHeight = 300;
-    const minHeight = 50;
+function AnimateLogo({maxHeight}: {maxHeight: number}) {
+    const minHeight = maxHeight / 5;
     const [logoHeight, setLogoHeight] = useState(maxHeight);
+    const [logoWidth, setLogoWidth] = useState(0);
 
     useEffect(() => {
         let virtualScroll = 0;
@@ -73,16 +91,30 @@ function AnimateLogo() {
                 setLogoHeight(maxHeight - virtualScroll);
             }
         };
-
         window.addEventListener("wheel", handleWheel, {passive: false,});
-
         return () => {window.removeEventListener("wheel", handleWheel);};
+    }, [maxHeight, minHeight]);
+
+    useEffect(() => {
+        setLogoHeight(maxHeight);
+    }, [maxHeight]);
+
+    useEffect(() => {
+        function handleResize() {
+            setLogoWidth(window.innerWidth);
+        }
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    if (logoWidth === 0)
+        return null;
 
     return (<div className="overflow-hidden w-full mb-4">
         <div className="flex gap-8">
             {[...Array(2)].map((_, i) => (
-                <HypertubeLogo key={i} className="animate-marquee min-w-full" width={window.innerWidth} height={logoHeight} />
+                <HypertubeLogo key={i} className="animate-marquee min-w-full" width={logoWidth} height={logoHeight} />
             ))}
         </div>
     </div>);

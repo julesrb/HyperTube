@@ -10,25 +10,6 @@ import {tNotificationType, useNotification} from "@/context/NotificationContext"
 import {errorMessages, successMessages} from "@/types/message";
 import {Button, SmallButton} from "@/components/Buttons";
 
-// export default function SigninModal() {
-//     const {activeModal, closeModal,} = useModal();
-//
-//     if (activeModal.type !== "signin")
-//         return null;
-//
-//     return (
-//         <ModalLayout onClose={closeModal} defaultLayout={false}>
-//             <div className="absolute top-0 right-1/10 flex gap-2 p-2 bg-white custom-shadow-s border" onClick={(e) => e.stopPropagation()}>
-//                 <button onClick={closeModal}><CrossIcon /></button>
-//                 <Input type="email" placeholder="Email"></Input>
-//                 <Input type="password" placeholder="Password"></Input>
-//
-//                 <Button className="h-8">Sign In</Button>
-//             </div>
-//         </ModalLayout>
-//     );
-// }
-
 export default function Signin() {
     const {openModal, activeModal, closeModal,} = useModal();
     const {login} = useAuth();

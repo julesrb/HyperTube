@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -74,7 +75,19 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 	params := url.Values{"t": {"movie"}, "cat": {"2000"}, "q": {title}, "apikey": {c.apiKey}}
 	queryURL := c.baseURL + "torznab?" + params.Encode()
 	log.Printf("C411 query: %s", queryURL)
+	return c.fetch(ctx, queryURL)
+}
 
+// FetchTop retrieves the top `limit` torrents from C411 using a broad category search.
+// Use this at startup to seed featured movies.
+func (c *Client) FetchTop(ctx context.Context, limit int) ([]models.Torrent, error) {
+	params := url.Values{"t": {"search"}, "q": {""}, "cat": {"2000"}, "limit": {strconv.Itoa(limit)}, "apikey": {c.apiKey}}
+	queryURL := c.baseURL + "torznab?" + params.Encode()
+	log.Printf("C411 top query: %s", queryURL)
+	return c.fetch(ctx, queryURL)
+}
+
+func (c *Client) fetch(ctx context.Context, queryURL string) ([]models.Torrent, error) {
 	body, err := c.get(ctx, queryURL)
 	if err != nil {
 		return nil, err
@@ -88,12 +101,11 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 	torrents := make([]models.Torrent, 0, len(feed.Channel.Items))
 	for _, item := range feed.Channel.Items {
 		imdbID := item.attr("imdbid")
-		if imdbID == "" { // TODO decide whether to include movies not referenced on imdb
+		if imdbID == "" {
 			continue
 		}
 		infohash := item.attr("infohash")
 		magnetURL := "magnet:?xt=urn:btih:" + infohash + "&dn=" + url.QueryEscape(item.Title)
-
 		torrents = append(torrents, models.Torrent{
 			ImdbID:   imdbID,
 			Title:    item.Title,
@@ -107,7 +119,6 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 	}
 	return torrents, nil
 }
-
 
 func (c *Client) get(ctx context.Context, rawURL string) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, rawURL, nil)
@@ -146,7 +157,7 @@ func extractLanguage(title string) string {
 	return strings.Join(languageRe.FindAllString(title, -1), "/")
 }
 
-func formatBytes(b int64) float64{
+func formatBytes(b int64) float64 {
 	const unit = 1024
 	if b < unit {
 		return 0.01
@@ -156,5 +167,5 @@ func formatBytes(b int64) float64{
 		div *= unit
 		exp++
 	}
-	return float64(b)/float64(div)
+	return float64(b) / float64(div)
 }

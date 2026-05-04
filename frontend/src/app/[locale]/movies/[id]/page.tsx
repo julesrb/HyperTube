@@ -3,8 +3,8 @@
 import {useParams} from "next/navigation";
 import {movies} from "@/types/movie";
 import React from "react";
-import {CommentSection} from "@/app/movies/[id]/CommentSection";
-import MovieInfoSection from "@/app/movies/[id]/MovieInfoSection";
+import {CommentSection} from "@/components/Comments";
+import MovieInfoSection from "@/app/[locale]/movies/[id]/MovieInfoSection";
 import MoviesHero from "@/components/MovieHero";
 
 export default function MoviePage() {

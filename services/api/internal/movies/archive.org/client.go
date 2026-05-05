@@ -159,24 +159,6 @@ func (c *Client) get(ctx context.Context, rawURL string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-var qualityRe = regexp.MustCompile(`\b(2160p|1080p|720p|480p)\b`)
-
-func extractQuality(title string) string {
-	if m := qualityRe.FindString(title); m != "" {
-		return m
-	}
-	if strings.Contains(title, "4K") || strings.Contains(title, "4KLight") {
-		return "2160p"
-	}
-	return ""
-}
-
-var languageRe = regexp.MustCompile(`(?i)\b(MULTI|VFF|VF2|VF|VO|VOSTFR|FRENCH)\b`)
-
-func extractLanguage(title string) string {
-	return strings.Join(languageRe.FindAllString(title, -1), "/")
-}
-
 func formatBytes(b int64) float64 {
 	const unit = 1024
 	if b < unit {

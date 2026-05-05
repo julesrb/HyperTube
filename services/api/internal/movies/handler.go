@@ -108,31 +108,42 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		if uniqueMovie >= 8 { // Protect TMDB api call per second limit
 			break
 		}
-		if !imdbIdSeen[torrent.ImdbID] {
-			// TODO OPTI look for preexisting data in db
-			var movie models.Movie
-			if torrent.ImdbID != "none" {
+		var movie models.Movie
+
+		if torrent.ImdbID == "none" {
+			movie, err = h.tmdb.FindByName(r.Context(), torrent.Title, torrent.Year)
+			if err != nil {
+				log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
+				continue
+			}
+			torrent.ImdbID = movie.ImdbID
+			if !imdbIdSeen[torrent.ImdbID] {
+				if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
+					log.Println("db err:", err)
+					respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
+					return
+				}
+				movies = append(movies, toMovieResponse(movie))
+				imdbIdSeen[movie.ImdbID] = true
+				uniqueMovie++
+			}
+		} else {
+			if !imdbIdSeen[torrent.ImdbID] {
+				// TODO OPTI look for preexisting data in db
 				movie, err = h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
 				if err != nil {
 					log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
 					continue
 				}
-			} else {
-				movie, err = h.tmdb.FindByName(r.Context(), torrent.Title, torrent.Year)
-				if err != nil {
-					log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
-					continue
+				if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
+					log.Println("db err:", err)
+					respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
+					return
 				}
-				torrent.ImdbID = movie.ImdbID
+				movies = append(movies, toMovieResponse(movie))
+				imdbIdSeen[movie.ImdbID] = true
+				uniqueMovie++
 			}
-			if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
-				log.Println("db err:", err)
-				respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
-				return
-			}
-			movies = append(movies, toMovieResponse(movie))
-			imdbIdSeen[movie.ImdbID] = true
-			uniqueMovie++
 		}
 		if err = h.store.UpsertTorrent(r.Context(), torrent); err != nil {
 			log.Println("db err:", err)

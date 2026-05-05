@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS torrents (
     id          SERIAL PRIMARY KEY,
     imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     title       TEXT    NOT NULL,
+    year        INTEGER NOT NULL,
     source      TEXT    NOT NULL,
     url         TEXT    NOT NULL,
     quality     TEXT    NOT NULL,

@@ -123,6 +123,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 					log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
 					continue
 				}
+				torrent.ImdbID = movie.ImdbID
 			}
 			if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
 				log.Println("db err:", err)

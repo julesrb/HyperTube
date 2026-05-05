@@ -81,8 +81,6 @@ func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 	movie.Director = details.Director
 	movie.Cast = details.Cast
 
-	//TODO retrieve the source of the movie and crawl for links. if no match exit
-	//TODO fetch torrent info
 	respond.Item(w, http.StatusOK, toMovieDetailResponse(*movie))
 }
 
@@ -93,25 +91,43 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("searching for movies with title: %s", title)
-	torrents, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
-	if err != nil {
-		log.Println("search err:", err)
-		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
-		return
+
+	var perSource [][]models.Torrent
+	for _, s := range h.searchers {
+		torrents, err := s.SearchByTitle(r.Context(), title)
+		if err != nil {
+			log.Println("search err:", err)
+			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
+			return
+		}
+		perSource = append(perSource, torrents)
+	}
+	maxLen := 0
+	for _, t := range perSource {
+		if len(t) > maxLen {
+			maxLen = len(t)
+		}
+	}
+	torrentsMix := make([]models.Torrent, 0, maxLen*len(perSource))
+	for i := range maxLen {
+		for _, t := range perSource {
+			if i < len(t) {
+				torrentsMix = append(torrentsMix, t[i])
+			}
+		}
 	}
 
 	movies := make([]movieResponse, 0)
 	imdbIdSeen := make(map[string]bool)
 	uniqueMovie := 0
 
-	for _, torrent := range torrents {
+	for _, torrent := range torrentsMix {
 		if uniqueMovie >= 8 { // Protect TMDB api call per second limit
 			break
 		}
-		var movie models.Movie
 
 		if torrent.ImdbID == "none" {
-			movie, err = h.tmdb.FindByName(r.Context(), torrent.Title, torrent.Year)
+			movie, err := h.tmdb.FindByName(r.Context(), torrent.Title, torrent.Year)
 			if err != nil {
 				log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
 				continue
@@ -130,7 +146,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		} else {
 			if !imdbIdSeen[torrent.ImdbID] {
 				// TODO OPTI look for preexisting data in db
-				movie, err = h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
+				movie, err := h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
 				if err != nil {
 					log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
 					continue
@@ -145,7 +161,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 				uniqueMovie++
 			}
 		}
-		if err = h.store.UpsertTorrent(r.Context(), torrent); err != nil {
+		if err := h.store.UpsertTorrent(r.Context(), torrent); err != nil {
 			log.Println("db err:", err)
 			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store torrent")
 			return

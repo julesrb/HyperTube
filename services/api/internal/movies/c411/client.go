@@ -91,12 +91,12 @@ func (c *Client) FetchTop(ctx context.Context, limit int) ([]models.Torrent, err
 func (c *Client) fetch(ctx context.Context, queryURL string) ([]models.Torrent, error) {
 	body, err := c.get(ctx, queryURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch C411 data: %w", err)
 	}
 
 	var feed torznabFeed
 	if err := xml.Unmarshal(body, &feed); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal C411 data: %w", err)
 	}
 
 	torrents := make([]models.Torrent, 0, len(feed.Channel.Items))

@@ -53,7 +53,7 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 		"rows":   {"10"},
 		"output": {"json"},
 	}
-	queryURL := c.baseURL + params.Encode()
+	queryURL := c.baseURL + "?" + params.Encode()
 
 	log.Printf("Archive.org query: %s", queryURL)
 	return c.fetch(ctx, queryURL)
@@ -68,7 +68,7 @@ func (c *Client) FetchTop(ctx context.Context, limit int) ([]models.Torrent, err
 		"rows":   {strconv.Itoa(limit)},
 		"output": {"json"},
 	}
-	queryURL := c.baseURL + params.Encode()
+	queryURL := c.baseURL + "?" + params.Encode()
 	return c.fetch(ctx, queryURL)
 }
 
@@ -90,12 +90,12 @@ func stripYear(title string, y int) (string, int) {
 func (c *Client) fetch(ctx context.Context, queryURL string) ([]models.Torrent, error) {
 	body, err := c.get(ctx, queryURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch archive.org data: %w", err)
 	}
 
 	var response archiveSearchResponse
 	if err := json.Unmarshal(body, &response); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal archive.org data: %w", err)
 	}
 
 	torrents := make([]models.Torrent, 0, len(response.Response.Docs))

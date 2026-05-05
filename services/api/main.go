@@ -29,8 +29,14 @@ func main() {
 
 	// prepare dependencies for DB and torrent search clients
 	store := movies.NewStore(db)
-	c411Client := c411.NewClient()
-	tmdbClient := tmdb.NewClient()
+	c411Client, err := c411.NewClient()
+	if err != nil {
+		log.Fatalf("init C411 client: %v", err)
+	}
+	tmdbClient, err := tmdb.NewClient()
+	if err != nil {
+		log.Fatalf("init TMDB client: %v", err)
+	}
 	searchers := []movies.MovieSearcher{c411Client}
 
 	moviesHandler := movies.NewHandler(store, searchers, tmdbClient)

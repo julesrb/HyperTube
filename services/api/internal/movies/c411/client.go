@@ -3,6 +3,7 @@ package c411
 import (
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"hypertube/api/internal/models"
 	"io"
@@ -22,16 +23,16 @@ type Client struct {
 	baseURL    string
 }
 
-func NewClient() *Client {
+func NewClient() (*Client, error) {
 	key := os.Getenv("C411_API_KEY")
 	if key == "" {
-		panic("C411 API key is required")
+		return nil, errors.New("C411 API key is required")
 	}
 	return &Client{
 		httpClient: http.DefaultClient,
 		apiKey:     key,
 		baseURL:    "https://c411.org/api/",
-	}
+	}, nil
 }
 
 type torznabFeed struct {

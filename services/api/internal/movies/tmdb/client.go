@@ -3,6 +3,7 @@ package tmdb
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"hypertube/api/internal/models"
 	"io"
@@ -16,16 +17,16 @@ type Client struct {
 	baseURL    string
 }
 
-func NewClient() *Client {
+func NewClient() (*Client, error) {
 	key := os.Getenv("TMDB_API_KEY")
 	if key == "" {
-		panic("TMDB API key is required")
+		return nil, errors.New("TMDB API key is required")
 	}
 	return &Client{
 		httpClient: http.DefaultClient,
 		apiKey:     key,
 		baseURL:    "https://api.themoviedb.org/3/",
-	}
+	}, nil
 }
 
 const tmdbImageBase = "https://image.tmdb.org/t/p/w500"

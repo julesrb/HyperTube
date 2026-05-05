@@ -18,10 +18,6 @@ type movieStore interface {
 	findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error)
 }
 
-// type TorrentFetcher interface {
-// 	FetchTorrents(ctx context.Context, pageURL string) ([]models.Torrent, error)
-// }
-
 type MovieSearcher interface {
 	SearchByTitle(ctx context.Context, title string) ([]models.Torrent, error)
 	GetTopMovies(ctx context.Context) ([]models.Torrent, error)
@@ -96,7 +92,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("searching for movies with title: %s", title)
-	Torrents, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
+	torrents, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
 	if err != nil {
 		log.Println("search err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
@@ -107,7 +103,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	imdbIdSeen := make(map[string]bool)
 	uniqueMovie := 0
 
-	for _, torrent := range Torrents {
+	for _, torrent := range torrents {
 		if uniqueMovie >= 10 { // Protect TMDB api call per second limit
 			break
 		}

@@ -51,6 +51,10 @@ func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string) (models.MovieDet
 	return models.MovieDetails{}, nil
 }
 
+func (f *fakeTMDB) FindByName(ctx context.Context, title string, year int) (models.Movie, error) {
+	return models.Movie{}, nil
+}
+
 func TestGetMovies_OK(t *testing.T) {
 	h := &Handler{store: &fakeStore{
 		movies: []models.Movie{

@@ -21,6 +21,7 @@ type Torrent struct {
 	Id       int     `json:"id"`
 	ImdbID   string  `json:"imdb_id"`
 	Title    string  `json:"title"`
+	Year     int     `json:"year"`
 	Source   string  `json:"source"`
 	URL      string  `json:"url"`
 	Quality  string  `json:"quality"`

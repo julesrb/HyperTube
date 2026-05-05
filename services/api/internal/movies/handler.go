@@ -26,6 +26,7 @@ type MovieSearcher interface {
 type tmdbClient interface {
 	FindByIMDBID(ctx context.Context, imdbID string) (models.Movie, error)
 	GetMovieDetails(ctx context.Context, tmdbID string) (models.MovieDetails, error)
+	FindByName(ctx context.Context, title string, year int) (models.Movie, error)
 }
 
 type Handler struct {
@@ -104,15 +105,24 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	uniqueMovie := 0
 
 	for _, torrent := range torrents {
-		if uniqueMovie >= 10 { // Protect TMDB api call per second limit
+		if uniqueMovie >= 8 { // Protect TMDB api call per second limit
 			break
 		}
 		if !imdbIdSeen[torrent.ImdbID] {
 			// TODO OPTI look for preexisting data in db
-			movie, err := h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
-			if err != nil {
-				log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
-				continue
+			var movie models.Movie
+			if torrent.ImdbID != "none" {
+				movie, err = h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
+				if err != nil {
+					log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
+					continue
+				}
+			} else {
+				movie, err = h.tmdb.FindByName(r.Context(), torrent.Title, torrent.Year)
+				if err != nil {
+					log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
+					continue
+				}
 			}
 			if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
 				log.Println("db err:", err)
@@ -120,7 +130,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			movies = append(movies, toMovieResponse(movie))
-			imdbIdSeen[torrent.ImdbID] = true
+			imdbIdSeen[movie.ImdbID] = true
 			uniqueMovie++
 		}
 		if err = h.store.UpsertTorrent(r.Context(), torrent); err != nil {

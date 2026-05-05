@@ -7,7 +7,8 @@ import (
 	"os"
 
 	"hypertube/api/internal/movies"
-	"hypertube/api/internal/movies/c411"
+	// "hypertube/api/internal/movies/c411"
+	"hypertube/api/internal/movies/archive.org"
 	"hypertube/api/internal/movies/tmdb"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -29,45 +30,50 @@ func main() {
 
 	// prepare dependencies for DB and torrent search clients
 	store := movies.NewStore(db)
-	c411Client, err := c411.NewClient()
+	// c411Client, err := c411.NewClient()
+	// if err != nil {
+	// 	log.Fatalf("init C411 client: %v", err)
+	// }
+	archiveClient, err := archiveorg.NewClient()
 	if err != nil {
-		log.Fatalf("init C411 client: %v", err)
+		log.Fatalf("init archive.org client: %v", err)
 	}
 	tmdbClient, err := tmdb.NewClient()
 	if err != nil {
 		log.Fatalf("init TMDB client: %v", err)
 	}
-	searchers := []movies.MovieSearcher{c411Client}
+	// searchers := []movies.MovieSearcher{c411Client}
+	searchers := []movies.MovieSearcher{archiveClient}
 
 	moviesHandler := movies.NewHandler(store, searchers, tmdbClient)
 
-	// Fetch top movies at startup to cache the frontpage content
-	featured, err := c411Client.GetTopMovies(ctx)
-	if err != nil {
-		log.Printf("startup: failed to fetch top movies: %v", err)
-	} else {
-		log.Printf("startup: top %d movies by seeds:", len(featured))
-		for _, t := range featured {
-			log.Printf("  imdb=%s seeds=%s title=%s", t.ImdbID, t.Seeds, t.Title)
-		}
-	}
-	for i, torrent := range featured {
-		movie, err := tmdbClient.FindByIMDBID(ctx, torrent.ImdbID)
-		if err != nil {
-			log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
-			continue
-		}
-		if err = store.UpsertMovie(ctx, movie); err != nil {
-			log.Println("db err:", err)
-			return
-		}
-		if err = store.UpsertTorrent(ctx, torrent); err != nil {
-			log.Printf("startup: failed to store torrent %s: %v", torrent.Title, err)
-		}
-		if err = store.UpsertFeatured(ctx, torrent.ImdbID, i); err != nil {
-			log.Printf("startup: failed to store featured torrent %s: %v", torrent.Title, err)
-		}
-	}
+	// // Fetch top movies at startup to cache the frontpage content
+	// featured, err := c411Client.GetTopMovies(ctx)
+	// if err != nil {
+	// 	log.Printf("startup: failed to fetch top movies: %v", err)
+	// } else {
+	// 	log.Printf("startup: top %d movies by seeds:", len(featured))
+	// 	for _, t := range featured {
+	// 		log.Printf("  imdb=%s seeds=%s title=%s", t.ImdbID, t.Seeds, t.Title)
+	// 	}
+	// }
+	// for i, torrent := range featured {
+	// 	movie, err := tmdbClient.FindByIMDBID(ctx, torrent.ImdbID)
+	// 	if err != nil {
+	// 		log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
+	// 		continue
+	// 	}
+	// 	if err = store.UpsertMovie(ctx, movie); err != nil {
+	// 		log.Println("db err:", err)
+	// 		return
+	// 	}
+	// 	if err = store.UpsertTorrent(ctx, torrent); err != nil {
+	// 		log.Printf("startup: failed to store torrent %s: %v", torrent.Title, err)
+	// 	}
+	// 	if err = store.UpsertFeatured(ctx, torrent.ImdbID, i); err != nil {
+	// 		log.Printf("startup: failed to store featured torrent %s: %v", torrent.Title, err)
+	// 	}
+	// }
 
 	mux := http.NewServeMux()
 

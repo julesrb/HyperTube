@@ -11,14 +11,10 @@ export const routing = defineRouting({
 export type tLocale = typeof routing.locales[number]
 
 export default getRequestConfig(async ({requestLocale}) => {
-    // todo: const store = await cookies();
     const requested = await requestLocale;
-    let locale = null;
-    if (!hasLocale(routing.locales, locale)) {
-        locale = hasLocale(routing.locales, requested)
-            ? requested
-            : routing.defaultLocale;
-    }
+    const locale = hasLocale(routing.locales, requested)
+        ? requested
+        : routing.defaultLocale;
 
     return {
         locale,

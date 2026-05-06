@@ -3,9 +3,11 @@ package comments
 import (
 	"context"
 	"errors"
+	"fmt"
+	"hypertube/api/internal/models"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"hypertube/api/internal/models"
 )
 
 var ErrNotFound = errors.New("not found")
@@ -76,4 +78,18 @@ func (s *Store) update(ctx context.Context, content string, id int, user_id int)
 		return models.Comment{}, err
 	}
 	return r, nil
+}
+
+func (s *Store) delete(ctx context.Context, id int, user_id int) error {
+	tag, err := s.db.Exec(ctx, `
+		DELETE FROM comments
+		WHERE id = $1 AND user_id = $2
+	`, id, user_id)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("comment not found")
+	}
+	return nil
 }

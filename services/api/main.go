@@ -118,7 +118,7 @@ func newRouter(moviesHandler *movies.MoviesHandler, commentsHandler *comments.Co
 	mux.HandleFunc("GET /api/v1/comments", commentsHandler.List) //TODO paginate fesult
 	mux.HandleFunc("GET /api/v1/comments/{id}", commentsHandler.Get)
 	mux.HandleFunc("PATCH /api/v1/comments/{id}", commentsHandler.Update)
-	// mux.HandleFunc("DELETE /api/v1/comments/{id}", commentsHandler.Delete)
+	mux.HandleFunc("DELETE /api/v1/comments/{id}", commentsHandler.Delete)
 
 	return mux
 }

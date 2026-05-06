@@ -2,10 +2,10 @@ package movies
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
-	"encoding/json"
 
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"

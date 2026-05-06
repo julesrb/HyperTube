@@ -1,3 +1,4 @@
-export default function Page({ params }) {
-    return <h1>search {params.id}</h1>;
+// todo remove ?
+export default function Page() {
+    return <h1>search</h1>;
 }

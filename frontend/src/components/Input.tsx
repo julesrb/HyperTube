@@ -14,7 +14,7 @@ export default function Input({id, type, placeholder, value, onChange, className
                value={value}
                onChange={(e) => onChange(e.target.value.trim())}
                className="peer py-4 m-0 w-full h-8 bg-white text-black border-b focus:border-b-2"/>
-        <label htmlFor={type}
+        <label htmlFor={id}
                className="pointer-events-none uppercase absolute text-xs font-sans bottom-15
                peer-focus:text-xs peer-focus:font-sans peer-focus:bottom-15
                peer-placeholder-shown:font-condensed peer-placeholder-shown:tracking-wide peer-placeholder-shown:bottom-9 peer-placeholder-shown:text-2xl">{placeholder}</label>

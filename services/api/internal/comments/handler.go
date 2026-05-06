@@ -2,6 +2,7 @@ package comments
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
@@ -20,6 +21,7 @@ func NewCommentsHandler(store CommentStore) *CommentsHandler {
 type CommentStore interface {
 	findByID(ctx context.Context, id string) (*models.Comment, error)
 	findAll(ctx context.Context) ([]models.Comment, error)
+	update(ctx context.Context, content string, id int, user_id int) (models.Comment, error)
 }
 
 func (h *CommentsHandler) List(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +52,25 @@ func (h *CommentsHandler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 	respond.Item(w, http.StatusOK, comment)
 }
-func (h *CommentsHandler) Create(w http.ResponseWriter, r *http.Request) {}
-func (h *CommentsHandler) Update(w http.ResponseWriter, r *http.Request) {}
+
+func (h *CommentsHandler) Update(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Content string `json:"content"`
+		Id      int    `json:"id"`
+		UserID  int    `json:"user_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		log.Println("decode err:", err)
+		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
+		return
+	}
+	comment, err := h.store.update(r.Context(), input.Content, input.Id, input.UserID)
+	if err != nil {
+		log.Println("db err:", err)
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to update comment")
+		return
+	}
+	respond.Item(w, http.StatusOK, comment)
+}
+
 func (h *CommentsHandler) Delete(w http.ResponseWriter, r *http.Request) {}

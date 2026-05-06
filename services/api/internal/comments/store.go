@@ -55,3 +55,25 @@ func (s *Store) findAll(ctx context.Context) ([]models.Comment, error) {
 	}
 	return comments, nil
 }
+
+func (s *Store) update(ctx context.Context, content string, id int, user_id int) (models.Comment, error) {
+	rows, err := s.db.Query(ctx, `
+		UPDATE comments
+		SET content = $1, updated_at = NOW()
+		WHERE id = $2 AND user_id = $3
+		RETURNING *
+	`, content, id, user_id)
+
+	if err != nil {
+		return models.Comment{}, err
+	}
+
+	r, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Comment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return models.Comment{}, ErrNotFound
+		}
+		return models.Comment{}, err
+	}
+	return r, nil
+}

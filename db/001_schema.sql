@@ -45,3 +45,11 @@ CREATE TABLE IF NOT EXISTS watch_history (
     movie_id    TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     watched_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+    id          SERIAL  PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    movie_id    TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    content     TEXT    NOT NULL,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

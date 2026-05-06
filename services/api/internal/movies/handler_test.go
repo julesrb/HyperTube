@@ -41,6 +41,14 @@ func (f *fakeStore) findTorrent(ctx context.Context, imdbID string) ([]models.To
 	return nil, nil
 }
 
+func (s *fakeStore) listComments(ctx context.Context, imdbId string) ([]models.Comment, error) {
+	return nil, nil
+}
+
+func (s *fakeStore) createComment(ctx context.Context, c models.Comment) (models.Comment, error) {
+	return models.Comment{}, nil
+}
+
 type fakeTMDB struct{}
 
 func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie, error) {

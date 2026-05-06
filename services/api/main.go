@@ -104,11 +104,11 @@ func newRouter(moviesHandler *movies.Handler) *http.ServeMux {
 
 	// Movies
 	mux.HandleFunc("GET /api/v1/movies", moviesHandler.GetMovies)
-	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies)
+	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies) //TODO paginate fesult
 	mux.HandleFunc("GET /api/v1/movies/{id}", moviesHandler.GetMoviesId)
 	mux.HandleFunc("GET /api/v1/movies/{id}/torrents", moviesHandler.GetMovieTorrents)
-	// mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.ListComments)
-	// mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.CreateComment)
+	mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.GetComments) //TODO paginate fesult
+	mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.PostComment)
 
 	// // Comments
 	// mux.HandleFunc("GET /api/v1/comments", nil)

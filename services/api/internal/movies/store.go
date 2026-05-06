@@ -141,3 +141,43 @@ func (s *Store) UpsertFeatured(ctx context.Context, imdbId string, position int)
 	`, imdbId, position)
 	return err
 }
+
+func (s *Store) listComments(ctx context.Context, imdbId string) ([]models.Comment, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT * FROM comments
+		WHERE movie_id = $1
+		ORDER BY updated_at DESC
+	`, imdbId)
+	if err != nil {
+		return nil, err
+	}
+	comments, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Comment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return comments, nil
+}
+
+func (s *Store) createComment(ctx context.Context, c models.Comment) (models.Comment, error) {
+	rows, err := s.db.Query(ctx, `
+		INSERT INTO comments (user_id, movie_id, content)
+		VALUES ($1, $2, $3)
+		RETURNING *
+	`, c.UserID, c.MovieID, c.Content)
+
+	if err != nil {
+		return models.Comment{}, err
+	}
+
+	r, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Comment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return models.Comment{}, ErrNotFound
+		}
+		return models.Comment{}, err
+	}
+	return r, nil
+}

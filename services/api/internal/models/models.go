@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Movie struct {
 	ImdbID      string   `json:"imdb_id"`
 	TmdbID      string   `json:"tmdb_id"`
@@ -39,4 +41,12 @@ type MovieDetails struct {
 	Summary  string   `json:"summary"`
 	Director string   `json:"director"`
 	Cast     []string `json:"cast"`
+}
+
+type Comment struct {
+	ID         int    `json:"id"`
+	UserID     int    `json:"user_id"`
+	MovieID    string `json:"movie_id"`
+	Content    string `json:"content"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }

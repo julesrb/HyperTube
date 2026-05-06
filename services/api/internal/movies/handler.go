@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"encoding/json"
 
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
@@ -16,6 +17,8 @@ type movieStore interface {
 	UpsertMovie(ctx context.Context, m models.Movie) error
 	UpsertTorrent(ctx context.Context, ts models.Torrent) error
 	findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error)
+	listComments(ctx context.Context, imdbID string) ([]models.Comment, error)
+	createComment(ctx context.Context, c models.Comment) (models.Comment, error)
 }
 
 type MovieSearcher interface {
@@ -188,7 +191,43 @@ func (h *Handler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
 }
 
 // ListComments returns comments for a movie.
-func (h *Handler) ListComments(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
+	imdbid := r.PathValue("id")
+	comments, err := h.store.listComments(r.Context(), imdbid)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			respond.Error(w, http.StatusNotFound, "NOT_FOUND", "no comments")
+		} else {
+			log.Println("db err:", err)
+			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to acess comments")
+		}
+		return
+	}
+	respond.List(w, http.StatusOK, comments, len(comments))
+}
 
 // CreateComment posts a new comment on a movie.
-func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		UserID  int    `json:"user_id"`
+		MovieID string `json:"movie_id"`
+		Content string `json:"content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		log.Println("decode err:", err)
+		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
+		return
+	}
+	comment := models.Comment{
+		UserID:  input.UserID,
+		MovieID: input.MovieID,
+		Content: input.Content,
+	}
+	if comment, err := h.store.createComment(r.Context(), comment); err != nil {
+		log.Println("db err:", err)
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to create comment")
+		return
+	} else {
+		respond.Item(w, http.StatusCreated, comment)
+	}
+}

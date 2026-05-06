@@ -78,7 +78,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     const t = useTranslations("movies");
 
     if (filteredMovies.length === 0)
-        return (<p className="text-center italic text-gray">{t("noResults")}</p>);
+        return (<p className="small-text">{t("noResults")}</p>);
 
     if (viewType === "grid")
         return (<MoviesCard movieSets={filteredMovies}/>);

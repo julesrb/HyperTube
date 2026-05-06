@@ -63,7 +63,7 @@ function MovieHistoryTab({user}: {user: tUser}) {
     const t = useTranslations("profile");
 
     if (user.watch_history.length === 0)
-        return (<div className="flex justify-center pt-5"><p>{t("noMoviesYet")}</p></div>);
+        return (<p className="small-text">{t("noMoviesYet")}</p>);
     return (<Pagination currenIndex={index} onClick={changeIndex} totalPage={3}>
         <MoviesCard movieSets={user.watch_history.map(m => movies[m.movie_id])}/>
     </Pagination>);

@@ -82,6 +82,9 @@ export function Comments({user, comments, updateComment, deleteComment}: {user: 
         dayjs.locale("de");
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
+    if (comments.length === 0)
+        return (<p className="small-text">{t("noCommentsYet")}</p>);
+
     return (<Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
         <div className="flex flex-col-reverse gap-6">
             {comments.map((comment, index) => (<Comment key={index} currentUser={user} comment={comment} updateComment={updateComment} deleteComment={deleteComment}/>))}

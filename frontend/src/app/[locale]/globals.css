@@ -46,6 +46,7 @@
 }
 
 /* ------------------------------------------------- CUSTOM CLASS --------------------------------------------------- */
+.small-text { @apply text-center italic text-gray }
 .bg-gradient { @apply size-full absolute inset-0 bg-linear-to-t from-black via-transparent via-40% to-transparent opacity-90; }
 .responsive-text-hairline { @apply font-hairline text-xs sm:text-xl xl:text-3xl tracking-normal; }
 

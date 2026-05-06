@@ -243,3 +243,147 @@ Posts a new comment on a movie.
 ```json
 { "error": { "code": "INTERNAL_ERROR", "message": "failed to create comment" } }
 ```
+
+---
+
+## GET /comments
+
+Returns all comments across all movies.
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "movie_id": "string",
+      "content": "string",
+      "updated_at": "2026-05-06T12:00:00Z"
+    }
+  ],
+  "meta": { "total": 12, "page": 1, "per_page": 12 }
+}
+```
+
+### Error responses
+
+```json
+{ "error": { "code": "NOT_FOUND", "message": "comments not found" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to load comments" } }
+```
+
+---
+
+## GET /comments/{id}
+
+Returns a single comment by its ID.
+
+### Path parameters
+
+| Parameter | Type   | Description       |
+|-----------|--------|-------------------|
+| `id`      | string | ID of the comment |
+
+### Response
+
+```json
+{
+  "data": {
+    "id": 1,
+    "user_id": 2,
+    "movie_id": "string",
+    "content": "string",
+    "updated_at": "2026-05-06T12:00:00Z"
+  }
+}
+```
+
+### Error responses
+
+```json
+{ "error": { "code": "NOT_FOUND", "message": "comment not found" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to load comment" } }
+```
+
+---
+
+## PATCH /comments/{id}
+
+Updates the content of an existing comment.
+
+### Path parameters
+
+| Parameter | Type   | Description       |
+|-----------|--------|-------------------|
+| `id`      | string | ID of the comment |
+
+### Request body
+
+```json
+{
+  "user_id": 2,
+  "content": "string"
+}
+```
+
+### Response
+
+```json
+{
+  "data": {
+    "id": 1,
+    "user_id": 2,
+    "movie_id": "string",
+    "content": "string",
+    "updated_at": "2026-05-06T12:00:00Z"
+  }
+}
+```
+
+### Error responses
+
+```json
+{ "error": { "code": "VALIDATION_ERROR", "message": "invalid request body" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to update comment" } }
+```
+
+---
+
+## DELETE /comments/{id}
+
+Deletes a comment.
+
+### Path parameters
+
+| Parameter | Type   | Description       |
+|-----------|--------|-------------------|
+| `id`      | string | ID of the comment |
+
+### Request body
+
+```json
+{
+  "user_id": 2
+}
+```
+
+### Response
+
+`200 OK` — no body.
+
+### Error responses
+
+```json
+{ "error": { "code": "VALIDATION_ERROR", "message": "invalid request body" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to update comment" } }
+```

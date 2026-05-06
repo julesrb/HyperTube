@@ -1,6 +1,168 @@
 {
-  "Home": {
-    "title": "Bienvenue",
-    "description": "Ceci est la page d'accueil"
+  "nav": {
+    "search": "Rechercher",
+    "account": "Compte",
+    "logout": "Déconnexion",
+    "signIn": "Connexion",
+    "createAccount": "Créer un compte"
+  },
+  "language": {
+    "english": "Anglais",
+    "french": "Français"
+  },
+  "home": {
+    "continueWatching": "Continuer à regarder",
+    "popular": "Populaires",
+    "mostRated": "Les mieux notés"
+  },
+  "movies": {
+    "searchPlaceholder": "Rechercher un film...",
+    "noResults": "Aucun film trouvé",
+    "sort": {
+      "title": "Titre",
+      "year": "Année",
+      "genre": "Genre",
+      "rating": "Note"
+    },
+    "selectedGenres": {
+      "more": "+ {count} de plus"
+    }
+  },
+  "movie": {
+    "notFound": "Film introuvable",
+    "watch": "Regarder",
+    "length": "Durée",
+    "genre": "Genre",
+    "directors": "Réalisateurs",
+    "stars": "Acteurs",
+    "synopsis": "Synopsis",
+    "posterAlt": "Affiche du film : {title}"
+  },
+  "comments": {
+    "title": "Commentaires",
+    "signInToComment": "Connectez-vous pour pouvoir poster un commentaire",
+    "edited": "Édité",
+    "readMore": "Lire la suite",
+    "collapse": "Réduire",
+    "saveChange": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "writeComment": "Écrire un commentaire...",
+    "publishComment": "Publier le commentaire",
+    "noCommentsYet": "Vous n'avez encore publié aucun commentaire."
+  },
+  "profile": {
+    "memberSince": "Membre depuis {date} · #{username}",
+    "tabs": {
+      "profile": "Profil",
+      "auth": "Mot de passe",
+      "history": "Historique",
+      "comments": "Commentaires"
+    },
+    "saveChanges": "Enregistrer les modifications",
+    "selectNewAvatar": "Choisir un nouvel avatar",
+    "remove": "Supprimer",
+    "noMoviesYet": "Vous n'avez encore vu aucun film.",
+    "fields": {
+      "email": "E-mail",
+      "firstname": "Prénom",
+      "lastname": "Nom",
+      "username": "Nom d'utilisateur"
+    }
+  },
+  "users": {
+    "searchResult": "Recherche {id}"
+  },
+  "common": {
+    "profilePictureAlt": "Photo de profil"
+  },
+  "auth": {
+    "signin": {
+      "title": "Connexion",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "noAccount": "Vous n'avez pas encore de compte ?",
+      "register": "Inscrivez-vous"
+    },
+    "register": {
+      "title": "Rejoindre Hypertube",
+      "email": "E-mail",
+      "firstname": "Prénom",
+      "lastname": "Nom",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "submit": "S'inscrire",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Connectez-vous"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "email": "E-mail",
+      "submit": "Envoyer"
+    },
+    "changePassword": {
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "submit": "Modifier"
+    }
+  },
+  "modal": {
+    "deleteComment": {
+      "title": "Supprimer le commentaire ?",
+      "confirm": "Oui",
+      "cancel": "Non"
+    },
+    "genre": {
+      "title": "Genres du film"
+    },
+    "filterGenre": {
+      "title": "Sélectionner des genres",
+      "apply": "Appliquer"
+    }
+  },
+  "notifications": {
+    "success": {
+      "passwordChanged": "Votre mot de passe a bien été modifié.",
+      "emailChanged": "Votre adresse e-mail a été modifiée. Un e-mail de confirmation vient de vous être envoyé pour valider ce changement.",
+      "emailResetPassword": "Un e-mail vient de vous être envoyé pour réinitialiser votre mot de passe.",
+      "infoChanged": "Vos informations ont bien été mises à jour.",
+      "login": "Vous êtes maintenant connecté avec succès.",
+      "commentChange": "La modification de votre commentaire a bien été mise à jour."
+    },
+    "error": {
+      "unknown": "Une erreur inattendue est survenue. Veuillez réessayer.",
+      "network": "Impossible de contacter le serveur. Vérifiez votre connexion internet.",
+      "unauthorized": "Vous devez être connecté pour effectuer cette action.",
+      "forbidden": "Vous n'avez pas les permissions nécessaires pour effectuer cette action.",
+      "passwordIncorrect": "Le mot de passe actuel est incorrect.",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+      "passwordTooWeak": "Le mot de passe est trop faible. Utilisez une combinaison de lettres, chiffres et caractères spéciaux.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "passwordSameAsOld": "Le nouveau mot de passe doit être différent de l'ancien.",
+      "passwordChangeFailed": "Impossible de modifier le mot de passe. Veuillez réessayer.",
+      "emailInvalid": "L'adresse e-mail n'est pas valide.",
+      "emailAlreadyUsed": "Cette adresse e-mail est déjà utilisée.",
+      "emailChangeFailed": "Impossible de modifier l'adresse e-mail. Veuillez réessayer.",
+      "emailVerificationFailed": "Impossible d'envoyer l'e-mail de confirmation.",
+      "emailTokenInvalid": "Le lien de confirmation est invalide ou expiré.",
+      "usernameTooShort": "Le nom d'utilisateur est trop court.",
+      "usernameTooLong": "Le nom d'utilisateur est trop long.",
+      "usernameInvalid": "Le nom d'utilisateur contient des caractères invalides.",
+      "usernameAlreadyUsed": "Ce nom d'utilisateur est déjà utilisé.",
+      "usernameChangeFailed": "Impossible de modifier le nom d'utilisateur.",
+      "firstnameTooShort": "Le prénom est trop court.",
+      "firstnameTooLong": "Le prénom est trop long.",
+      "firstnameInvalid": "Le prénom contient des caractères invalides.",
+      "firstnameChangeFailed": "Impossible de modifier le prénom.",
+      "lastnameTooShort": "Le nom est trop court.",
+      "lastnameTooLong": "Le nom est trop long.",
+      "lastnameInvalid": "Le nom contient des caractères invalides.",
+      "lastnameChangeFailed": "Impossible de modifier le nom.",
+      "requiredField": "Ce champ est obligatoire.",
+      "requiredFields": "Veuillez remplir tous les champs obligatoires.",
+      "missingFields": "Certains champs obligatoires sont manquants. Veuillez vérifier le formulaire."
+    }
   }
 }

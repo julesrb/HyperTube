@@ -1,6 +1,168 @@
 {
-  "Home": {
-    "title": "Bienvenue",
-    "description": "Ceci est la page d'accueil"
+  "nav": {
+    "search": "Suchen",
+    "account": "Konto",
+    "logout": "Abmelden",
+    "signIn": "Anmelden",
+    "createAccount": "Konto erstellen"
+  },
+  "language": {
+    "english": "Englisch",
+    "french": "Französisch"
+  },
+  "home": {
+    "continueWatching": "Weiter ansehen",
+    "popular": "Beliebt",
+    "mostRated": "Am besten bewertet"
+  },
+  "movies": {
+    "searchPlaceholder": "Nach einem Film suchen...",
+    "noResults": "Kein Film gefunden",
+    "sort": {
+      "title": "Titel",
+      "year": "Jahr",
+      "genre": "Genre",
+      "rating": "Bewertung"
+    },
+    "selectedGenres": {
+      "more": "+ {count} mehr"
+    }
+  },
+  "movie": {
+    "notFound": "Film nicht gefunden",
+    "watch": "Ansehen",
+    "length": "Dauer",
+    "genre": "Genre",
+    "directors": "Regisseure",
+    "stars": "Schauspieler",
+    "synopsis": "Zusammenfassung",
+    "posterAlt": "Filmplakat: {title}"
+  },
+  "comments": {
+    "title": "Kommentare",
+    "signInToComment": "Melden Sie sich an, um einen Kommentar zu schreiben",
+    "edited": "Bearbeitet",
+    "readMore": "Mehr lesen",
+    "collapse": "Weniger anzeigen",
+    "saveChange": "Änderungen speichern",
+    "cancel": "Abbrechen",
+    "writeComment": "Kommentar schreiben...",
+    "publishComment": "Kommentar veröffentlichen",
+    "noCommentsYet": "Sie haben noch keine Kommentare verfasst."
+  },
+  "profile": {
+    "memberSince": "Mitglied seit {date} · #{username}",
+    "tabs": {
+      "profile": "Profil",
+      "auth": "Passwort",
+      "history": "Verlauf",
+      "comments": "Kommentare"
+    },
+    "saveChanges": "Änderungen speichern",
+    "selectNewAvatar": "Neuen Avatar auswählen",
+    "remove": "Entfernen",
+    "noMoviesYet": "Sie haben noch keine Filme gesehen.",
+    "fields": {
+      "email": "E-Mail",
+      "firstname": "Vorname",
+      "lastname": "Nachname",
+      "username": "Benutzername"
+    }
+  },
+  "users": {
+    "searchResult": "Suche {id}"
+  },
+  "common": {
+    "profilePictureAlt": "Profilbild"
+  },
+  "auth": {
+    "signin": {
+      "title": "Anmelden",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden",
+      "noAccount": "Noch kein Konto?",
+      "register": "Jetzt erstellen"
+    },
+    "register": {
+      "title": "Hypertube beitreten",
+      "email": "E-Mail",
+      "firstname": "Vorname",
+      "lastname": "Nachname",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "submit": "Registrieren",
+      "haveAccount": "Haben Sie bereits ein Konto?",
+      "signIn": "Anmelden"
+    },
+    "forgotPassword": {
+      "title": "Passwort zurücksetzen",
+      "email": "E-Mail",
+      "submit": "Senden"
+    },
+    "changePassword": {
+      "current": "Aktuelles Passwort",
+      "new": "Neues Passwort",
+      "confirm": "Neues Passwort bestätigen",
+      "submit": "Ändern"
+    }
+  },
+  "modal": {
+    "deleteComment": {
+      "title": "Kommentar löschen?",
+      "confirm": "Ja",
+      "cancel": "Nein"
+    },
+    "genre": {
+      "title": "Filmgenres"
+    },
+    "filterGenre": {
+      "title": "Genres auswählen",
+      "apply": "Anwenden"
+    }
+  },
+  "notifications": {
+    "success": {
+      "passwordChanged": "Ihr Passwort wurde aktualisiert.",
+      "emailChanged": "Ihre E-Mail-Adresse wurde aktualisiert. Eine Bestätigungs-E-Mail wurde gesendet, um die Änderung zu bestätigen.",
+      "emailResetPassword": "Eine E-Mail zum Zurücksetzen Ihres Passworts wurde gesendet.",
+      "infoChanged": "Ihre Profilinformationen wurden aktualisiert.",
+      "login": "Sie sind jetzt erfolgreich angemeldet.",
+      "commentChange": "Ihr Kommentar wurde aktualisiert."
+    },
+    "error": {
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "network": "Der Server konnte nicht erreicht werden. Bitte überprüfen Sie Ihre Internetverbindung.",
+      "unauthorized": "Sie müssen angemeldet sein, um diese Aktion auszuführen.",
+      "forbidden": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
+      "passwordIncorrect": "Das aktuelle Passwort ist falsch.",
+      "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "passwordTooWeak": "Das Passwort ist zu schwach. Verwenden Sie eine Kombination aus Buchstaben, Zahlen und Sonderzeichen.",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+      "passwordSameAsOld": "Das neue Passwort muss sich vom alten unterscheiden.",
+      "passwordChangeFailed": "Das Passwort konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
+      "emailInvalid": "Die E-Mail-Adresse ist ungültig.",
+      "emailAlreadyUsed": "Diese E-Mail-Adresse wird bereits verwendet.",
+      "emailChangeFailed": "Die E-Mail-Adresse konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
+      "emailVerificationFailed": "Die Bestätigungs-E-Mail konnte nicht gesendet werden.",
+      "emailTokenInvalid": "Der Bestätigungslink ist ungültig oder abgelaufen.",
+      "usernameTooShort": "Der Benutzername ist zu kurz.",
+      "usernameTooLong": "Der Benutzername ist zu lang.",
+      "usernameInvalid": "Der Benutzername enthält ungültige Zeichen.",
+      "usernameAlreadyUsed": "Dieser Benutzername wird bereits verwendet.",
+      "usernameChangeFailed": "Der Benutzername konnte nicht geändert werden.",
+      "firstnameTooShort": "Der Vorname ist zu kurz.",
+      "firstnameTooLong": "Der Vorname ist zu lang.",
+      "firstnameInvalid": "Der Vorname enthält ungültige Zeichen.",
+      "firstnameChangeFailed": "Der Vorname konnte nicht geändert werden.",
+      "lastnameTooShort": "Der Nachname ist zu kurz.",
+      "lastnameTooLong": "Der Nachname ist zu lang.",
+      "lastnameInvalid": "Der Nachname enthält ungültige Zeichen.",
+      "lastnameChangeFailed": "Der Nachname konnte nicht geändert werden.",
+      "requiredField": "Dieses Feld ist erforderlich.",
+      "requiredFields": "Bitte füllen Sie alle erforderlichen Felder aus.",
+      "missingFields": "Einige erforderliche Felder fehlen. Bitte überprüfen Sie das Formular."
+    }
   }
 }

@@ -1,6 +1,168 @@
 {
-  "Home": {
-    "title": "Welcome",
-    "description": "This is home page"
+  "nav": {
+    "search": "Search",
+    "account": "Account",
+    "logout": "Logout",
+    "signIn": "Sign in",
+    "createAccount": "Create account"
+  },
+  "language": {
+    "english": "English",
+    "french": "French"
+  },
+  "home": {
+    "continueWatching": "Continue watching",
+    "popular": "Popular",
+    "mostRated": "Most rated"
+  },
+  "movies": {
+    "searchPlaceholder": "Search for a movie...",
+    "noResults": "No movie found",
+    "sort": {
+      "title": "Title",
+      "year": "Year",
+      "genre": "Genre",
+      "rating": "Rating"
+    },
+    "selectedGenres": {
+      "more": "+ {count} more"
+    }
+  },
+  "movie": {
+    "notFound": "Movie not found",
+    "watch": "Watch",
+    "length": "Length",
+    "genre": "Genre",
+    "directors": "Directors",
+    "stars": "Stars",
+    "synopsis": "Synopsis",
+    "posterAlt": "Poster of movie: {title}"
+  },
+  "comments": {
+    "title": "Comments",
+    "signInToComment": "Sign in to post a comment",
+    "edited": "Edited",
+    "readMore": "Read more",
+    "collapse": "Collapse",
+    "saveChange": "Save changes",
+    "cancel": "Cancel",
+    "writeComment": "Write a comment...",
+    "publishComment": "Publish comment",
+    "noCommentsYet": "You haven't posted any comments yet."
+  },
+  "profile": {
+    "memberSince": "Member since {date} · #{username}",
+    "tabs": {
+      "profile": "Profile",
+      "auth": "Password",
+      "history": "History",
+      "comments": "Comments"
+    },
+    "saveChanges": "Save changes",
+    "selectNewAvatar": "Select new avatar",
+    "remove": "Remove",
+    "noMoviesYet": "You haven't seen any films yet.",
+    "fields": {
+      "email": "Email",
+      "firstname": "Firstname",
+      "lastname": "Lastname",
+      "username": "Username"
+    }
+  },
+  "users": {
+    "searchResult": "Search {id}"
+  },
+  "common": {
+    "profilePictureAlt": "Profile picture"
+  },
+  "auth": {
+    "signin": {
+      "title": "Sign in",
+      "username": "Username",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account yet?",
+      "register": "Create one"
+    },
+    "register": {
+      "title": "Join Hypertube",
+      "email": "Email",
+      "firstname": "Firstname",
+      "lastname": "Lastname",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign up",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "forgotPassword": {
+      "title": "Reset password",
+      "email": "Email",
+      "submit": "Send"
+    },
+    "changePassword": {
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "submit": "Change"
+    }
+  },
+  "modal": {
+    "deleteComment": {
+      "title": "Delete comment?",
+      "confirm": "Yes",
+      "cancel": "No"
+    },
+    "genre": {
+      "title": "Film genres"
+    },
+    "filterGenre": {
+      "title": "Select genres",
+      "apply": "Apply"
+    }
+  },
+  "notifications": {
+    "success": {
+      "passwordChanged": "Your password has been updated.",
+      "emailChanged": "Your email address has been updated. A confirmation email has been sent to validate the change.",
+      "emailResetPassword": "An email has been sent to reset your password.",
+      "infoChanged": "Your profile information has been updated.",
+      "login": "You are now successfully signed in.",
+      "commentChange": "Your comment has been updated."
+    },
+    "error": {
+      "unknown": "An unexpected error occurred. Please try again.",
+      "network": "Unable to contact the server. Please check your internet connection.",
+      "unauthorized": "You must be signed in to perform this action.",
+      "forbidden": "You do not have permission to perform this action.",
+      "passwordIncorrect": "The current password is incorrect.",
+      "passwordTooShort": "The password must contain at least 8 characters.",
+      "passwordTooWeak": "The password is too weak. Use a combination of letters, numbers and special characters.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordSameAsOld": "The new password must be different from the old one.",
+      "passwordChangeFailed": "Unable to change the password. Please try again.",
+      "emailInvalid": "The email address is invalid.",
+      "emailAlreadyUsed": "This email address is already in use.",
+      "emailChangeFailed": "Unable to change the email address. Please try again.",
+      "emailVerificationFailed": "Unable to send the confirmation email.",
+      "emailTokenInvalid": "The confirmation link is invalid or expired.",
+      "usernameTooShort": "The username is too short.",
+      "usernameTooLong": "The username is too long.",
+      "usernameInvalid": "The username contains invalid characters.",
+      "usernameAlreadyUsed": "This username is already in use.",
+      "usernameChangeFailed": "Unable to change the username.",
+      "firstnameTooShort": "The firstname is too short.",
+      "firstnameTooLong": "The firstname is too long.",
+      "firstnameInvalid": "The firstname contains invalid characters.",
+      "firstnameChangeFailed": "Unable to change the firstname.",
+      "lastnameTooShort": "The lastname is too short.",
+      "lastnameTooLong": "The lastname is too long.",
+      "lastnameInvalid": "The lastname contains invalid characters.",
+      "lastnameChangeFailed": "Unable to change the lastname.",
+      "requiredField": "This field is required.",
+      "requiredFields": "Please fill in all required fields.",
+      "missingFields": "Some required fields are missing. Please check the form."
+    }
   }
 }

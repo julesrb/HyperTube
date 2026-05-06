@@ -29,7 +29,6 @@
     }
   },
   "movie": {
-    "notFound": "Film nicht gefunden",
     "watch": "Ansehen",
     "length": "Dauer",
     "genre": "Genre",

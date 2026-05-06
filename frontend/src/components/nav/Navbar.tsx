@@ -50,7 +50,7 @@ function NavItemComponent({item, selected, logoutBtn}: {item: NavItem, selected:
     const isLogoutBtn = item.name === logoutBtn;
     const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
     const className = "uppercase flex items-center " + hoverColor;
-    const PName = item.name ? <span style={{transform: "translateY(-1px)"}} className={"pl-1 xl:pl-2 text-xl xl:text-2xl hidden md:block text-nowrap " + (selected ? "font-base font-light" : "font-hairline")}>{item.name}</span> : null;
+    const PName = item.name ? <span style={{transform: "translateY(-1px)"}} className={"pl-1 xl:pl-2 text-lg xl:text-2xl hidden md:block text-nowrap " + (selected ? "font-base font-light" : "font-hairline")}>{item.name}</span> : null;
     const [isHover, setIsHover] = useState(false);
 
     if (item.href !== undefined) {

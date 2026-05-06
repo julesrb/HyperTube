@@ -134,7 +134,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
             <col className="w-0" />
             <col className="w-1/4 hidden lg:table-column" />
             <col className="w-15 hidden sm:table-column" />
-            <col className="w-25" />
+            <col className="w-32" />
         </colgroup>
 
         <thead>
@@ -142,7 +142,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
                 <th></th>
                 {sortOptions.map((sortOption, i) =>
                     <th key={sortOption.type} className={classNames[i]}>
-                        <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption.type === "year" ? " -left-5 md:-left-30 xl:-left-45" : "")}
+                        <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption.type === "year" ? " -left-4 sm:-left-20 md:-left-30 xl:-left-45 2xl:-left-80" : "")}
                                 onClick={() => handleSort(sortOption.type)}>
                             {sortOption.label} {sortOption.type === sort.type && (sort.side ? "▾" : "▴")}
                         </button>

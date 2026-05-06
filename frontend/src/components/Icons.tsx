@@ -135,7 +135,7 @@ export function HypertubResponsiveLogo({color="black", height=20}: {color?: stri
         return () => window.removeEventListener("resize", handlWindowResize);
     }, []);
 
-    return (<svg className="h-3 sm:h-5 w-auto" width={height * handleResize(1110) / 65} height={height} viewBox={`0 0 ${handleResize(1110)} 65`} fill="none" xmlns="http://www.w3.org/2000/svg">
+    return (<svg className="h-3 sm:h-6 md:h-4 xl:h-6 w-auto" width={height * handleResize(1110) / 65} height={height} viewBox={`0 0 ${handleResize(1110)} 65`} fill="none" xmlns="http://www.w3.org/2000/svg">
         {/*h*/} <path d="M590.15 30.5918C590.15 41.8558 595.142 48.1279 610.758 48.1279C611.645 48.1279 612.498 48.1057 613.317 48.0654V64.6094C612.48 64.6282 611.626 64.6396 610.758 64.6396C579.014 64.6396 567.75 52.0958 567.75 30.5918V0H590.15V30.5918Z" fill={fullColor}/>
         {/*y*/} <path d="M22.5283 23.4238H63.7441V0H86.2725V64H63.7441V40.0645H22.5283V64H0V0H22.5283V23.4238Z" fill={fullColor}/>
         {/*p*/} <path d="M143.669 25.0879L166.325 0H194.613L154.805 39.2959V64H132.277V39.2959L92.4688 0H120.757L143.669 25.0879Z" fill={fullColor}/>

@@ -36,7 +36,7 @@
 @layer base {
     body { @apply font-body bg-white text-black }
     h1, h2, h3, h4, h5, h6, .custom-condensed { @apply uppercase font-condensed; }
-    h1 { @apply text-4xl sm:text-6xl xl:text-8xl; }
+    h1 { @apply text-4xl sm:text-5xl md:text-6xl xl:text-8xl 2xl:text-9xl; }
     h2 { @apply text-4xl sm:text-6xl; }
     h3 { @apply text-3xl sm:text-5xl; }
     p { @apply font-sans text-sm sm:text-base; }

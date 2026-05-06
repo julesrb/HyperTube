@@ -49,7 +49,7 @@ export default function Page() {
             <div className="border-b border-r w-12"></div>
             {(Object.keys(tabs) as Array<keyof typeof tabs>).map((tabName, index) => (<button
                 key={index}
-                className={"custom-condensed text-2xl sm:text-4xl tracking-wide sm:tracking-normal border-t border-r px-4 sm:px-12 xl:px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
+                className={"custom-condensed text-2xl sm:text-4xl tracking-wide sm:tracking-normal border-t border-r px-4 sm:px-12 xl:px-16 border-b text-nowrap" + (activeTab === tabName ? " border-b-white" : "")}
                 onClick={() => switchTab(tabName)}>{t(tabName)}</button>))}
             <div className="border-b w-full"></div>
         </div>

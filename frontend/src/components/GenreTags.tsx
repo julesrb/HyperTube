@@ -1,6 +1,6 @@
 import React, {Dispatch, SetStateAction} from "react";
 import {useModal} from "@/context/ModalContext";
-import {useRouter} from "next/navigation";
+import {useRouter} from "@/i18n/navigation";
 
 export default function GenreTags({genres, className = "", limit, setFilterGenre}: { genres: string[], className?: string, limit?: number, setFilterGenre?: Dispatch<SetStateAction<string[]>>}) {
     let addLimit = false;

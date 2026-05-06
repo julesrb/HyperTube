@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
-import Link from "next/link";
+import {Link} from "@/i18n/navigation";
 import {SecondaryButton} from "@/components/Buttons";
 
 export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] | string[], movie: tMovie, onClick?: () => void }) {

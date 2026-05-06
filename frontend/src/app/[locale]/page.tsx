@@ -43,8 +43,6 @@ export default function HomePage() {
     }
 
     return (<div>
-        <Home />
-        <LanguageSwitcher />
         <AnimateLogo maxHeight={heightAnimationLogo} />
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
         <GenreTags genres={genres.slice(0, genreCount)} className="justify-center w-full my-8" />
@@ -130,35 +128,4 @@ function filterAlreadyWatch(user: tUser, movies: tMovie[]) {
         }
         return true;
     });
-}
-
-
-import {useRouter, usePathname} from 'next/navigation';
-
-function LanguageSwitcher() {
-    const router = useRouter();
-    const pathname = usePathname();
-    const changeLanguage = (locale: "fr" | "en" | "de") => {
-        router.push(`/${locale}${pathname}`);
-    };
-    return (
-        <div className="flex gap-2">
-            <button onClick={() => changeLanguage('fr')}>FR</button>
-            <button onClick={() => changeLanguage('en')}>EN</button>
-            <button onClick={() => changeLanguage('de')}>DE</button>
-        </div>
-    );
-}
-
-import {useTranslations} from 'next-intl';
-
-function Home() {
-    const t = useTranslations('Home');
-
-    return (
-        <div>
-            <h1>{t('title')}</h1>
-            <p>{t('description')}</p>
-        </div>
-    );
 }

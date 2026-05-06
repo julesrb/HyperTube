@@ -1,11 +1,11 @@
 import Image from "next/image";
 import {tMovie} from "@/types/movie";
-import Link from "next/link";
+import {Link} from "@/i18n/navigation";
 import React, {Dispatch, SetStateAction} from "react";
 import {Button} from "./Buttons";
 import {StarIcon} from "@/components/Icons";
 import GenreTags from "@/components/GenreTags";
-import {useRouter} from "next/navigation";
+import {useRouter} from "@/i18n/navigation";
 import {useAuth} from "@/context/AuthContext";
 import {tUser} from "@/types/user";
 

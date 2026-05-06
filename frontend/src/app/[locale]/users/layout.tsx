@@ -1,7 +1,7 @@
 "use client";
 
 import {useAuth} from "@/context/AuthContext";
-import {useRouter} from "next/navigation";
+import {useRouter} from "@/i18n/navigation";
 import React, {useEffect} from "react";
 
 export default function DashboardLayout({children,}: {children: React.ReactNode;}) {

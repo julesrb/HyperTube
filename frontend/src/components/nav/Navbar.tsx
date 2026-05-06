@@ -3,17 +3,10 @@
 import {useModal} from "@/context/ModalContext";
 import LanguageDropdown from "@/components/nav/LanguageDropdown";
 import React, {useState} from "react";
-import Link from "next/link";
-import {
-    ExitDoorIcon,
-    HypertubResponsiveLogo,
-    LanguageIcon,
-    RegisterIcon,
-    SearchIcon,
-    UserIcon
-} from "@/components/Icons";
+import {Link} from "@/i18n/navigation";
+import {ExitDoorIcon, HypertubResponsiveLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icons";
 import {useAuth} from "@/context/AuthContext";
-import {usePathname} from "next/navigation";
+import {usePathname} from "@/i18n/navigation";
 
 type NavItem = {
     name: string

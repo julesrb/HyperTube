@@ -49,7 +49,7 @@ export default function HomePage() {
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
         <GenreTags genres={genres.slice(0, genreCount)} className="justify-center w-full my-8" />
 
-        {continueWatching &&
+        {(continueWatching && continueWatching.length > 0) &&
         <Section title={t("continueWatching")} href="/users?tab=history">
             <MoviesCard movieSets={continueWatching.slice(0, moviesCount)} />
         </Section>}

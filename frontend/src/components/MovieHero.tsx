@@ -4,6 +4,7 @@ import {tMovie} from "@/types/movie";
 import {useRandomBackdrop} from "@/script/utils";
 import {Link} from "@/i18n/navigation";
 import {SecondaryButton} from "@/components/Buttons";
+import {useTranslations} from "next-intl";
 
 export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] | string[], movie: tMovie, onClick?: () => void }) {
     const [index, setIndex] = useState(0);
@@ -30,6 +31,7 @@ export default function MoviesHero({items, movie, onClick}: { items?: tMovie[] |
 
 function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movie: tMovie, onClick?: () => void, onClickLeft: () => void, onClickRight: () => void, backdrop?: string }) {
     let randomBackdrop = useRandomBackdrop(movie);
+    const t = useTranslations("movie");
 
     if (backdrop)
         randomBackdrop = backdrop;
@@ -37,7 +39,7 @@ function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movi
     return (<div className="px-4 sm:px-6 min-w-full">
         <div className="relative flex flex-col items-center gap-4 aspect-video xl:aspect-21/9 border">
             <Image className="size-full object-cover" width={5000} height={5000} loading="eager"
-                   src={"/images/" + randomBackdrop} alt={"poster of movie " + movie.title}/>
+                   src={"/images/" + randomBackdrop} alt={t("posterAlt", {title: movie.title})}/>
             <div className="h-full w-50 z-30 absolute left-0 custom-cursor-left"
                  onClick={onClickLeft}></div>
             {onClick ?
@@ -54,7 +56,7 @@ function MovieHero({movie, onClick, onClickLeft, onClickRight, backdrop}: { movi
                         <h1 className="relative hover:underline decoration-3 underline-offset-3">{movie.title}
                             <span className="absolute -right-8 sm:-right-13 xl:-right-18 responsive-text-hairline">{movie.year}</span>
                         </h1> :
-                        <SecondaryButton className="my-2 xl:my-4 font-bold md:h-12" onClick={() => console.log("watch movie")}>Watch</SecondaryButton>
+                        <SecondaryButton className="my-2 xl:my-4 font-bold md:h-12" onClick={() => console.log("watch movie")}>{t("watch")}</SecondaryButton>
                     }
                 </Link>
             </div>

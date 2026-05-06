@@ -8,6 +8,7 @@ import GenreTags from "@/components/GenreTags";
 import {useRouter} from "@/i18n/navigation";
 import {useAuth} from "@/context/AuthContext";
 import {tUser} from "@/types/user";
+import {useTranslations} from "next-intl";
 
 
 // todo useRandomBackdrop ?
@@ -20,13 +21,14 @@ export function MoviesCard({movieSets, className} : {movieSets: tMovie[], classN
 
 export function MovieCard({movie, user, className, showTitle = true} : {movie: tMovie, user: tUser | null, className?: string, showTitle?: boolean}) {
     let watchingPercent = 0;
+    const t = useTranslations("movie");
     if (user) {
         const watchMovie = user.watch_history.find(h => h.movie_id === movie.id);
         if (watchMovie)
             watchingPercent = watchMovie.watch_percent;
     }
     return (<Link href={"/movies/" + movie.id} className={"relative aspect-10/7 overflow-hidden group border " + className}>
-        <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
+        <Image className="size-full object-cover transition-transform duration-200 group-hover:scale-103" width={1000} height={1000} src={"/images/" + movie.backdrops[0]} alt={t("posterAlt", {title: movie.title})}/>
         {watchingPercent > 0 && <div className={`absolute bottom-0 h-1 bg-${user ? user.color : "red"} z-10`} style={{width: `${watchingPercent}%`}}></div>}
         <div className="absolute inset-0 p-4 flex items-end">
             {watchingPercent === 100 ?
@@ -45,6 +47,7 @@ export function MovieCard({movie, user, className, showTitle = true} : {movie: t
 
 export function ListMovieCard({movie, setFilterGenre} : {movie: tMovie, setFilterGenre: Dispatch<SetStateAction<string[]>>}) {
     const router = useRouter();
+    const t = useTranslations("movie");
     let title = movie.title;
 
     if (title.length > 20)
@@ -54,7 +57,7 @@ export function ListMovieCard({movie, setFilterGenre} : {movie: tMovie, setFilte
             <td className="p-2 xl:p-4">
                 <div className="border overflow-hidden">
                     <Link href={"/movies/" + movie.id}>
-                        <Image className="object-cover size-full transition-transform duration-200 group-hover:scale-103" width={150} height={100} src={"/images/" + movie.backdrops[0]} alt={"poster of movie: " + movie.title}/>
+                        <Image className="object-cover size-full transition-transform duration-200 group-hover:scale-103" width={150} height={100} src={"/images/" + movie.backdrops[0]} alt={t("posterAlt", {title: movie.title})}/>
                     </Link>
                 </div>
             </td>
@@ -75,7 +78,7 @@ export function ListMovieCard({movie, setFilterGenre} : {movie: tMovie, setFilte
                 </div>
             </td>
             <td className="text-right">
-                <Button className="px-3" onClick={() => router.push("/movies/" + movie.id)}>watch</Button>
+                <Button className="px-3" onClick={() => router.push("/movies/" + movie.id)}>{t("watch")}</Button>
             </td>
     </tr>);
 }

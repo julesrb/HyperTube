@@ -5,6 +5,8 @@ import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
+import "dayjs/locale/en";
+import "dayjs/locale/de";
 import Pagination from "@/components/Pagination";
 import {Button, SecondaryButton, SmallButton} from "@/components/Buttons";
 import ProfilePicture from "@/components/ProfilePicture";
@@ -14,10 +16,9 @@ import {EditIcon, TrashIcon} from "@/components/Icons";
 import {movies, tMovie} from "@/types/movie";
 import {MovieCard} from "@/components/MovieCard";
 import {useNotification} from "@/context/NotificationContext";
-import {successMessages} from "@/types/message";
+import {useLocale, useTranslations} from "next-intl";
 
 dayjs.extend(relativeTime);
-dayjs.locale("fr");
 
 
 export function CommentSection({movie}: {movie: tMovie}) {
@@ -25,6 +26,8 @@ export function CommentSection({movie}: {movie: tMovie}) {
     const {addNotification} = useNotification();
     const {openModal} = useModal();
     const [actualComments, setComments] = useState(comments);
+    const t = useTranslations("comments");
+    const tSuccess = useTranslations("notifications.success");
     const addNewComment = (newComment: tComment) => {setComments([...actualComments, newComment]);}
     const updateComment = (commentId: number, newContent: string) => {
         setComments(actualComments.map((comment) => {
@@ -37,13 +40,13 @@ export function CommentSection({movie}: {movie: tMovie}) {
             else
                 return comment;
         }));
-        addNotification(successMessages.commentChange, "success");
+        addNotification(tSuccess("commentChange"), "success");
     }
     const deleteComment = (commentId: number) => {setComments(actualComments.filter(c => c.id !== commentId));}
 
     return (<div className="mx-auto max-w-2xl w-9/10 sm:w-full flex flex-col items-center gap-7">
         <div className="w-full">
-            <h1 className="text-center">Comments</h1>
+            <h1 className="text-center">{t("title")}</h1>
             <div className="flex h-2 sm:h-4 mt-1 sm:mt-2 w-full">
                 <div className="size-full bg-yellow"></div>
                 <div className="size-full bg-pink"></div>
@@ -60,7 +63,7 @@ export function CommentSection({movie}: {movie: tMovie}) {
                     <ProfilePicture user={user}/>
                     <NewComment user={user} onSubmit={addNewComment} movie={movie}></NewComment>
                 </div> :
-                <SmallButton onClick={() => openModal({type: "signin"})}>Connectez-vous pour pouvoir poster un commentaire</SmallButton>
+                <SmallButton onClick={() => openModal({type: "signin"})}>{t("signInToComment")}</SmallButton>
             }
         </div>
         <Comments user={user} comments={actualComments} updateComment={updateComment} deleteComment={deleteComment}/>
@@ -69,6 +72,14 @@ export function CommentSection({movie}: {movie: tMovie}) {
 
 export function Comments({user, comments, updateComment, deleteComment}: {user: tUser | null, comments: tComment[], updateComment?: (commentId: number, newContent: string) => void, deleteComment?: (commentId: number) => void}) {
     const [index, setIndex] = useState(0);
+    const locale = useLocale();
+    const t = useTranslations("comments");
+    if (locale === "fr")
+        dayjs.locale("fr");
+    else if (locale === "en")
+        dayjs.locale("en");
+    else
+        dayjs.locale("de");
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     return (<Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
@@ -85,6 +96,7 @@ function Comment({comment, currentUser, updateComment, deleteComment}: { comment
     const [hoverTrash, setHoverTrash] = useState(false);
     const {openModal} = useModal();
     const movie = movies.find(m => m.id === comment.movie_id);
+    const t = useTranslations("comments");
 
     if (currentUser && currentUser.id === comment.author_id)
         user = currentUser;
@@ -102,7 +114,7 @@ function Comment({comment, currentUser, updateComment, deleteComment}: { comment
                 <div className="flex justify-between w-full">
                     <div>
                         <span className="text-bold">{user.username}</span>
-                        <p className="text-sm font-normal text-gray leading-4 mb-2">{dayjs.unix(comment.created_at).fromNow()} {comment.edited && " • Édité"}</p>
+                        <p className="text-sm font-normal text-gray leading-4 mb-2">{dayjs.unix(comment.created_at).fromNow()} {comment.edited && ` • ${t("edited")}`}</p>
                     </div>
                     {/* todo mby replace icon by text 'edit', 'remove' */}
                     {
@@ -137,6 +149,7 @@ function CommentText({comment}: {comment: tComment}) {
     const [isCommentExpend, setIsExpendComment] = useState(false);
     const [isClamped, setIsClamped] = useState(false);
     const textRef = useRef<HTMLParagraphElement>(null);
+    const t = useTranslations("comments");
 
     useEffect(() => {
         const el = textRef.current;
@@ -155,13 +168,14 @@ function CommentText({comment}: {comment: tComment}) {
             {comment.comment}
         </p>
         {isClamped && (<SmallButton onClick={() => setIsExpendComment(!isCommentExpend)}>
-            {isCommentExpend ? "Reduire" : "Lire la suite"}</SmallButton>)}
+            {isCommentExpend ? t("collapse") : t("readMore")}</SmallButton>)}
     </div>);
 }
 
 function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComment, setEditMode: (newEditMode: boolean) => void, updateComment: (commentId: number, newContent: string) => void}) {
     const [newEditedComment, setNewEditedComment] = useState(comment.comment);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const t = useTranslations("comments");
 
     useEffect(() => {
         const el = textareaRef.current;
@@ -198,11 +212,11 @@ function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComme
         <div className="flex gap-2">
             <Button className="xl:px-6"
                 disabled={newEditedComment.trim().length <= 0 || newEditedComment.trim() === comment.comment}
-                onClick={saveChange}>save change</Button>
+                onClick={saveChange}>{t("saveChange")}</Button>
             <SecondaryButton className="w-30 xl:w-40" onClick={() => {
                 setEditMode(false);
                 setNewEditedComment(comment.comment);
-            }}>cancel</SecondaryButton>
+            }}>{t("cancel")}</SecondaryButton>
         </div>
     </div>);
 }
@@ -210,6 +224,7 @@ function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComme
 function NewComment({user, movie, onSubmit}: { user: tUser, movie: tMovie, onSubmit: (value: tComment) => void }) {
     const [expendComment, setExpendComment] = useState(false);
     const [comment, setComment] = useState("");
+    const t = useTranslations("comments");
 
     const handleComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (expendComment)
@@ -239,7 +254,7 @@ function NewComment({user, movie, onSubmit}: { user: tUser, movie: tMovie, onSub
         <textarea className="border w-full block px-3 py-1.5"
                   style={{resize: expendComment ? "vertical" : "none"}}
                   maxLength={1000} rows={expendComment ? 5 : 1}
-                  placeholder={expendComment ? "" : "Écrire un commentaire..."}
+                  placeholder={expendComment ? "" : t("writeComment")}
                   onClick={() => setExpendComment(true)}
                   onKeyDown={(e) => {
                       if (comment.trim().length > 0 && e.key === "Enter" && !e.shiftKey) {
@@ -250,8 +265,8 @@ function NewComment({user, movie, onSubmit}: { user: tUser, movie: tMovie, onSub
                   onChange={handleComment} value={comment}>
         </textarea>
         {expendComment &&
-            <Button onClick={handlePostComment} disabled={comment.trim().length <= 0} className="w-full">Publier le commentaire</Button>}
+            <Button onClick={handlePostComment} disabled={comment.trim().length <= 0} className="w-full">{t("publishComment")}</Button>}
         {expendComment &&
-            <SmallButton onClick={() => setExpendComment(false)}>Annuler</SmallButton>}
+            <SmallButton onClick={() => setExpendComment(false)}>{t("cancel")}</SmallButton>}
     </div>);
 }

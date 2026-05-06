@@ -3,8 +3,8 @@ import Input from "@/components/Input";
 import {tUser} from "@/types/user";
 import ProfilePicture from "@/components/ProfilePicture";
 import {useNotification} from "@/context/NotificationContext";
-import {successMessages} from "@/types/message";
 import {Button, SmallButton} from "@/components/Buttons";
+import {useTranslations} from "next-intl";
 
 
 export default function ProfileTab({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
@@ -20,6 +20,9 @@ function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Pa
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [username, setUsername] = useState("");
+    const t = useTranslations("profile.fields");
+    const tProfile = useTranslations("profile");
+    const tSuccess = useTranslations("notifications.success");
 
     const saveChange = () => {
         const newUser = structuredClone(user);
@@ -27,7 +30,7 @@ function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Pa
 
         if (email && email != user.email) {
             newUser.email = email;
-            addNotification(successMessages.emailChanged, "warning");
+            addNotification(tSuccess("emailChanged"), "warning");
             setEmail("");
         }
         if (firstname && firstname != user.firstname) {
@@ -47,26 +50,27 @@ function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Pa
         }
         if (isInfoChanged) {
             updateUser(newUser);
-            addNotification(successMessages.infoChanged, "success");
+            addNotification(tSuccess("infoChanged"), "success");
         }
     }
 
     return (<div className="flex flex-col gap-4 items-start">
-        <Input id="profile-email" type="email" placeholder="Email" value={email} onChange={(newValue) => setEmail(newValue)}></Input>
+        <Input id="profile-email" type="email" placeholder={t("email")} value={email} onChange={(newValue) => setEmail(newValue)}></Input>
 
         <div className="flex gap-2 w-full">
-            <Input id="profile-firstname" type="firstname" placeholder="Firstname" value={firstname} onChange={(newValue) => setFirstname(newValue)}></Input>
-            <Input id="profile-lastname" type="lastname" placeholder="Lastname" value={lastname} onChange={(newValue) => setLastname(newValue)}></Input>
+            <Input id="profile-firstname" type="firstname" placeholder={t("firstname")} value={firstname} onChange={(newValue) => setFirstname(newValue)}></Input>
+            <Input id="profile-lastname" type="lastname" placeholder={t("lastname")} value={lastname} onChange={(newValue) => setLastname(newValue)}></Input>
         </div>
 
-        <Input id="profile-username" type="username" placeholder="Username" value={username} onChange={(newValue) => setUsername(newValue)} className={"max-w-3/5"}></Input>
+        <Input id="profile-username" type="username" placeholder={t("username")} value={username} onChange={(newValue) => setUsername(newValue)} className={"max-w-3/5"}></Input>
 
-        <Button className="h-8" onClick={saveChange}>Save Changes</Button>
+        <Button className="h-8" onClick={saveChange}>{tProfile("saveChanges")}</Button>
     </div>);
 }
 
 function AvatarSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
     const colors = ["yellow", "pink", "green", "purple", "blue", "red"];
+    const t = useTranslations("profile");
 
     const handleNewPP = (newPP: string | null) => {updateUser({profile_picture: newPP});}
     const handleSwitchColors = (newColor: string) => {updateUser({color: newColor});}
@@ -74,11 +78,11 @@ function AvatarSection({user, updateUser}: {user: tUser, updateUser: (patch: Par
 
     return (<div className="flex flex-col gap-2 items-center justify-center">
         <ProfilePicture user={user} size={2} className="mb-6" onClick={uploadNewPP}/>
-        <Button onClick={uploadNewPP}>Select New avatar</Button>
+        <Button onClick={uploadNewPP}>{t("selectNewAvatar")}</Button>
 
         <SmallButton
             className={user.profile_picture ? "text-red  custom-underline-red" : "custom-no-underline"}
-            onClick={() => handleNewPP(null)}>Remove</SmallButton>
+            onClick={() => handleNewPP(null)}>{t("remove")}</SmallButton>
 
         { !user.profile_picture && (
             <div className="grid grid-cols-3 gap-2 mt-4">

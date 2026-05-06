@@ -12,6 +12,7 @@ import {useAuth} from "@/context/AuthContext";
 import {comments} from "@/types/comment";
 import Pagination from "@/components/Pagination";
 import {useSearchParams} from "next/navigation";
+import {useLocale, useTranslations} from "next-intl";
 
 export default function Page() {
     const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab, comments: CommentsTab};
@@ -22,10 +23,14 @@ export default function Page() {
     const initialTab: tTab = tabParam && tabParam in tabs ? (tabParam as tTab) : "profile"
     const {user, updateUser} = useAuth();
     const [activeTab, setActiveTab] = useState<tTab>(initialTab);
+    const t = useTranslations("profile.tabs");
+    const tProfile = useTranslations("profile");
+    const locale = useLocale();
     if (!user)
         return null;
     const ActiveTab = tabs[activeTab];
     const date = new Date(user.joined_at);
+    const memberSince = new Intl.DateTimeFormat(locale, {day: "2-digit", month: "2-digit", year: "numeric"}).format(date).replace(/[\/-]/g, ".");
 
     const switchTab = (tabName: keyof typeof tabs) => {
         if (activeTab !== tabName)
@@ -37,7 +42,7 @@ export default function Page() {
             <ProfilePicture user={user} size={1}/>
             <div className="flex flex-col items-start">
                 <h2>{user.firstname} {user.lastname[0]}.</h2>
-                <p className="uppercase">Member since {date.toLocaleDateString('fr-FR').replace(/\//g, '.')} · #{user.username}</p>
+                <p className="uppercase">{tProfile("memberSince", {date: memberSince, username: user.username})}</p>
             </div>
         </div>
         <div className="flex h-12 sm:h-16">
@@ -45,7 +50,7 @@ export default function Page() {
             {(Object.keys(tabs) as Array<keyof typeof tabs>).map((tabName, index) => (<button
                 key={index}
                 className={"custom-condensed text-2xl sm:text-4xl tracking-wide sm:tracking-normal border-t border-r px-4 sm:px-12 xl:px-16 border-b" + (activeTab === tabName ? " border-b-white" : "")}
-                onClick={() => switchTab(tabName)}>{tabName}</button>))}
+                onClick={() => switchTab(tabName)}>{t(tabName)}</button>))}
             <div className="border-b w-full"></div>
         </div>
         <ActiveTab user={user} updateUser={updateUser}/>
@@ -55,9 +60,10 @@ export default function Page() {
 function MovieHistoryTab({user}: {user: tUser}) {
     const [index, setIndex] = useState(0);
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
+    const t = useTranslations("profile");
 
     if (user.watch_history.length === 0)
-        return (<div className="flex justify-center pt-5"><p>You haven&#39;t seen any films yet.</p></div>);
+        return (<div className="flex justify-center pt-5"><p>{t("noMoviesYet")}</p></div>);
     return (<Pagination currenIndex={index} onClick={changeIndex} totalPage={3}>
         <MoviesCard movieSets={user.watch_history.map(m => movies[m.movie_id])}/>
     </Pagination>);

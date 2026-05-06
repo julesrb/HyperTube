@@ -77,8 +77,10 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     const size = useResponsiveSize();
     const t = useTranslations("movies");
 
+    const noResult = () => (<p className="small-text">{t("noResults")}</p>);
+
     if (filteredMovies.length === 0)
-        return (<p className="small-text">{t("noResults")}</p>);
+        return noResult();
 
     if (viewType === "grid")
         return (<MoviesCard movieSets={filteredMovies}/>);
@@ -127,35 +129,38 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
 
     const classNames = ["sm:pl-3", "", "hidden lg:table-cell", "hidden sm:table-cell"]
 
-    return (<table className="table-fixed w-full overflow-hidden">
-        <colgroup>
-            <col className="w-30 sm:w-55 xl:w-80" />
-            <col />
-            <col className="w-0" />
-            <col className="w-1/4 hidden lg:table-column" />
-            <col className="w-15 hidden sm:table-column" />
-            <col className="w-32" />
-        </colgroup>
+    return (<div>
+        <table className="table-fixed w-full overflow-hidden">
+            <colgroup>
+                <col className="w-30 sm:w-55 xl:w-80" />
+                <col />
+                <col className="w-0" />
+                <col className="w-1/4 hidden lg:table-column" />
+                <col className="w-15 hidden sm:table-column" />
+                <col className="w-32" />
+            </colgroup>
 
-        <thead>
-            <tr className="text-left align-top">
-                <th></th>
-                {sortOptions.map((sortOption, i) =>
-                    <th key={sortOption.type} className={classNames[i]}>
-                        <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption.type === "year" ? " -left-4 sm:-left-20 md:-left-30 xl:-left-45 2xl:-left-80" : "")}
-                                onClick={() => handleSort(sortOption.type)}>
-                            {sortOption.label} {sortOption.type === sort.type && (sort.side ? "▾" : "▴")}
-                        </button>
-                        {sortOption.type === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
-                    </th>
-                )}
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie} setFilterGenre={setFilterGenre}/>))}
-        </tbody>
-    </table>);
+            <thead>
+                <tr className="text-left align-top">
+                    <th></th>
+                    {sortOptions.map((sortOption, i) =>
+                        <th key={sortOption.type} className={classNames[i]}>
+                            <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption.type === "year" ? " -left-4 sm:-left-20 md:-left-30 xl:-left-45 2xl:-left-80" : "")}
+                                    onClick={() => handleSort(sortOption.type)}>
+                                {sortOption.label} {sortOption.type === sort.type && (sort.side ? "▾" : "▴")}
+                            </button>
+                            {sortOption.type === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
+                        </th>
+                    )}
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie} setFilterGenre={setFilterGenre}/>))}
+            </tbody>
+        </table>
+        {sortedMovies.length === 0 && noResult()}
+    </div>);
 }
 
 function SelectedGenre({genres, deleteGenre}: {genres: string[], deleteGenre:(genre: string) => void}) {

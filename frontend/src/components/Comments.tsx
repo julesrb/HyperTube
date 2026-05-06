@@ -83,7 +83,7 @@ export function Comments({user, comments, updateComment, deleteComment}: {user: 
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     if (comments.length === 0)
-        return (<p className="small-text">{t("noCommentsYet")}</p>);
+        return (<p className="small-text">{t(deleteComment === undefined ? "noCommentsYet" : "noCommentsPrompt")}</p>);
 
     return (<Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
         <div className="flex flex-col-reverse gap-6">

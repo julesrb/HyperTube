@@ -47,7 +47,8 @@
     "cancel": "Cancel",
     "writeComment": "Write a comment...",
     "publishComment": "Publish comment",
-    "noCommentsYet": "You haven't posted any comments yet."
+    "noCommentsYet": "You haven't posted any comments yet.",
+    "noCommentsPrompt": "No comments yet. Be the first to post one!"
   },
   "profile": {
     "memberSince": "Member since {date} · #{username}",

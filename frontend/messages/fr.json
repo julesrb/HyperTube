@@ -47,7 +47,8 @@
     "cancel": "Annuler",
     "writeComment": "Écrire un commentaire...",
     "publishComment": "Publier le commentaire",
-    "noCommentsYet": "Vous n'avez encore publié aucun commentaire."
+    "noCommentsYet": "Vous n'avez encore publié aucun commentaire.",
+    "noCommentsPrompt": "Aucun commentaire pour le moment. Soyez le premier à en publier un !"
   },
   "profile": {
     "memberSince": "Membre depuis {date} · #{username}",

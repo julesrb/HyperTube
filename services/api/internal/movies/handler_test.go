@@ -64,7 +64,7 @@ func (f *fakeTMDB) FindByName(ctx context.Context, title string, year int) (mode
 }
 
 func TestGetMovies_OK(t *testing.T) {
-	h := &Handler{store: &fakeStore{
+	h := &MoviesHandler{store: &fakeStore{
 		movies: []models.Movie{
 			{ImdbID: "1", Title: "Dune: Part Two", PosterURL: "poster.jpg", BackdropURL: "backdrop.jpg"},
 			{ImdbID: "2", Title: "Avatar", PosterURL: "poster2.jpg", BackdropURL: "backdrop2.jpg"},
@@ -98,7 +98,7 @@ func TestGetMovies_OK(t *testing.T) {
 }
 
 func TestGetMovies_Empty(t *testing.T) {
-	h := &Handler{store: &fakeStore{movies: []models.Movie{}}}
+	h := &MoviesHandler{store: &fakeStore{movies: []models.Movie{}}}
 
 	req := httptest.NewRequest(http.MethodGet, "/movies", nil)
 	rec := httptest.NewRecorder()
@@ -125,7 +125,7 @@ func TestGetMovies_Empty(t *testing.T) {
 }
 
 func TestGetMovies_StoreError(t *testing.T) {
-	h := &Handler{store: &fakeStore{err: errors.New("db down")}}
+	h := &MoviesHandler{store: &fakeStore{err: errors.New("db down")}}
 
 	req := httptest.NewRequest(http.MethodGet, "/movies", nil)
 	rec := httptest.NewRecorder()
@@ -148,7 +148,7 @@ func TestGetMovies_StoreError(t *testing.T) {
 }
 
 func TestGetMoviesId_OK(t *testing.T) {
-	h := &Handler{tmdb: &fakeTMDB{}, store: &fakeStore{
+	h := &MoviesHandler{tmdb: &fakeTMDB{}, store: &fakeStore{
 		movies: []models.Movie{
 			{
 				ImdbID:      "693134",
@@ -203,7 +203,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 }
 
 func TestGetMoviesId_NotFound(t *testing.T) {
-	h := &Handler{store: &fakeStore{
+	h := &MoviesHandler{store: &fakeStore{
 		movies: []models.Movie{
 			{ImdbID: "1", Title: "Dune: Part Two"},
 			{ImdbID: "2", Title: "Avatar"},

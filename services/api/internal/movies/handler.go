@@ -11,6 +11,12 @@ import (
 	"hypertube/api/internal/respond"
 )
 
+type MoviesHandler struct {
+	store     movieStore
+	searchers []MovieSearcher
+	tmdb tmdbClient
+}
+
 type movieStore interface {
 	listFeatured(ctx context.Context) ([]models.Movie, error)
 	findByID(ctx context.Context, id string) (*models.Movie, error)
@@ -32,19 +38,13 @@ type tmdbClient interface {
 	FindByName(ctx context.Context, title string, year int) (models.Movie, error)
 }
 
-type Handler struct {
-	store     movieStore
-	searchers []MovieSearcher
-	// fetchers  []TorrentFetcher
-	tmdb tmdbClient
-}
 
-func NewHandler(store movieStore, searchers []MovieSearcher, tmdb tmdbClient) *Handler {
-	return &Handler{store: store, searchers: searchers, tmdb: tmdb}
+func NewMoviesHandler(store movieStore, searchers []MovieSearcher, tmdb tmdbClient) *MoviesHandler {
+	return &MoviesHandler{store: store, searchers: searchers, tmdb: tmdb}
 }
 
 // GetMovies returns a list of movies.
-func (h *Handler) GetMovies(w http.ResponseWriter, r *http.Request) {
+func (h *MoviesHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
 	movies, err := h.store.listFeatured(r.Context())
 	if err != nil {
 		log.Println("db err:", err)
@@ -60,7 +60,7 @@ func (h *Handler) GetMovies(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get returns metadata for a single movie.
-func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
+func (h *MoviesHandler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	movie, err := h.store.findByID(r.Context(), id)
 	if err != nil {
@@ -87,7 +87,7 @@ func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 	respond.Item(w, http.StatusOK, toMovieDetailResponse(*movie))
 }
 
-func (h *Handler) collectTorrents(ctx context.Context, title string) ([]models.Torrent, error) {
+func (h *MoviesHandler) collectTorrents(ctx context.Context, title string) ([]models.Torrent, error) {
 	var perSource [][]models.Torrent
 	for _, s := range h.searchers {
 		torrents, err := s.SearchByTitle(ctx, title)
@@ -113,7 +113,7 @@ func (h *Handler) collectTorrents(ctx context.Context, title string) ([]models.T
 	return mixed, nil
 }
 
-func (h *Handler) resolveMovie(ctx context.Context, torrent models.Torrent) (models.Movie, models.Torrent, error) {
+func (h *MoviesHandler) resolveMovie(ctx context.Context, torrent models.Torrent) (models.Movie, models.Torrent, error) {
 	if torrent.ImdbID == "none" {
 		movie, err := h.tmdb.FindByName(ctx, torrent.Title, torrent.Year)
 		if err != nil {
@@ -126,7 +126,7 @@ func (h *Handler) resolveMovie(ctx context.Context, torrent models.Torrent) (mod
 	return movie, torrent, err
 }
 
-func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
+func (h *MoviesHandler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Query().Get("title")
 	if title == "" {
 		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "title query parameter is required")
@@ -175,7 +175,7 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	respond.List(w, http.StatusOK, movies, len(movies))
 }
 
-func (h *Handler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
+func (h *MoviesHandler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
 	imdbid := r.PathValue("id")
 	torrents, err := h.store.findTorrent(r.Context(), imdbid)
 	if err != nil {
@@ -191,7 +191,7 @@ func (h *Handler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
 }
 
 // ListComments returns comments for a movie.
-func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
+func (h *MoviesHandler) GetComments(w http.ResponseWriter, r *http.Request) {
 	imdbid := r.PathValue("id")
 	comments, err := h.store.listComments(r.Context(), imdbid)
 	if err != nil {
@@ -207,7 +207,7 @@ func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
 }
 
 // CreateComment posts a new comment on a movie.
-func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
+func (h *MoviesHandler) PostComment(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		UserID  int    `json:"user_id"`
 		MovieID string `json:"movie_id"`

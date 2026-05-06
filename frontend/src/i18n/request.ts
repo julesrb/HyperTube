@@ -1,4 +1,4 @@
-import {cookies} from 'next/headers';
+// import {cookies} from 'next/headers';
 import {getRequestConfig} from 'next-intl/server';
 import {defineRouting} from 'next-intl/routing';
 import {hasLocale} from "next-intl";
@@ -8,11 +8,12 @@ export const routing = defineRouting({
 
     defaultLocale: 'en'
 });
+export type tLocale = typeof routing.locales[number]
 
 export default getRequestConfig(async ({requestLocale}) => {
-    const store = await cookies();
+    // todo: const store = await cookies();
     const requested = await requestLocale;
-    let locale = store.get('locale')?.value;
+    let locale = null;
     if (!hasLocale(routing.locales, locale)) {
         locale = hasLocale(routing.locales, requested)
             ? requested

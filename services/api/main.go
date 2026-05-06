@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"hypertube/api/internal/comments"
 	"hypertube/api/internal/movies"
 	"hypertube/api/internal/movies/archive.org"
 	"hypertube/api/internal/movies/c411"
@@ -20,8 +21,9 @@ func main() {
 
 	db := connectDB(ctx)
 	defer db.Close()
+	movieStore := movies.NewStore(db)
+	commentStore := comments.NewStore(db)
 
-	store := movies.NewStore(db)
 	c411Client, err := c411.NewClient()
 	if err != nil {
 		log.Fatalf("init C411 client: %v", err)
@@ -35,15 +37,15 @@ func main() {
 		log.Fatalf("init TMDB client: %v", err)
 	}
 
-	seedFeatured(ctx, c411Client, tmdbClient, store)
+	seedFeatured(ctx, c411Client, tmdbClient, movieStore)
 
 	searchers := []movies.MovieSearcher{c411Client, archiveClient}
-	moviesHandler := movies.NewMoviesHandler(store, searchers, tmdbClient)
-	// commentsHandler := comments.NewCommentsHandler(store)
+	moviesHandler := movies.NewMoviesHandler(movieStore, searchers, tmdbClient)
+	commentsHandler := comments.NewCommentsHandler(commentStore)
 
 	addr := ":" + getEnv("PORT", "8080")
 	log.Printf("api listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, newRouter(moviesHandler)))
+	log.Fatal(http.ListenAndServe(addr, newRouter(moviesHandler, commentsHandler)))
 }
 
 func connectDB(ctx context.Context) *pgxpool.Pool {
@@ -86,7 +88,7 @@ func seedFeatured(ctx context.Context, c411Client *c411.Client, tmdbClient *tmdb
 	}
 }
 
-func newRouter(moviesHandler *movies.MoviesHandler) *http.ServeMux {
+func newRouter(moviesHandler *movies.MoviesHandler, commentsHandler *comments.CommentsHandler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// Health check
@@ -113,11 +115,10 @@ func newRouter(moviesHandler *movies.MoviesHandler) *http.ServeMux {
 	mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.PostComment)
 
 	// // Comments
-	// mux.HandleFunc("GET /api/v1/comments", commentsHandler.GetComments)
-	// mux.HandleFunc("GET /api/v1/comments/{id}", nil)
-	// mux.HandleFunc("POST /api/v1/comments", nil)
-	// mux.HandleFunc("PATCH /api/v1/comments/{id}", nil)
-	// mux.HandleFunc("DELETE /api/v1/comments/{id}", nil)
+	mux.HandleFunc("GET /api/v1/comments", commentsHandler.List) //TODO paginate fesult
+	mux.HandleFunc("GET /api/v1/comments/{id}", commentsHandler.Get)
+	mux.HandleFunc("PATCH /api/v1/comments/{id}", commentsHandler.Update)
+	mux.HandleFunc("DELETE /api/v1/comments/{id}", commentsHandler.Delete)
 
 	return mux
 }

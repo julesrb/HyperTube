@@ -2,10 +2,10 @@ package movies
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
-	"encoding/json"
 
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
@@ -14,7 +14,7 @@ import (
 type MoviesHandler struct {
 	store     movieStore
 	searchers []MovieSearcher
-	tmdb tmdbClient
+	tmdb      tmdbClient
 }
 
 type movieStore interface {
@@ -37,7 +37,6 @@ type tmdbClient interface {
 	GetMovieDetails(ctx context.Context, tmdbID string) (models.MovieDetails, error)
 	FindByName(ctx context.Context, title string, year int) (models.Movie, error)
 }
-
 
 func NewMoviesHandler(store movieStore, searchers []MovieSearcher, tmdb tmdbClient) *MoviesHandler {
 	return &MoviesHandler{store: store, searchers: searchers, tmdb: tmdb}

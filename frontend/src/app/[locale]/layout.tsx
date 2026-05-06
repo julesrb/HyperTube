@@ -14,6 +14,7 @@ import {DeleteCommentModal} from "@/components/modal/DeleteComment";
 import {hasLocale, NextIntlClientProvider} from 'next-intl';
 import {routing} from "@/i18n/request";
 import {notFound} from "next/navigation";
+import {getLocale, getMessages} from "next-intl/server";
 
 export default async function RootLayout({children, params}: {children: React.ReactNode, params: Promise<{locale: string}>}) {
     const {locale} = await params;
@@ -21,10 +22,13 @@ export default async function RootLayout({children, params}: {children: React.Re
         notFound();
     }
 
-    return (<html>
+    const messages = await getMessages();
+    const currentLocale = await getLocale();
+
+    return (<html lang={currentLocale}>
     <body>
 
-    <NextIntlClientProvider>
+    <NextIntlClientProvider locale={currentLocale} messages={messages}>
         <AuthProvider>
             <NotificationProvider>
                 <ModalProvider>

@@ -10,6 +10,7 @@ import (
 	"hypertube/api/internal/movies/archive.org"
 	"hypertube/api/internal/movies/c411"
 	"hypertube/api/internal/movies/tmdb"
+	// "hypertube/api/internal/comments"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -37,7 +38,8 @@ func main() {
 	seedFeatured(ctx, c411Client, tmdbClient, store)
 
 	searchers := []movies.MovieSearcher{c411Client, archiveClient}
-	moviesHandler := movies.NewHandler(store, searchers, tmdbClient)
+	moviesHandler := movies.NewMoviesHandler(store, searchers, tmdbClient)
+	// commentsHandler := comments.NewCommentsHandler(store)
 
 	addr := ":" + getEnv("PORT", "8080")
 	log.Printf("api listening on %s", addr)
@@ -84,7 +86,7 @@ func seedFeatured(ctx context.Context, c411Client *c411.Client, tmdbClient *tmdb
 	}
 }
 
-func newRouter(moviesHandler *movies.Handler) *http.ServeMux {
+func newRouter(moviesHandler *movies.MoviesHandler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// Health check
@@ -111,7 +113,7 @@ func newRouter(moviesHandler *movies.Handler) *http.ServeMux {
 	mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.PostComment)
 
 	// // Comments
-	// mux.HandleFunc("GET /api/v1/comments", nil)
+	// mux.HandleFunc("GET /api/v1/comments", commentsHandler.GetComments)
 	// mux.HandleFunc("GET /api/v1/comments/{id}", nil)
 	// mux.HandleFunc("POST /api/v1/comments", nil)
 	// mux.HandleFunc("PATCH /api/v1/comments/{id}", nil)

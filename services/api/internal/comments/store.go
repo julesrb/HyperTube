@@ -58,7 +58,7 @@ func (s *Store) findAll(ctx context.Context) ([]models.Comment, error) {
 	return comments, nil
 }
 
-func (s *Store) update(ctx context.Context, content string, id int, user_id int) (models.Comment, error) {
+func (s *Store) update(ctx context.Context, content string, id string, user_id int) (models.Comment, error) {
 	rows, err := s.db.Query(ctx, `
 		UPDATE comments
 		SET content = $1, updated_at = NOW()
@@ -80,7 +80,7 @@ func (s *Store) update(ctx context.Context, content string, id int, user_id int)
 	return r, nil
 }
 
-func (s *Store) delete(ctx context.Context, id int, user_id int) error {
+func (s *Store) delete(ctx context.Context, id string, user_id int) error {
 	tag, err := s.db.Exec(ctx, `
 		DELETE FROM comments
 		WHERE id = $1 AND user_id = $2

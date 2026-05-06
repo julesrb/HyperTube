@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"encoding/json"
 
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
@@ -16,6 +17,8 @@ type movieStore interface {
 	UpsertMovie(ctx context.Context, m models.Movie) error
 	UpsertTorrent(ctx context.Context, ts models.Torrent) error
 	findTorrent(ctx context.Context, imdbID string) ([]models.Torrent, error)
+	listComments(ctx context.Context, imdbID string) ([]models.Comment, error)
+	createComment(ctx context.Context, c models.Comment) (models.Comment, error)
 }
 
 type MovieSearcher interface {
@@ -26,6 +29,7 @@ type MovieSearcher interface {
 type tmdbClient interface {
 	FindByIMDBID(ctx context.Context, imdbID string) (models.Movie, error)
 	GetMovieDetails(ctx context.Context, tmdbID string) (models.MovieDetails, error)
+	FindByName(ctx context.Context, title string, year int) (models.Movie, error)
 }
 
 type Handler struct {
@@ -80,9 +84,46 @@ func (h *Handler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 	movie.Director = details.Director
 	movie.Cast = details.Cast
 
-	//TODO retrieve the source of the movie and crawl for links. if no match exit
-	//TODO fetch torrent info
 	respond.Item(w, http.StatusOK, toMovieDetailResponse(*movie))
+}
+
+func (h *Handler) collectTorrents(ctx context.Context, title string) ([]models.Torrent, error) {
+	var perSource [][]models.Torrent
+	for _, s := range h.searchers {
+		torrents, err := s.SearchByTitle(ctx, title)
+		if err != nil {
+			return nil, err
+		}
+		perSource = append(perSource, torrents)
+	}
+	maxLen := 0
+	for _, t := range perSource {
+		if len(t) > maxLen {
+			maxLen = len(t)
+		}
+	}
+	mixed := make([]models.Torrent, 0, maxLen*len(perSource))
+	for i := range maxLen {
+		for _, t := range perSource {
+			if i < len(t) {
+				mixed = append(mixed, t[i])
+			}
+		}
+	}
+	return mixed, nil
+}
+
+func (h *Handler) resolveMovie(ctx context.Context, torrent models.Torrent) (models.Movie, models.Torrent, error) {
+	if torrent.ImdbID == "none" {
+		movie, err := h.tmdb.FindByName(ctx, torrent.Title, torrent.Year)
+		if err != nil {
+			return models.Movie{}, torrent, err
+		}
+		torrent.ImdbID = movie.ImdbID
+		return movie, torrent, nil
+	}
+	movie, err := h.tmdb.FindByIMDBID(ctx, torrent.ImdbID)
+	return movie, torrent, err
 }
 
 func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +133,8 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("searching for movies with title: %s", title)
-	torrents, err := h.searchers[0].SearchByTitle(r.Context(), title) // TODO Nest and add the second torrent source
+
+	torrents, err := h.collectTorrents(r.Context(), title)
 	if err != nil {
 		log.Println("search err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to search movies")
@@ -101,27 +143,28 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 
 	movies := make([]movieResponse, 0)
 	imdbIdSeen := make(map[string]bool)
-	uniqueMovie := 0
 
 	for _, torrent := range torrents {
-		if uniqueMovie >= 10 { // Protect TMDB api call per second limit
+		if len(movies) >= 8 { // Protect TMDB api call per second limit
 			break
 		}
-		if !imdbIdSeen[torrent.ImdbID] {
-			// TODO OPTI look for preexisting data in db
-			movie, err := h.tmdb.FindByIMDBID(r.Context(), torrent.ImdbID)
-			if err != nil {
-				log.Printf("TMDB lookup error for IMDb ID %s: %v", torrent.ImdbID, err)
-				continue
-			}
+		if imdbIdSeen[torrent.ImdbID] {
+			h.store.UpsertTorrent(r.Context(), torrent)
+			continue
+		}
+		movie, torrent, err := h.resolveMovie(r.Context(), torrent)
+		if err != nil {
+			log.Printf("TMDB lookup error for %q: %v", torrent.Title, err)
+			continue
+		}
+		if !imdbIdSeen[movie.ImdbID] {
 			if err = h.store.UpsertMovie(r.Context(), movie); err != nil {
 				log.Println("db err:", err)
 				respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to store movie")
 				return
 			}
 			movies = append(movies, toMovieResponse(movie))
-			imdbIdSeen[torrent.ImdbID] = true
-			uniqueMovie++
+			imdbIdSeen[movie.ImdbID] = true
 		}
 		if err = h.store.UpsertTorrent(r.Context(), torrent); err != nil {
 			log.Println("db err:", err)
@@ -148,7 +191,43 @@ func (h *Handler) GetMovieTorrents(w http.ResponseWriter, r *http.Request) {
 }
 
 // ListComments returns comments for a movie.
-func (h *Handler) ListComments(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
+	imdbid := r.PathValue("id")
+	comments, err := h.store.listComments(r.Context(), imdbid)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			respond.Error(w, http.StatusNotFound, "NOT_FOUND", "no comments")
+		} else {
+			log.Println("db err:", err)
+			respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to acess comments")
+		}
+		return
+	}
+	respond.List(w, http.StatusOK, comments, len(comments))
+}
 
 // CreateComment posts a new comment on a movie.
-func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		UserID  int    `json:"user_id"`
+		MovieID string `json:"movie_id"`
+		Content string `json:"content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		log.Println("decode err:", err)
+		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
+		return
+	}
+	comment := models.Comment{
+		UserID:  input.UserID,
+		MovieID: input.MovieID,
+		Content: input.Content,
+	}
+	if comment, err := h.store.createComment(r.Context(), comment); err != nil {
+		log.Println("db err:", err)
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to create comment")
+		return
+	} else {
+		respond.Item(w, http.StatusCreated, comment)
+	}
+}

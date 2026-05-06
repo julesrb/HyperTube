@@ -1,10 +1,22 @@
-doc for the API
+API documentation
+
+Base path: `/api/v1`
+
+---
+
+## GET /health
+
+Health check.
+
+### Response
+
+`200 OK` — no body.
 
 ---
 
 ## GET /movies
 
-Returns a curated list of featured movies.
+Returns the curated list of featured movies.
 
 ### Response
 
@@ -17,41 +29,69 @@ Returns a curated list of featured movies.
       "year": "string",
       "poster_url": "string",
       "backdrop_url": "string"
-    }, 
-    ...
+    }
   ],
-  "meta": {
-    "total": 11,
-    "page": 1,
-    "per_page": 11
-  }
+  "meta": { "total": 9, "page": 1, "per_page": 9 }
 }
 ```
 
-> Only `imdb_id`, `title`, `year`, `poster_url`, and `backdrop_url` are returned. Full details are available via `GET /movies/:id`.
+> Only the card fields are returned. Full details are available via `GET /movies/{id}`.
 
-### Error response
+### Error responses
 
 ```json
-{
-  "error": {
-    "code": "INTERNAL_ERROR",
-    "message": "failed to load movies"
-  }
-}
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to load movies" } }
 ```
 
 ---
 
-## GET /movies/:id
+## GET /movies/search?title=
+
+Searches for movies by title across tracker sources, enriches results with TMDB metadata, and persists new entries to the database. Results are capped at 8 to stay within TMDB rate limits.
+
+### Query parameters
+
+| Parameter | Type   | Required | Description         |
+|-----------|--------|----------|---------------------|
+| `title`   | string | yes      | Title to search for |
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "imdb_id": "string",
+      "title": "string",
+      "year": "string",
+      "poster_url": "string",
+      "backdrop_url": "string"
+    }
+  ],
+  "meta": { "total": 8, "page": 1, "per_page": 8 }
+}
+```
+
+### Error responses
+
+```json
+{ "error": { "code": "VALIDATION_ERROR", "message": "title query parameter is required" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to search movies" } }
+```
+
+---
+
+## GET /movies/{id}
 
 Returns full metadata for a single movie. Summary, director, and cast are fetched live from TMDB.
 
 ### Path parameters
 
-| Parameter | Type   | Description            |
-|-----------|--------|------------------------|
-| `id`      | string | IMDb ID of the movie   |
+| Parameter | Type   | Description          |
+|-----------|--------|----------------------|
+| `id`      | string | IMDb ID of the movie |
 
 ### Response
 
@@ -90,15 +130,15 @@ Returns full metadata for a single movie. Summary, director, and cast are fetche
 
 ---
 
-## GET /movies/search?title=
+## GET /movies/{id}/torrents
 
-Searches for movies by title across tracker sources, enriches results with TMDB metadata, and persists new entries to the database.
+Returns available torrent sources for a movie.
 
-### Query parameters
+### Path parameters
 
-| Parameter | Type   | Required | Description          |
-|-----------|--------|----------|----------------------|
-| `title`   | string | yes      | Title to search for  |
+| Parameter | Type   | Description          |
+|-----------|--------|----------------------|
+| `id`      | string | IMDb ID of the movie |
 
 ### Response
 
@@ -106,39 +146,36 @@ Searches for movies by title across tracker sources, enriches results with TMDB 
 {
   "data": [
     {
+      "id": 1,
       "imdb_id": "string",
       "title": "string",
-      "year": "string",
-      "poster_url": "string",
-      "backdrop_url": "string"
+      "year": 2024,
+      "source": "string",
+      "url": "string",
+      "quality": "string",
+      "size": 2.4,
+      "language": "string",
+      "seeds": "string"
     }
   ],
-  "meta": {
-    "total": 10,
-    "page": 1,
-    "per_page": 10
-  }
+  "meta": { "total": 3, "page": 1, "per_page": 3 }
 }
 ```
-
-> Results are capped at 10 to stay within TMDB rate limitsfor now.
 
 ### Error responses
 
 ```json
-{ "error": { "code": "VALIDATION_ERROR", "message": "title query parameter is required" } }
+{ "error": { "code": "NOT_FOUND", "message": "no tracker source found for this movie" } }
 ```
 ```json
-{ "error": { "code": "INTERNAL_ERROR", "message": "failed to search movies" } }
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to load tracker source" } }
 ```
 
 ---
 
-## GET /movies/:id/torrents
+## GET /movies/{id}/comments
 
-> **Not yet implemented.**
-
-Returns available torrent sources for a movie. Sources are resolved by crawling the tracker URLs stored during search.
+Returns comments posted on a movie, ordered by most recent first.
 
 ### Path parameters
 
@@ -146,101 +183,63 @@ Returns available torrent sources for a movie. Sources are resolved by crawling 
 |-----------|--------|----------------------|
 | `id`      | string | IMDb ID of the movie |
 
-### Planned response
+### Response
 
 ```json
 {
   "data": [
     {
-      "title": "string",
-      "url": "string",
-      "quality": "string",
-      "size": "string",
-      "language": "string",
-      "seeds": "string",
-      "source": "string"
-    }
-  ],
-  "meta": {
-    "total": 11,
-    "page": 1,
-    "per_page": 11
-  }
-}
-```
-
----
-
-## GET /movies/:id/subtitles
-
-> **Not yet implemented.**
-
-Returns available subtitle tracks for a movie.
-
-### Path parameters
-
-| Parameter | Type   | Description          |
-|-----------|--------|----------------------|
-| `id`      | string | IMDb ID of the movie |
-
-### Planned response
-
-```json
-{
-  "data": [
-    {
-      "url": "string",
-      "language": "string"
-    }
-  ],
-  "meta": {
-    "total": 11,
-    "page": 1,
-    "per_page": 11
-  }
-}
-```
-
----
-
-## GET /movies/:id/comments
-
-> **Not yet implemented.**
-
-Returns comments posted on a movie.
-
-### Path parameters
-
-| Parameter | Type   | Description          |
-|-----------|--------|----------------------|
-| `id`      | string | IMDb ID of the movie |
-
-### Planned response
-
-```json
-{
-  "data": [
-    {
-      "id": "string",
+      "id": 1,
+      "user_id": 2,
+      "movie_id": "string",
       "content": "string",
-      "posted_at": "2025-12-17T00:00:00Z",
-      "author": {
-        "id": "string",
-        "username": "string",
-        "picture_url": "string"
-      }
+      "updated_at": "2026-05-06T12:00:00Z"
     }
   ],
-  "meta": {
-    "total": 5,
-    "page": 1,
-    "per_page": 5
-  }
+  "meta": { "total": 4, "page": 1, "per_page": 4 }
 }
 ```
 
-### Planned error responses
+### Error responses
 
 ```json
-{ "error": { "code": "NOT_FOUND", "message": "movie not found" } }
+{ "error": { "code": "NOT_FOUND", "message": "no comments" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to acess comments" } }
+```
+
+---
+
+## POST /movies/{id}/comments
+
+Posts a new comment on a movie.
+
+### Path parameters
+
+| Parameter | Type   | Description          |
+|-----------|--------|----------------------|
+| `id`      | string | IMDb ID of the movie |
+
+### Request body
+
+```json
+{
+  "user_id": 1,
+  "movie_id": "string",
+  "content": "string"
+}
+```
+
+### Response
+
+`201 Created` — no body.
+
+### Error responses
+
+```json
+{ "error": { "code": "VALIDATION_ERROR", "message": "invalid request body" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to create comment" } }
 ```

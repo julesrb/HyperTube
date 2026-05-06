@@ -8,6 +8,7 @@ import (
 	"hypertube/api/internal/models"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -31,16 +32,26 @@ func NewClient() (*Client, error) {
 
 const tmdbImageBase = "https://image.tmdb.org/t/p/w500"
 
+type movieResult struct {
+	ID           int     `json:"id"`
+	Title        string  `json:"title"`
+	PosterPath   string  `json:"poster_path"`
+	BackdropPath string  `json:"backdrop_path"`
+	ReleaseDate  string  `json:"release_date"`
+	Note         float32 `json:"vote_average"`
+	GenreIDs     []int   `json:"genre_ids"`
+}
+
 type findResponse struct {
-	MovieResults []struct {
-		ID           int     `json:"id"`
-		Title        string  `json:"title"`
-		PosterPath   string  `json:"poster_path"`
-		BackdropPath string  `json:"backdrop_path"`
-		ReleaseDate  string  `json:"release_date"`
-		Note         float32 `json:"vote_average"`
-		GenreIDs     []int   `json:"genre_ids"`
-	} `json:"movie_results"`
+	MovieResults []movieResult `json:"movie_results"`
+}
+
+type searchResponse struct {
+	Results []movieResult `json:"results"`
+}
+
+type movieResponse struct {
+	ImdbID string `json:"imdb_id"`
 }
 
 type creditsResponse struct {
@@ -97,6 +108,37 @@ func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (models.Movie,
 		TmdbID:      fmt.Sprintf("%d", m.ID),
 		Title:       m.Title,
 		Year:        year,
+		PosterURL:   tmdbImageBase + m.PosterPath,
+		BackdropURL: tmdbImageBase + m.BackdropPath,
+		Note:        m.Note,
+		Genre:       m.GenreIDs,
+	}, nil
+}
+
+func (c *Client) FindByName(ctx context.Context, title string, year int) (models.Movie, error) {
+	var search searchResponse
+	queryURL := "https://api.themoviedb.org/3/search/movie?query=" + url.QueryEscape(title) + "&year=" + fmt.Sprintf("%d", year) + "&language=en-US"
+	if err := c.get(ctx, queryURL, &search); err != nil {
+		return models.Movie{}, err
+	}
+	if len(search.Results) == 0 {
+		return models.Movie{}, fmt.Errorf("no TMDB movie found for title %s", title)
+	}
+
+	m := search.Results[0]
+	yearStr := ""
+	if len(m.ReleaseDate) >= 4 {
+		yearStr = m.ReleaseDate[:4]
+	}
+
+	var detail movieResponse
+	_ = c.get(ctx, fmt.Sprintf("https://api.themoviedb.org/3/movie/%d", m.ID), &detail)
+
+	return models.Movie{
+		ImdbID:      detail.ImdbID,
+		TmdbID:      fmt.Sprintf("%d", m.ID),
+		Title:       m.Title,
+		Year:        yearStr,
 		PosterURL:   tmdbImageBase + m.PosterPath,
 		BackdropURL: tmdbImageBase + m.BackdropPath,
 		Note:        m.Note,

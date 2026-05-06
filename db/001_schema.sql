@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS torrents (
     id          SERIAL PRIMARY KEY,
     imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     title       TEXT    NOT NULL,
+    year        INTEGER NOT NULL,
     source      TEXT    NOT NULL,
     url         TEXT    NOT NULL,
     quality     TEXT    NOT NULL,
@@ -43,4 +44,12 @@ CREATE TABLE IF NOT EXISTS watch_history (
     user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     movie_id    TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     watched_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id          SERIAL  PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    movie_id    TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    content     TEXT    NOT NULL,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

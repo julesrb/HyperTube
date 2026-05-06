@@ -126,10 +126,10 @@ func (s *Store) findTorrent(ctx context.Context, imdbID string) ([]models.Torren
 
 func (s *Store) UpsertTorrent(ctx context.Context, ts models.Torrent) error {
 	_, err := s.db.Exec(ctx, `
-		INSERT INTO torrents (imdbid, source, title, url, quality, size, language, seeds)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO torrents (imdbid, source, year, title, url, quality, size, language, seeds)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		ON CONFLICT (imdbid, url) DO NOTHING
-	`, ts.ImdbID, ts.Source, ts.Title, ts.URL, ts.Quality, ts.Size, ts.Language, ts.Seeds)
+	`, ts.ImdbID, ts.Source, ts.Year, ts.Title, ts.URL, ts.Quality, ts.Size, ts.Language, ts.Seeds)
 	return err
 }
 
@@ -140,4 +140,44 @@ func (s *Store) UpsertFeatured(ctx context.Context, imdbId string, position int)
 		ON CONFLICT (imdbid, position) DO NOTHING
 	`, imdbId, position)
 	return err
+}
+
+func (s *Store) listComments(ctx context.Context, imdbId string) ([]models.Comment, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT * FROM comments
+		WHERE movie_id = $1
+		ORDER BY updated_at DESC
+	`, imdbId)
+	if err != nil {
+		return nil, err
+	}
+	comments, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Comment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return comments, nil
+}
+
+func (s *Store) createComment(ctx context.Context, c models.Comment) (models.Comment, error) {
+	rows, err := s.db.Query(ctx, `
+		INSERT INTO comments (user_id, movie_id, content)
+		VALUES ($1, $2, $3)
+		RETURNING *
+	`, c.UserID, c.MovieID, c.Content)
+
+	if err != nil {
+		return models.Comment{}, err
+	}
+
+	r, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Comment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return models.Comment{}, ErrNotFound
+		}
+		return models.Comment{}, err
+	}
+	return r, nil
 }

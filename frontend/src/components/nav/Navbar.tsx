@@ -8,6 +8,7 @@ import {ExitDoorIcon, HypertubResponsiveLogo, LanguageIcon, RegisterIcon, Search
 import {useAuth} from "@/context/AuthContext";
 import {usePathname} from "@/i18n/navigation";
 import {useTranslations} from "next-intl";
+import ProfilePicture from "@/components/ProfilePicture";
 
 type NavItem = {
     name: string
@@ -30,7 +31,7 @@ export default function Navbar() {
     const navItems: NavItem[] = user !== null ? [{
         name: "", icon: HypertubResponsiveLogo, href: "/",}, {
         name: t("search"), icon: SearchIcon, href: "/movies",}, {
-        name: t("account"), icon: UserIcon, href: "/users",}, {
+        name: t("account"), icon: () => <ProfilePicture user={user} />, href: "/users",}, {
         name: t("logout"), icon: ExitDoorIcon, action: logout,}, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },] : [{
@@ -49,8 +50,8 @@ export default function Navbar() {
 function NavItemComponent({item, selected, logoutBtn}: {item: NavItem, selected: boolean, logoutBtn: string}) {
     const isLogoutBtn = item.name === logoutBtn;
     const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
-    const className = "uppercase flex items-center " + hoverColor;
-    const PName = item.name ? <span style={{transform: "translateY(-1px)"}} className={"pl-1 xl:pl-2 text-lg xl:text-2xl hidden md:block text-nowrap " + (selected ? "font-base font-light" : "font-hairline")}>{item.name}</span> : null;
+    const className = "uppercase flex items-center";
+    const PName = item.name ? <span style={{transform: "translateY(-1px)"}} className={`pl-1 xl:pl-2 text-lg xl:text-2xl hidden md:block text-nowrap + ${selected ? "font-base font-light" : "font-hairline"} ${hoverColor}`}>{item.name}</span> : null;
     const [isHover, setIsHover] = useState(false);
 
     if (item.href !== undefined) {

@@ -1,15 +1,21 @@
 services:
-  # postgres:
-  #   image: postgres:16-alpine
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: ${POSTGRES_USER:-peerstream}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-peerstream}
-  #     POSTGRES_DB: ${POSTGRES_DB:-peerstream}
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hypertube}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-hypertube}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hypertube}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
   api:
     build: ./services/api
@@ -17,8 +23,9 @@ services:
     env_file: .env
     ports:
       - "8080:8080"
-    # depends_on:
-    #   - postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   # vpn:
   #   image: qmcgaw/gluetun

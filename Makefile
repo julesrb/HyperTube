@@ -18,6 +18,9 @@ logs:
 api:
 	cd services/api && go run .
 
+api-integration-test:
+	cd services/api && go test -v -run IntegrationTest
+
 stream:
 	cd services/torrent-stream && go run .
 

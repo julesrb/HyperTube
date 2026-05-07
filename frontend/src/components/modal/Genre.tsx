@@ -2,7 +2,7 @@
 
 import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/modal/Layout";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import GenreTags from "@/components/GenreTags";
 import {genres} from "@/types/genre";
 import {CheckFillIcon} from "@/components/Icons";
@@ -24,11 +24,17 @@ export function GenreModal() {
 export function FilterGenreModal() {
     const {activeModal, closeModal,} = useModal();
     const t = useTranslations("modal.filterGenre");
+    const [modalFilterGenre, setModalFilterGenre] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (activeModal.filterGenre !== undefined) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setModalFilterGenre(activeModal.filterGenre[0]);
+        }
+    }, [activeModal.filterGenre]);
+
     if (activeModal.type !== "filter-genre" || activeModal.filterGenre === undefined)
         return null;
-    const [filterGenre, setFilterGenre] = activeModal.filterGenre;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [modalFilterGenre, setModalFilterGenre] = useState<string[]>(filterGenre);
 
     const handleSelection = (genre: string) => {
         let newGenres;
@@ -36,7 +42,8 @@ export function FilterGenreModal() {
             newGenres = modalFilterGenre.filter(g => g !== genre);
         else
             newGenres = [...modalFilterGenre, genre];
-        setFilterGenre(newGenres);
+        if (activeModal.filterGenre !== undefined)
+            activeModal.filterGenre[1](newGenres);
         setModalFilterGenre(newGenres);
     }
 

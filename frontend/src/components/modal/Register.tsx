@@ -7,6 +7,7 @@ import Input from "@/components/Input";
 import {tUser} from "@/types/user";
 import {useAuth} from "@/context/AuthContext";
 import {Button, SmallButton} from "@/components/Buttons";
+import {useTranslations} from "next-intl";
 
 export default function Register() {
     const {openModal, activeModal, closeModal} = useModal();
@@ -16,32 +17,33 @@ export default function Register() {
     const [lastname, setLastname] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const t = useTranslations("auth.register");
 
     if (activeModal.type !== "register")
         return null;
 
     return (
-        <ModalLayout onClose={closeModal} title="Join Hypertube">
-            <Input id="email-register" value={email} onChange={setEmail} type="email" placeholder="Email"></Input>
+        <ModalLayout onClose={closeModal} title={t("title")}>
+            <Input id="email-register" value={email} onChange={setEmail} type="email" placeholder={t("email")}></Input>
 
             <div className="flex gap-2">
-                <Input id="firstname-register" value={firstname} onChange={setFirstname} type="firstname" placeholder="Firstname"></Input>
-                <Input id="lastname-register" value={lastname} onChange={setLastname} type="lastname" placeholder="Lastname"></Input>
+                <Input id="firstname-register" value={firstname} onChange={setFirstname} type="firstname" placeholder={t("firstname")}></Input>
+                <Input id="lastname-register" value={lastname} onChange={setLastname} type="lastname" placeholder={t("lastname")}></Input>
             </div>
 
-            <Input id="username-register" value={username} onChange={setUsername} type="username" placeholder="Username" className={"max-w-2/3"}></Input>
-            <Input id="password-register" value={password} onChange={setPassword} type="password" placeholder="Password" className={"max-w-2/3"}></Input>
+            <Input id="username-register" value={username} onChange={setUsername} type="username" placeholder={t("username")} className={"max-w-2/3"}></Input>
+            <Input id="password-register" value={password} onChange={setPassword} type="password" placeholder={t("password")} className={"max-w-2/3"}></Input>
 
             <Button className="h-8 mt-2" onClick={() =>
                 handleRegister(login, username, email, firstname, lastname, password, closeModal)
-            }>Sign Up</Button>
+            }>{t("submit")}</Button>
 
             <div className="flex gap-2 mt-5">
-                <span className="text-sm">Vous avez déjà un compte?</span>
+                <span className="text-sm">{t("haveAccount")}</span>
                 <SmallButton onClick={() => {
                     closeModal();
                     openModal({type: "signin"});
-                }}>Connectez-vous</SmallButton>
+                }}>{t("signIn")}</SmallButton>
             </div>
         </ModalLayout>
     );

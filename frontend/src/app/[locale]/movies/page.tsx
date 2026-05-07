@@ -9,6 +9,7 @@ import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
 import Pagination from "@/components/Pagination";
 import {useResponsiveSize} from "@/script/utils";
+import {useTranslations} from "next-intl";
 
 type tViewType = | "grid" | "list";
 type tSort = "name" | "genre" | "grade" | "year";
@@ -47,6 +48,7 @@ export default function Page() {
 
 function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?: React.ChangeEvent<HTMLInputElement>) => void}) {
     const inputRef = useRef<HTMLInputElement>(null);
+    const t = useTranslations("movies");
     useEffect(() => {
         const el = inputRef.current;
         if (!el) return;
@@ -55,7 +57,7 @@ function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?:
     }, []);
 
     return (<div className="flex items-center px-6">
-        <input ref={inputRef} type="search" placeholder="Rechercher un film..." value={searchValue} onChange={onChange}
+        <input ref={inputRef} type="search" placeholder={t("searchPlaceholder")} value={searchValue} onChange={onChange}
         className="w-full bg-white text-5xl md:text-7xl xl:text-9xl font-condensed uppercase border-b focus:border-b-2"></input>
         <CloseButton className="absolute right-10" onClick={() => onChange()} disabled={searchValue.length === 0}/>
     </div>);
@@ -73,14 +75,22 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     const [filterGenre, setFilterGenre] = useState<string[]>(genre === null ? [] : [genre])
     const filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
     const size = useResponsiveSize();
+    const t = useTranslations("movies");
+
+    const noResult = () => (<p className="small-text">{t("noResults")}</p>);
 
     if (filteredMovies.length === 0)
-        return (<p className="text-center italic text-gray">Aucun film trouvé</p>);
+        return noResult();
 
     if (viewType === "grid")
         return (<MoviesCard movieSets={filteredMovies}/>);
 
-    const sortOptions: tSort[] = ["name", "year", "genre", "grade"];
+    const sortOptions: {type: tSort, label: string}[] = [
+        {type: "name", label: t("sort.title")},
+        {type: "year", label: t("sort.year")},
+        {type: "genre", label: t("sort.genre")},
+        {type: "grade", label: t("sort.rating")},
+    ];
     let sortedMovies;
     if (sort.type === "grade")
         sortedMovies = filteredMovies.sort((a, b) => a.rate - b.rate);
@@ -119,41 +129,45 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
 
     const classNames = ["sm:pl-3", "", "hidden lg:table-cell", "hidden sm:table-cell"]
 
-    return (<table className="table-fixed w-full overflow-hidden">
-        <colgroup>
-            <col className="w-30 sm:w-55 xl:w-80" />
-            <col />
-            <col className="w-0" />
-            <col className="w-1/4 hidden lg:table-column" />
-            <col className="w-15 hidden sm:table-column" />
-            <col className="w-25" />
-        </colgroup>
+    return (<div>
+        <table className="table-fixed w-full overflow-hidden">
+            <colgroup>
+                <col className="w-30 sm:w-55 xl:w-80" />
+                <col />
+                <col className="w-0" />
+                <col className="w-1/4 hidden lg:table-column" />
+                <col className="w-15 hidden sm:table-column" />
+                <col className="w-32" />
+            </colgroup>
 
-        <thead>
-            <tr className="text-left align-top">
-                <th></th>
-                {sortOptions.map((sortOption, i) =>
-                    <th key={sortOption} className={classNames[i]}>
-                        <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption === "year" ? " -left-5 md:-left-30 xl:-left-45" : "")}
-                                onClick={() => handleSort(sortOption)}>
-                            {sortOption} {sortOption === sort.type && (sort.side ? "▾" : "▴")}
-                        </button>
-                        {sortOption === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
-                    </th>
-                )}
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie} setFilterGenre={setFilterGenre}/>))}
-        </tbody>
-    </table>);
+            <thead>
+                <tr className="text-left align-top">
+                    <th></th>
+                    {sortOptions.map((sortOption, i) =>
+                        <th key={sortOption.type} className={classNames[i]}>
+                            <button className={"relative capitalize text-nowrap hover:underline text-xs sm:text-base" + (sortOption.type === "year" ? " -left-4 sm:-left-20 md:-left-30 xl:-left-45 2xl:-left-80" : "")}
+                                    onClick={() => handleSort(sortOption.type)}>
+                                {sortOption.label} {sortOption.type === sort.type && (sort.side ? "▾" : "▴")}
+                            </button>
+                            {sortOption.type === "genre" && <SelectedGenre genres={filterGenre} deleteGenre={deleteGenre}/>}
+                        </th>
+                    )}
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {sortedMovies.map((movie, index) => (<ListMovieCard key={index} movie={movie} setFilterGenre={setFilterGenre}/>))}
+            </tbody>
+        </table>
+        {sortedMovies.length === 0 && noResult()}
+    </div>);
 }
 
 function SelectedGenre({genres, deleteGenre}: {genres: string[], deleteGenre:(genre: string) => void}) {
     const showGenres = genres.slice(0, 2);
+    const t = useTranslations("movies");
     if (genres.length > 2)
-        showGenres.push(`+ ${genres.length - 2} de plus`)
+        showGenres.push(t("selectedGenres.more", {count: genres.length - 2}))
     return (<div className="flex gap-2">
         {showGenres.map((genre, index) => (<div key={index}
         className="border flex items-center">

@@ -11,9 +11,11 @@ import Section from "@/components/Section";
 import {useAuth} from "@/context/AuthContext";
 import {tUser} from "@/types/user";
 import {useResponsiveSize} from "@/script/utils";
+import {useTranslations} from "next-intl";
 
 export default function HomePage() {
     const {user} = useAuth();
+    const t = useTranslations("home");
     const moviesSets = user ? filterAlreadyWatch(user, movies) : movies;
     const popular = structuredClone(moviesSets);
     const mostRated = structuredClone(moviesSets).sort((a, b) => b.rate - a.rate);
@@ -47,16 +49,16 @@ export default function HomePage() {
         <MoviesHero items={movies.slice(0, 5)} movie={movies[0]} />
         <GenreTags genres={genres.slice(0, genreCount)} className="justify-center w-full my-8" />
 
-        {continueWatching &&
-        <Section title="Continue to watch" href="/users?tab=history">
+        {(continueWatching && continueWatching.length > 0) &&
+        <Section title={t("continueWatching")} href="/users?tab=history">
             <MoviesCard movieSets={continueWatching.slice(0, moviesCount)} />
         </Section>}
 
-        <Section title="Popular" href="/movies/">
+        <Section title={t("popular")} href="/movies/">
             <MoviesCard movieSets={popular.slice(0, moviesCount)} />
         </Section>
 
-        <Section title="Most rated" href="/movies?sort=most_rated">
+        <Section title={t("mostRated")} href="/movies?sort=most_rated">
             <MoviesCard movieSets={mostRated.slice(0, moviesCount)} />
         </Section>
 

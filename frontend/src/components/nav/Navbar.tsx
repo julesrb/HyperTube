@@ -3,17 +3,12 @@
 import {useModal} from "@/context/ModalContext";
 import LanguageDropdown from "@/components/nav/LanguageDropdown";
 import React, {useState} from "react";
-import Link from "next/link";
-import {
-    ExitDoorIcon,
-    HypertubResponsiveLogo,
-    LanguageIcon,
-    RegisterIcon,
-    SearchIcon,
-    UserIcon
-} from "@/components/Icons";
+import {Link} from "@/i18n/navigation";
+import {ExitDoorIcon, HypertubResponsiveLogo, LanguageIcon, RegisterIcon, SearchIcon, UserIcon} from "@/components/Icons";
 import {useAuth} from "@/context/AuthContext";
-import {usePathname} from "next/navigation";
+import {usePathname} from "@/i18n/navigation";
+import {useTranslations} from "next-intl";
+import ProfilePicture from "@/components/ProfilePicture";
 
 type NavItem = {
     name: string
@@ -31,31 +26,32 @@ export default function Navbar() {
     const {openModal} = useModal();
     const {user, logout} = useAuth();
     const pathname = usePathname()
+    const t = useTranslations("nav");
 
     const navItems: NavItem[] = user !== null ? [{
         name: "", icon: HypertubResponsiveLogo, href: "/",}, {
-        name: "Search", icon: SearchIcon, href: "/movies",}, {
-        name: "Account", icon: UserIcon, href: "/users",}, {
-        name: "Logout", icon: ExitDoorIcon, action: logout,}, {
+        name: t("search"), icon: SearchIcon, href: "/movies",}, {
+        name: t("account"), icon: () => <ProfilePicture user={user} />, href: "/users",}, {
+        name: t("logout"), icon: ExitDoorIcon, action: logout,}, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },] : [{
         name: "", icon: HypertubResponsiveLogo, href: "/",}, {
-        name: "Search", icon: SearchIcon, href: "/movies",}, {
-        name: "Sign In", icon: UserIcon, action: () => openModal({type: "signin"}),}, {
-        name: "Create Account", icon: RegisterIcon, action: () => openModal({type: "register"}),}, {
+        name: t("search"), icon: SearchIcon, href: "/movies",}, {
+        name: t("signIn"), icon: UserIcon, action: () => openModal({type: "signin"}),}, {
+        name: t("createAccount"), icon: RegisterIcon, action: () => openModal({type: "register"}),}, {
         name: "", icon: LanguageIcon, hover: LanguageDropdown,
     },];
 
     return (<nav className="flex justify-between px-6 sm:px-10 xl:px-16 py-8">
-        {navItems.map((item, index) => (<NavItemComponent key={index} item={item} selected={pathname === item.href} />))}
+        {navItems.map((item, index) => (<NavItemComponent key={index} item={item} selected={pathname === item.href} logoutBtn={t("logout")} />))}
     </nav>)
 }
 
-function NavItemComponent({item, selected}: {item: NavItem, selected: boolean}) {
-    const isLogoutBtn = "Logout" === item.name;
+function NavItemComponent({item, selected, logoutBtn}: {item: NavItem, selected: boolean, logoutBtn: string}) {
+    const isLogoutBtn = item.name === logoutBtn;
     const hoverColor = isLogoutBtn ? "hover:text-red custom-underline-red" : "custom-underline";
-    const className = "uppercase flex items-center " + hoverColor;
-    const PName = item.name ? <span className={"pl-2 text-2xl hidden md:block mb-1 " + (selected ? "font-base font-light" : "font-hairline")}>{item.name}</span> : null;
+    const className = "uppercase flex items-center";
+    const PName = item.name ? <span style={{transform: "translateY(-1px)"}} className={`pl-1 xl:pl-2 text-lg xl:text-2xl hidden md:block text-nowrap + ${selected ? "font-base font-light" : "font-hairline"} ${hoverColor}`}>{item.name}</span> : null;
     const [isHover, setIsHover] = useState(false);
 
     if (item.href !== undefined) {

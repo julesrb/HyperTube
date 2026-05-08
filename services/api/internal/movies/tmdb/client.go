@@ -41,7 +41,6 @@ type movieResult struct {
 	BackdropPath string  `json:"backdrop_path"`
 	ReleaseDate  string  `json:"release_date"`
 	Note         float32 `json:"vote_average"`
-	Runtime      int     `json:"runtime"`
 	GenreIDs     []int   `json:"genre_ids"`
 }
 
@@ -58,6 +57,7 @@ type movieResponse struct {
 }
 
 type creditsResponse struct {
+	Runtime  int    `json:"runtime"`
 	Overview string `json:"overview"`
 	Credits  struct {
 		Cast []struct {
@@ -128,7 +128,6 @@ func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (models.Movie,
 		BackdropURL: tmdbImageBase + m.BackdropPath,
 		Note:        m.Note,
 		Genre:       m.GenreIDs,
-		Runtime:     m.Runtime,
 	}, nil
 }
 
@@ -160,7 +159,6 @@ func (c *Client) FindByName(ctx context.Context, title string, year int) (models
 		BackdropURL: tmdbImageBase + m.BackdropPath,
 		Note:        m.Note,
 		Genre:       m.GenreIDs,
-		Runtime:     m.Runtime,
 	}, nil
 }
 
@@ -195,8 +193,8 @@ func (c *Client) GetMovieDetails(ctx context.Context, tmdbID string, language st
 	for _, img := range imagesResult.Images.Backdrops {
 		extraBackdrops = append(extraBackdrops, tmdbImageBase+img.FilePath)
 	}
-
 	return models.MovieDetails{
+		Runtime:        creditsResult.Runtime,
 		Summary:        creditsResult.Overview,
 		Director:       director,
 		Cast:           cast,

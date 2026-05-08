@@ -166,8 +166,6 @@ func TestGetMoviesId_OK(t *testing.T) {
 				BackdropURL: "https://image.tmdb.org/t/p/original/oBCR7ShGq9ZdnHMK8SGOckGpEgo.jpg",
 				Note:        8.1,
 				Genre:       []int{878, 12, 18},
-				Runtime:     167,
-				Watched:     false,
 			},
 			{
 				ImdbID:      "83533",
@@ -177,8 +175,6 @@ func TestGetMoviesId_OK(t *testing.T) {
 				BackdropURL: "https://image.tmdb.org/t/p/original/u8DU5fkLoM5tTRukzPC31oGPxaQ.jpg",
 				Note:        7.4,
 				Genre:       []int{878, 12, 14},
-				Runtime:     197,
-				Watched:     false,
 			},
 		},
 	}}

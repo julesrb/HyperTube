@@ -11,10 +11,7 @@ type Movie struct {
 	BackdropURL string  `json:"backdrop_url"`
 	Genre       []int   `json:"genres"`
 	Summary     string  `json:"summary"`
-	Runtime     int     `json:"runtime_minutes"`
 	Note        float32 `json:"note"`
-	Watched     bool    `json:"watched"`
-	Progression float32 `json:"progression"`
 }
 
 type Torrent struct {
@@ -37,6 +34,7 @@ type Subtitle struct {
 
 type MovieDetails struct {
 	Summary        string   `json:"summary"`
+	Runtime        int      `json:"runtime"`
 	Director       []string `json:"director"`
 	Cast           []string `json:"cast"`
 	ExtraBackdrops []string `json:"extra_backdrops"`

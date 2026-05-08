@@ -40,8 +40,14 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS watch_history (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    imdbid    TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     watched_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS direct_stream_movies (
+    imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (imdbid)
 );
 
 CREATE TABLE IF NOT EXISTS comments (

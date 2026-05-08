@@ -30,6 +30,7 @@ type movieStore interface {
 	upsertSearchResults(ctx context.Context, query string, imdbIDs []string) error
 	listSearchResults(ctx context.Context, query string, limit, offset int) ([]models.Movie, error)
 	listWatched(ctx context.Context, userID int) ([]models.Movie, error)
+	listDirectStream(ctx context.Context) ([]models.Movie, error)
 }
 
 type MovieSearcher interface {
@@ -65,13 +66,27 @@ func (h *MoviesHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
 
 func (h *MoviesHandler) GetWatchedMovies(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		UserID  int    `json:"user_id"`
+		UserID int `json:"user_id"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
 		return
 	}
 	movies, err := h.store.listWatched(r.Context(), input.UserID)
+	if err != nil {
+		log.Println("db err:", err)
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to load movies")
+		return
+	}
+	movieResponse := make([]movieResponse, len(movies))
+	for i, m := range movies {
+		movieResponse[i] = toMovieResponse(m)
+	}
+	respond.List(w, http.StatusOK, movieResponse)
+}
+
+func (h *MoviesHandler) GetDirectStreamMovies(w http.ResponseWriter, r *http.Request) {
+	movies, err := h.store.listDirectStream(r.Context())
 	if err != nil {
 		log.Println("db err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to load movies")

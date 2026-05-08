@@ -98,6 +98,30 @@ func (s *Store) listWatched(ctx context.Context, user_id int) ([]models.Movie, e
 	return movies, nil
 }
 
+func (s *Store) listDirectStream(ctx context.Context) ([]models.Movie, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT m.imdbid, m.tmdbid, m.title, m.year,
+		       m.poster_url, m.backdrop_url, m.note, m.genre,
+		       m.runtime_minutes, m.summary
+		FROM movies m
+		JOIN direct_stream_movies d ON d.imdbid = m.imdbid
+	`)
+	if err != nil {
+		return nil, err
+	}
+
+	movieRows, err := pgx.CollectRows(rows, pgx.RowToStructByName[movieRow])
+	if err != nil {
+		return nil, err
+	}
+
+	movies := make([]models.Movie, len(movieRows))
+	for i, r := range movieRows {
+		movies[i] = toMovie(r)
+	}
+	return movies, nil
+}
+
 func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) {
 	rows, err := s.db.Query(ctx, `
 		SELECT imdbid, tmdbid, title, year,

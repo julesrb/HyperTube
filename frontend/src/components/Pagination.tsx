@@ -19,9 +19,9 @@ export default function Pagination({children, currenIndex, totalPage, onClick} :
             onClick(index);
     }
 
-    return (<div className="w-full">
+    return (<div className="w-full mb-4">
         {children}
-        { totalPage !== 0 &&
+        { totalPage > 1 &&
             <div className="flex w-full gap-2 justify-center my-4">
                 <button className="mt-1" onClick={handleLeftArrow} onMouseEnter={() => setLeftColor(currenIndex === 0 ? "gray" : "black")} onMouseLeave={() => setLeftColor("gray")}>
                     <LeftIcon color={leftColor}/>

@@ -67,7 +67,7 @@ func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie,
 	return models.Movie{ImdbID: imdbID}, nil
 }
 
-func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string) (models.MovieDetails, error) {
+func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string, _ string) (models.MovieDetails, error) {
 	return models.MovieDetails{}, nil
 }
 
@@ -159,9 +159,6 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Note:        8.1,
 				Genre:       []int{878, 12, 18},
 				Runtime:     167,
-				Summary:     "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a path of revenge against the conspirators who destroyed his family.",
-				Director:    "Denis Villeneuve",
-				Cast:        []string{"Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Josh Brolin"},
 				Watched:     false,
 			},
 			{
@@ -173,9 +170,6 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Note:        7.4,
 				Genre:       []int{878, 12, 14},
 				Runtime:     197,
-				Summary:     "Following a devastating conflict with the RDA and the death of their eldest son, Jake Sully and Neytiri face a new threat on Pandora.",
-				Director:    "James Cameron",
-				Cast:        []string{"Sam Worthington", "Zoe Saldaña", "Sigourney Weaver", "Stephen Lang"},
 				Watched:     false,
 			},
 		},

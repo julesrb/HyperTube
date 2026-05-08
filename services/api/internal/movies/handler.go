@@ -38,7 +38,7 @@ type MovieSearcher interface {
 
 type tmdbClient interface {
 	FindByIMDBID(ctx context.Context, imdbID string) (models.Movie, error)
-	GetMovieDetails(ctx context.Context, tmdbID string) (models.MovieDetails, error)
+	GetMovieDetails(ctx context.Context, tmdbID string, language string) (models.MovieDetails, error)
 	FindByName(ctx context.Context, title string, year int) (models.Movie, error)
 }
 
@@ -75,19 +75,17 @@ func (h *MoviesHandler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	// TODO OPTI look for preexisting data in db
-	details, err := h.tmdb.GetMovieDetails(r.Context(), movie.TmdbID)
+	language := r.URL.Query().Get("lang")
+	if language == "" {
+		language = "en-US"
+	}
+	details, err := h.tmdb.GetMovieDetails(r.Context(), movie.TmdbID, language)
 	if err != nil {
 		log.Printf("TMDB details error for TmdbID %s: %v", movie.TmdbID, err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to fetch movie details")
 		return
 	}
-	movie.Summary = details.Summary
-	movie.Director = details.Director
-	movie.Cast = details.Cast
-
-	respond.Item(w, http.StatusOK, toMovieDetailResponse(*movie))
+	respond.Item(w, http.StatusOK, toMovieDetailResponse(*movie, details))
 }
 
 func (h *MoviesHandler) collectTorrents(ctx context.Context, title string) ([]models.Torrent, error) {

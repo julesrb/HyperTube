@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"hypertube/api/internal/models"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
-	"log"
 	"time"
 )
 
@@ -41,6 +41,7 @@ type movieResult struct {
 	BackdropPath string  `json:"backdrop_path"`
 	ReleaseDate  string  `json:"release_date"`
 	Note         float32 `json:"vote_average"`
+	Runtime      int     `json:"runtime"`
 	GenreIDs     []int   `json:"genre_ids"`
 }
 
@@ -68,6 +69,14 @@ type creditsResponse struct {
 			Job  string `json:"job"`
 		} `json:"crew"`
 	} `json:"credits"`
+}
+
+type imagesResponse struct {
+	Images struct {
+		Backdrops []struct {
+			FilePath string `json:"file_path"`
+		} `json:"backdrops"`
+	} `json:"images"`
 }
 
 func (c *Client) get(ctx context.Context, url string, out any) error {
@@ -119,6 +128,7 @@ func (c *Client) FindByIMDBID(ctx context.Context, imdbID string) (models.Movie,
 		BackdropURL: tmdbImageBase + m.BackdropPath,
 		Note:        m.Note,
 		Genre:       m.GenreIDs,
+		Runtime:     m.Runtime,
 	}, nil
 }
 
@@ -150,34 +160,46 @@ func (c *Client) FindByName(ctx context.Context, title string, year int) (models
 		BackdropURL: tmdbImageBase + m.BackdropPath,
 		Note:        m.Note,
 		Genre:       m.GenreIDs,
+		Runtime:     m.Runtime,
 	}, nil
 }
 
-func (c *Client) GetMovieDetails(ctx context.Context, tmdbID string) (models.MovieDetails, error) {
-	var result creditsResponse
-	if err := c.get(ctx, "https://api.themoviedb.org/3/movie/"+tmdbID+"?append_to_response=credits&language=en-US", &result); err != nil {
+func (c *Client) GetMovieDetails(ctx context.Context, tmdbID string, language string) (models.MovieDetails, error) {
+	var creditsResult creditsResponse
+	if err := c.get(ctx, "https://api.themoviedb.org/3/movie/"+tmdbID+"?append_to_response=credits&language="+language, &creditsResult); err != nil {
 		return models.MovieDetails{}, err
 	}
 
-	director := ""
-	for _, crew := range result.Credits.Crew {
+	var imagesResult imagesResponse
+	if err := c.get(ctx, "https://api.themoviedb.org/3/movie/"+tmdbID+"?images?include_image_language=null", &imagesResult); err != nil {
+		return models.MovieDetails{}, err
+	}
+
+	director := make([]string, 0)
+	for _, crew := range creditsResult.Credits.Crew {
 		if crew.Job == "Director" {
-			director = crew.Name
+			director = append(director, crew.Name)
 			break
 		}
 	}
 
 	cast := make([]string, 0, 5)
-	for _, member := range result.Credits.Cast {
+	for _, member := range creditsResult.Credits.Cast {
 		if member.Order >= 5 { // Limit the cast to the 5 more important ones
 			break
 		}
 		cast = append(cast, member.Name)
 	}
 
+	extraBackdrops := make([]string, 0)
+	for _, img := range imagesResult.Images.Backdrops {
+		extraBackdrops = append(extraBackdrops, tmdbImageBase+img.FilePath)
+	}
+
 	return models.MovieDetails{
-		Summary:  result.Overview,
-		Director: director,
-		Cast:     cast,
+		Summary:        creditsResult.Overview,
+		Director:       director,
+		Cast:           cast,
+		ExtraBackdrops: extraBackdrops,
 	}, nil
 }

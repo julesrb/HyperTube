@@ -67,7 +67,9 @@ Searches for movies by title. On first request, fetches from tracker sources, re
       "title": "string",
       "year": "string",
       "poster_url": "string",
-      "backdrop_url": "string"
+      "backdrop_url": "string",
+      "note": 8.1,
+      "genres": [878, 12, 18]
     }
   ],
   "meta": { "total": 87, "page": 0, "per_page": 12 }
@@ -95,6 +97,12 @@ Returns full metadata for a single movie. Summary, director, and cast are fetche
 |-----------|--------|----------------------|
 | `id`      | string | IMDb ID of the movie |
 
+### Query parameters
+
+| Parameter | Type   | Required | Default  | Description                        |
+|-----------|--------|----------|----------|------------------------------------|
+| `lang`    | string | no       | `en-US`  | TMDB language code for the details |
+
 ### Response
 
 ```json
@@ -110,8 +118,9 @@ Returns full metadata for a single movie. Summary, director, and cast are fetche
     "genres": [878, 12, 18],
     "runtime_minutes": 167,
     "summary": "string",
-    "director": "string",
+    "director": ["string"],
     "cast": ["string"],
+    "extra_backdrops": ["string"],
     "watched": false,
     "progression": 0.0
   }

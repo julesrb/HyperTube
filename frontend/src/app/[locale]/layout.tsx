@@ -15,6 +15,7 @@ import {hasLocale, NextIntlClientProvider} from 'next-intl';
 import {routing} from "@/i18n/request";
 import {notFound} from "next/navigation";
 import {getLocale, getMessages} from "next-intl/server";
+import Providers from "@/app/providers";
 
 export default async function RootLayout({children, params}: {children: React.ReactNode, params: Promise<{locale: string}>}) {
     const {locale} = await params;
@@ -29,24 +30,26 @@ export default async function RootLayout({children, params}: {children: React.Re
     <body>
 
     <NextIntlClientProvider locale={currentLocale} messages={messages}>
-        <AuthProvider>
-            <NotificationProvider>
-                <ModalProvider>
-                    <NotificationList/>
+        <Providers>
+            <AuthProvider>
+                <NotificationProvider>
+                    <ModalProvider>
+                        <NotificationList/>
 
-                    <Navbar/>
+                        <Navbar/>
 
-                    <SigninModal/>
-                    <RegisterModal/>
-                    <GenreModal/>
-                    <FilterGenreModal/>
-                    <ForgotPassword/>
-                    <DeleteCommentModal/>
+                        <SigninModal/>
+                        <RegisterModal/>
+                        <GenreModal/>
+                        <FilterGenreModal/>
+                        <ForgotPassword/>
+                        <DeleteCommentModal/>
 
-                    {children}
-                </ModalProvider>
-            </NotificationProvider>
-        </AuthProvider>
+                        {children}
+                    </ModalProvider>
+                </NotificationProvider>
+            </AuthProvider>
+        </Providers>
     </NextIntlClientProvider>
 
     </body>

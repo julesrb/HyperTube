@@ -13,15 +13,16 @@ import ProfilePicture from "@/components/ProfilePicture";
 import {useAuth} from "@/context/AuthContext";
 import {useModal} from "@/context/ModalContext";
 import {EditIcon, TrashIcon} from "@/components/Icons";
-import {movies, tMovie} from "@/types/movie";
+import {iMovie} from "@/types/movie";
 import {MovieCard} from "@/components/MovieCard";
 import {useNotification} from "@/context/NotificationContext";
 import {useLocale, useTranslations} from "next-intl";
+import {getMovie} from "@/services/movies";
 
 dayjs.extend(relativeTime);
 
 
-export function CommentSection({movie}: {movie: tMovie}) {
+export function CommentSection({movie}: {movie: iMovie}) {
     const {user} = useAuth();
     const {addNotification} = useNotification();
     const {openModal} = useModal();
@@ -224,7 +225,7 @@ function CommentTextEdit({comment, setEditMode, updateComment}: {comment: tComme
     </div>);
 }
 
-function NewComment({user, movie, onSubmit}: { user: tUser, movie: tMovie, onSubmit: (value: tComment) => void }) {
+function NewComment({user, movie, onSubmit}: { user: tUser, movie: iMovie, onSubmit: (value: tComment) => void }) {
     const [expendComment, setExpendComment] = useState(false);
     const [comment, setComment] = useState("");
     const t = useTranslations("comments");
@@ -237,7 +238,7 @@ function NewComment({user, movie, onSubmit}: { user: tUser, movie: tMovie, onSub
     const handlePostComment = () => {
         const newComment: tComment = {
             id: Math.floor(Date.now() / 1000),
-            movie_id: movie.id,
+            movie_imdb_id: movie.imdb_id,
             author_id: user.id,
             author_username: user.username,
             author_firstname: user.firstname,

@@ -10,7 +10,7 @@ import {usePathname} from "@/i18n/navigation";
 import {useTranslations} from "next-intl";
 import ProfilePicture from "@/components/ProfilePicture";
 
-type NavItem = {
+interface NavItem {
     name: string
     icon: ({color, size}: {
         selected: boolean
@@ -20,7 +20,7 @@ type NavItem = {
     href?: string
     action?: () => void
     hover?: (Icon: ({selected}: {selected: boolean}) => React.JSX.Element) => React.JSX.Element
-};
+}
 
 export default function Navbar() {
     const {openModal} = useModal();

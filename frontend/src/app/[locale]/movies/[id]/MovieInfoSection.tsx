@@ -7,8 +7,8 @@ export default function MovieInfoSection({movie} : {movie: iMovieDetails}) {
     const t = useTranslations("movie");
 
     const getLenght = () => {
-        const hours = movie.runtime_minutes % 60;
-        const minutes = movie.runtime_minutes / 60;
+        const hours = Math.floor(movie.runtime_minutes / 60);
+        const minutes = movie.runtime_minutes % 60;
         return (`${hours}h${minutes > 10 ? "" : "0"}${minutes}`);
     }
 

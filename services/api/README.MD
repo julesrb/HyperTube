@@ -187,7 +187,6 @@ Returns full metadata for a single movie. Summary, director, and cast are fetche
     "backdrop_url": "string",
     "note": 8.1,
     "genres": [878, 12, 18],
-    "runtime_minutes": 167,
     "summary": "string",
     "director": ["string"],
     "cast": ["string"],

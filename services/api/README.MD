@@ -87,6 +87,47 @@ Searches for movies by title. On first request, fetches from tracker sources, re
 
 ---
 
+## GET /movies/watched
+
+Returns the watch history for a user, ordered by most recently watched.
+
+### Request body
+
+```json
+{
+  "user_id": 1
+}
+```
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "imdb_id": "string",
+      "title": "string",
+      "year": "string",
+      "poster_url": "string",
+      "backdrop_url": "string",
+      "note": 8.1,
+      "genres": [878, 12, 18]
+    }
+  ]
+}
+```
+
+### Error responses
+
+```json
+{ "error": { "code": "VALIDATION_ERROR", "message": "invalid request body" } }
+```
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to load movies" } }
+```
+
+---
+
 ## GET /movies/{id}
 
 Returns full metadata for a single movie. Summary, director, and cast are fetched live from TMDB.

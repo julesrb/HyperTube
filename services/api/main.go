@@ -107,6 +107,7 @@ func newRouter(moviesHandler *movies.MoviesHandler, commentsHandler *comments.Co
 
 	// Movies
 	mux.HandleFunc("GET /api/v1/movies", moviesHandler.GetMovies)
+	mux.HandleFunc("GET /api/v1/movies/watched", moviesHandler.GetWatchedMovies)
 	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies)
 	mux.HandleFunc("GET /api/v1/movies/{id}", moviesHandler.GetMoviesId)
 	mux.HandleFunc("GET /api/v1/movies/{id}/torrents", moviesHandler.GetMovieTorrents)

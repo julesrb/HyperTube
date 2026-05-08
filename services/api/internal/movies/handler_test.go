@@ -61,6 +61,10 @@ func (s *fakeStore) listSearchResults(ctx context.Context, query string, limit, 
 	return nil, nil
 }
 
+func (s *fakeStore) listWatched(ctx context.Context, user_id int) ([]models.Movie, error) {
+	return nil, nil
+}
+
 type fakeTMDB struct{}
 
 func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie, error) {

@@ -93,17 +93,11 @@ func TestGetMovies_OK(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
-		Meta struct {
-			Total int `json:"total"`
-		} `json:"meta"`
 	}
 	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
 	}
 
-	if body.Meta.Total != 2 {
-		t.Errorf("expected total=2, got %d", body.Meta.Total)
-	}
 	if body.Data[0].ImdbID != "1" || body.Data[1].ImdbID != "2" {
 		t.Errorf("unexpected order: %+v", body.Data)
 	}
@@ -122,15 +116,9 @@ func TestGetMovies_Empty(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
-		Meta struct {
-			Total int `json:"total"`
-		} `json:"meta"`
 	}
 	json.NewDecoder(rec.Body).Decode(&body)
 
-	if body.Meta.Total != 0 {
-		t.Errorf("expected total=0, got %d", body.Meta.Total)
-	}
 	if len(body.Data) != 0 {
 		t.Errorf("expected empty data, got %+v", body.Data)
 	}

@@ -140,7 +140,7 @@ func (c *Client) GetTopMovies(ctx context.Context) ([]models.Torrent, error) {
 		}
 		seen[t.ImdbID] = true
 		result = append(result, t)
-		if len(result) == 9 {
+		if len(result) == 12 {
 			break
 		}
 	}

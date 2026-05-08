@@ -50,3 +50,10 @@ type Comment struct {
 	Content   string    `json:"content"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
+
+type MovieSearchRow struct {
+	Query      string    `json:"query"      db:"query"`
+	ImdbID     string    `json:"imdb_id"    db:"imdbid"`
+	Rank       int       `json:"rank"       db:"rank"`
+	SearchedAt time.Time `json:"searched_at" db:"searched_at"`
+}

@@ -30,8 +30,7 @@ Returns the curated list of featured movies.
       "poster_url": "string",
       "backdrop_url": "string"
     }
-  ],
-  "meta": { "total": 9, "page": 1, "per_page": 9 }
+  ]
 }
 ```
 
@@ -45,15 +44,16 @@ Returns the curated list of featured movies.
 
 ---
 
-## GET /movies/search?title=
+## GET /movies/search?title=&page=
 
-Searches for movies by title across tracker sources, enriches results with TMDB metadata, and persists new entries to the database. Results are capped at 8 to stay within TMDB rate limits.
+Searches for movies by title. On first request, fetches from tracker sources, resolves metadata via TMDB, and persists results to the database. Subsequent requests for the same title are served directly from the database. Results are paginated at 12 per page.
 
 ### Query parameters
 
-| Parameter | Type   | Required | Description         |
-|-----------|--------|----------|---------------------|
-| `title`   | string | yes      | Title to search for |
+| Parameter | Type    | Required | Default | Description                  |
+|-----------|---------|----------|---------|------------------------------|
+| `title`   | string  | yes      |         | Title to search for          |
+| `page`    | integer | no       | `0`     | Page index (0 is first page) |
 
 ### Response
 
@@ -68,7 +68,7 @@ Searches for movies by title across tracker sources, enriches results with TMDB 
       "backdrop_url": "string"
     }
   ],
-  "meta": { "total": 8, "page": 1, "per_page": 8 }
+  "meta": { "total": 87, "page": 0, "per_page": 12 }
 }
 ```
 
@@ -157,8 +157,7 @@ Returns available torrent sources for a movie.
       "language": "string",
       "seeds": "string"
     }
-  ],
-  "meta": { "total": 3, "page": 1, "per_page": 3 }
+  ]
 }
 ```
 
@@ -195,8 +194,7 @@ Returns comments posted on a movie, ordered by most recent first.
       "content": "string",
       "updated_at": "2026-05-06T12:00:00Z"
     }
-  ],
-  "meta": { "total": 4, "page": 1, "per_page": 4 }
+  ]
 }
 ```
 
@@ -233,7 +231,19 @@ Posts a new comment on a movie.
 
 ### Response
 
-`201 Created` — no body.
+`201 Created`
+
+```json
+{
+  "data": {
+    "id": 1,
+    "user_id": 1,
+    "movie_id": "string",
+    "content": "string",
+    "updated_at": "2026-05-06T12:00:00Z"
+  }
+}
+```
 
 ### Error responses
 
@@ -262,8 +272,7 @@ Returns all comments across all movies.
       "content": "string",
       "updated_at": "2026-05-06T12:00:00Z"
     }
-  ],
-  "meta": { "total": 12, "page": 1, "per_page": 12 }
+  ]
 }
 ```
 
@@ -377,7 +386,11 @@ Deletes a comment.
 
 ### Response
 
-`200 OK` — no body.
+`200 OK`
+
+```json
+{ "data": null }
+```
 
 ### Error responses
 

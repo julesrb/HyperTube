@@ -181,3 +181,52 @@ func (s *Store) createComment(ctx context.Context, c models.Comment) (models.Com
 	}
 	return r, nil
 }
+
+func (s *Store) countSearchResults(ctx context.Context, query string) (int, error) {
+	var count int
+	err := s.db.QueryRow(ctx, `
+		SELECT COUNT(*) FROM movie_searches WHERE query = $1
+	`, query).Scan(&count)
+	return count, err
+}
+
+func (s *Store) upsertSearchResults(ctx context.Context, query string, imdbIDs []string) error {
+	for i, id := range imdbIDs {
+		_, err := s.db.Exec(ctx, `
+			INSERT INTO movie_searches (query, imdbid, rank)
+			VALUES ($1, $2, $3)
+			ON CONFLICT (query, imdbid) DO UPDATE SET rank = $3, searched_at = NOW()
+		`, query, id, i)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *Store) listSearchResults(ctx context.Context, query string, limit, offset int) ([]models.Movie, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT m.imdbid, m.tmdbid, m.title, m.year,
+		       m.poster_url, m.backdrop_url, m.note, m.genre,
+		       m.runtime_minutes, m.summary, m.director, m."cast"
+		FROM movies m
+		JOIN movie_searches ms ON ms.imdbid = m.imdbid
+		WHERE ms.query = $1
+		ORDER BY ms.rank
+		LIMIT $2 OFFSET $3
+	`, query, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	movieRows, err := pgx.CollectRows(rows, pgx.RowToStructByName[movieRow])
+	if err != nil {
+		return nil, err
+	}
+
+	movies := make([]models.Movie, len(movieRows))
+	for i, r := range movieRows {
+		movies[i] = toMovie(r)
+	}
+	return movies, nil
+}

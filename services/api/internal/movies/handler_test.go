@@ -49,6 +49,18 @@ func (s *fakeStore) createComment(ctx context.Context, c models.Comment) (models
 	return models.Comment{}, nil
 }
 
+func (s *fakeStore) countSearchResults(ctx context.Context, query string) (int, error) {
+	return 0, nil
+}
+
+func (s *fakeStore) upsertSearchResults(ctx context.Context, query string, imdbIDs []string) error {
+	return nil
+}
+
+func (s *fakeStore) listSearchResults(ctx context.Context, query string, limit, offset int) ([]models.Movie, error) {
+	return nil, nil
+}
+
 type fakeTMDB struct{}
 
 func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie, error) {

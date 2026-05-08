@@ -35,10 +35,14 @@ func Data(w http.ResponseWriter, status int, data any) {
 	JSON(w, status, envelope{Data: data})
 }
 
-func List(w http.ResponseWriter, status int, data any, total int) {
+func List(w http.ResponseWriter, status int, data any) {
+	JSON(w, status, envelope{Data: data})
+}
+
+func ListPaginated(w http.ResponseWriter, status int, data any, total, page, perPage int) {
 	JSON(w, status, envelope{
 		Data: data,
-		Meta: &Meta{Total: total, Page: 1, PerPage: total},
+		Meta: &Meta{Total: total, Page: page, PerPage: perPage},
 	})
 }
 

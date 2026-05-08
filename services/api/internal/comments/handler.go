@@ -36,7 +36,7 @@ func (h *CommentsHandler) List(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	respond.List(w, http.StatusOK, comments, len(comments))
+	respond.List(w, http.StatusOK, comments)
 }
 
 func (h *CommentsHandler) Get(w http.ResponseWriter, r *http.Request) {

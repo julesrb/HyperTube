@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"log"
+	"time"
 )
 
 type Client struct {
@@ -81,6 +83,11 @@ func (c *Client) get(ctx context.Context, url string, out any) error {
 		return err
 	}
 	defer res.Body.Close()
+	if res.StatusCode == http.StatusTooManyRequests {
+		log.Println("TMDB rate limit exceeded (429) - wait 1 second before retrying")
+		time.Sleep(time.Second)
+		return c.get(ctx, url, out)
+	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err

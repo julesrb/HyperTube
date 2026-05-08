@@ -2,7 +2,7 @@ const API_URL = "http://localhost:8080/api/v1";
 
 export type tListResponse<T> = {
     data: T;
-    meta: {
+    meta?: {
         page: number;
         per_page: number;
         total: number;

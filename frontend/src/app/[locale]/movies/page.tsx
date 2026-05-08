@@ -42,17 +42,18 @@ export default function Page() {
     useEffect(() => {
         async function loadMovies() {
             try {
-                const data = await getMovies(searchValue);
+                const data = await getMovies(searchValue, index);
                 for (let i = 0; i < data.data.length; i++)
                     data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
-                setTotalPage(data.meta.page);
+                if (data.meta)
+                    setTotalPage(Math.ceil(data.meta.total / data.meta.per_page));
                 setMovies(data.data);
             } catch (error) {
                 console.error(error);
             }
         }
         loadMovies().then(r => console.log(r));
-    }, [searchValue]);
+    }, [index, searchValue]);
 
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e === undefined ? "" : e.target.value.toLowerCase()

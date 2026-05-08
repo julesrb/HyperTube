@@ -35,6 +35,7 @@ export default function HomePage() {
         heightAnimationLogo = 300;
 
     const [movies, setMovies] = useState<iMovie[] | null>(null);
+    const [dirctedWatchMovies, setDirctedWatchMovies] = useState<iMovie[]>([]);
     const moviesSets = filterAlreadyWatch(user, movies);
     const mostRated = moviesSets ? structuredClone(moviesSets).sort((a, b) => b.note - a.note) : null;
     const popular = structuredClone(moviesSets);
@@ -46,6 +47,20 @@ export default function HomePage() {
                 for (let i = 0; i < data.data.length; i++)
                     data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
                 setMovies(data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        loadMovies().then(r => console.log(r));
+    }, []);
+
+    useEffect(() => { // todo filter by film already watch
+        async function loadMovies() {
+            try {
+                const data = await getMovies("directstream");
+                for (let i = 0; i < data.data.length; i++)
+                    data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
+                setDirctedWatchMovies(data.data);
             } catch (error) {
                 console.error(error);
             }
@@ -78,6 +93,11 @@ export default function HomePage() {
             <MoviesCard movieSets={mostRated.slice(0, moviesCount)}/>
         </Section>}
 
+        {dirctedWatchMovies.length > 0 && <Section title={t("directStream")} href="/movies?q=directstream">
+            <MoviesCard movieSets={dirctedWatchMovies}/>
+        </Section>}
+
+        {/* todo make componant */}
         <div className="flex w-full">
             <div className="h-4 w-full bg-yellow hover:bg-yellow-hover"></div>
             <div className="h-4 w-full bg-pink hover:bg-pink-hover"></div>

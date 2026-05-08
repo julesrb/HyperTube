@@ -13,7 +13,8 @@
   "home": {
     "continueWatching": "Continue watching",
     "popular": "Popular",
-    "mostRated": "Most rated"
+    "mostRated": "Most rated",
+    "directStream": "Direct Streaming"
   },
   "movies": {
     "searchPlaceholder": "Search for a movie...",

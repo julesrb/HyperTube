@@ -13,7 +13,8 @@
   "home": {
     "continueWatching": "Weiter ansehen",
     "popular": "Beliebt",
-    "mostRated": "Am besten bewertet"
+    "mostRated": "Am besten bewertet",
+    "directStream": "Direkt-Streaming"
   },
   "movies": {
     "searchPlaceholder": "Nach einem Film suchen...",

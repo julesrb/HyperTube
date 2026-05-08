@@ -1,4 +1,4 @@
-export type tUser = {
+export interface iUser {
     id: number
     username: string
     firstname: string
@@ -6,11 +6,11 @@ export type tUser = {
     email: string
     color: string
     profile_picture: null | string
-    watch_history: {movie_id: number, watch_percent: number}[]
+    watch_history: {movie_id: string, watch_percent: number}[]
     joined_at: number
-};
+}
 
-export const users: tUser[] = [
+export const users: iUser[] = [
     {
         id: 0,
         username: "fguirama",
@@ -20,11 +20,12 @@ export const users: tUser[] = [
         color: "purple",
         profile_picture: "/images/profile_pictures.jpeg",
         watch_history: [
-            { movie_id: 8, watch_percent: 34 },
-            { movie_id: 1, watch_percent: 100 },
-            { movie_id: 2, watch_percent: 25 },
-            { movie_id: 6, watch_percent: 55 },
-            { movie_id: 7, watch_percent: 100 },
+            { movie_id: "tt36856791", watch_percent: 34 },
+            { movie_id: "tt39749979", watch_percent: 100 },
+            { movie_id: "tt32560777", watch_percent: 25 },
+            { movie_id: "tt28650488", watch_percent: 55 },
+            { movie_id: "tt6105098", watch_percent: 100 },
+            { movie_id: "tt34794183", watch_percent: 62 },
         ],
         joined_at: 1746764800
     },

@@ -7,7 +7,7 @@ import {StarIcon} from "@/components/Icons";
 import GenreTags from "@/components/GenreTags";
 import {useRouter} from "@/i18n/navigation";
 import {useAuth} from "@/context/AuthContext";
-import {tUser} from "@/types/user";
+import {iUser} from "@/types/user";
 import {useTranslations} from "next-intl";
 
 
@@ -19,7 +19,7 @@ export function MoviesCard({movieSets, className} : {movieSets: iMovie[], classN
     </div>);
 }
 
-export function MovieCard({movie, user, className, showTitle = true} : {movie: iMovie, user: tUser | null, className?: string, showTitle?: boolean}) {
+export function MovieCard({movie, user, className, showTitle = true} : {movie: iMovie, user: iUser | null, className?: string, showTitle?: boolean}) {
     let watchingPercent = 0;
     const t = useTranslations("movie");
     if (user) {

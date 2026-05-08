@@ -1,20 +1,20 @@
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import {tUser} from "@/types/user";
+import {iUser} from "@/types/user";
 import ProfilePicture from "@/components/ProfilePicture";
 import {useNotification} from "@/context/NotificationContext";
 import {Button, SmallButton} from "@/components/Buttons";
 import {useTranslations} from "next-intl";
 
 
-export default function ProfileTab({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
+export default function ProfileTab({user, updateUser}: {user: iUser, updateUser: (patch: Partial<iUser>) => void}) {
     return (<div className="mb-20 flex flex-col sm:flex-row gap-14 sm:gap-20 xl:gap-30 max-w-9/10 xl:max-w-2/3 w-full justify-center items-center mx-auto">
         <ProfileSection user={user} updateUser={updateUser} />
         <AvatarSection user={user} updateUser={updateUser} />
     </div>);
 }
 
-function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
+function ProfileSection({user, updateUser}: {user: iUser, updateUser: (patch: Partial<iUser>) => void}) {
     const { addNotification } = useNotification();
     const [email, setEmail] = useState("");
     const [firstname, setFirstname] = useState("");
@@ -68,7 +68,7 @@ function ProfileSection({user, updateUser}: {user: tUser, updateUser: (patch: Pa
     </div>);
 }
 
-function AvatarSection({user, updateUser}: {user: tUser, updateUser: (patch: Partial<tUser>) => void}) {
+function AvatarSection({user, updateUser}: {user: iUser, updateUser: (patch: Partial<iUser>) => void}) {
     const colors = ["yellow", "pink", "green", "purple", "blue", "red"];
     const t = useTranslations("profile");
 

@@ -1,20 +1,20 @@
 "use client";
 
 import {createContext, useContext, useEffect, useState, ReactNode,} from "react";
-import {tUser} from "@/types/user";
+import {iUser} from "@/types/user";
 
 interface AuthContextType {
-    user: tUser | null;
-    login: (user: tUser, token: string) => void;
+    user: iUser | null;
+    login: (user: iUser, token: string) => void;
     logout: () => void;
     loading: boolean;
-    updateUser: (patch: Partial<tUser>) => void;
+    updateUser: (patch: Partial<iUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({children,}: { children: ReactNode; }) {
-    const [user, setUser] = useState<tUser | null>(null);
+    const [user, setUser] = useState<iUser | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export function AuthProvider({children,}: { children: ReactNode; }) {
         setLoading(false);
     }, []);
 
-    const login = (user: tUser, token: string) => {
+    const login = (user: iUser, token: string) => {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
@@ -39,7 +39,7 @@ export function AuthProvider({children,}: { children: ReactNode; }) {
         setUser(null);
     };
 
-    const updateUser = (patch: Partial<tUser>) => {
+    const updateUser = (patch: Partial<iUser>) => {
         setUser((prev) => {
             if (!prev)
                 return prev;

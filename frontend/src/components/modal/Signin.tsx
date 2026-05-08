@@ -5,7 +5,7 @@ import ModalLayout from "@/components/modal/Layout";
 import React, {useState} from "react";
 import Input from "@/components/Input";
 import {useAuth} from "@/context/AuthContext";
-import {tUser, users} from "@/types/user";
+import {iUser, users} from "@/types/user";
 import {tNotificationType, useNotification} from "@/context/NotificationContext";
 import {Button, SmallButton} from "@/components/Buttons";
 import {useTranslations} from "next-intl";
@@ -45,7 +45,7 @@ export default function Signin() {
     );
 }
 
-function handleLogin(login: (user: tUser, token: string) => void, addNotification: (message: string, type?: tNotificationType) => void, username: string, password: string, closeModal: () => void, passwordIncorrectMessage: string, loginSuccessMessage: string) {
+function handleLogin(login: (user: iUser, token: string) => void, addNotification: (message: string, type?: tNotificationType) => void, username: string, password: string, closeModal: () => void, passwordIncorrectMessage: string, loginSuccessMessage: string) {
     // const res = await fetch("/api/login", {
     //     method: "POST",
     //     body: JSON.stringify({

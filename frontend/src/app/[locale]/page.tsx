@@ -8,7 +8,7 @@ import {HypertubeLogo} from "@/components/Icons";
 import GenreTags from "@/components/GenreTags";
 import Section from "@/components/Section";
 import {useAuth} from "@/context/AuthContext";
-import {tUser} from "@/types/user";
+import {iUser} from "@/types/user";
 import {useResponsiveSize} from "@/context/utils";
 import {useTranslations} from "next-intl";
 import {getMovies} from "@/services/movies";
@@ -138,7 +138,7 @@ function AnimateLogo({maxHeight}: {maxHeight: number}) {
     </div>);
 }
 
-function filterAlreadyWatch(user: tUser | null, movies: iMovie[] | null) {
+function filterAlreadyWatch(user: iUser | null, movies: iMovie[] | null) {
     if (!movies || !user)
         return null;
     return movies.filter(m => {

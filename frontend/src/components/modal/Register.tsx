@@ -4,7 +4,7 @@ import { useModal } from "@/context/ModalContext";
 import ModalLayout from "@/components/modal/Layout";
 import React, {useState} from "react";
 import Input from "@/components/Input";
-import {tUser} from "@/types/user";
+import {iUser} from "@/types/user";
 import {useAuth} from "@/context/AuthContext";
 import {Button, SmallButton} from "@/components/Buttons";
 import {useTranslations} from "next-intl";
@@ -49,7 +49,7 @@ export default function Register() {
     );
 }
 
-function handleRegister(login: (user: tUser, token: string) => void, username: string, email: string, firstname: string, lastname: string, password: string, closeModal: () => void) {
+function handleRegister(login: (user: iUser, token: string) => void, username: string, email: string, firstname: string, lastname: string, password: string, closeModal: () => void) {
     // const res = await fetch("/api/register", {
     //     method: "POST",
     //     body: JSON.stringify({
@@ -63,7 +63,7 @@ function handleRegister(login: (user: tUser, token: string) => void, username: s
     //
     // const data = await res.json();
     // login(data.user, data.token);
-    const user: tUser = {
+    const user: iUser = {
         id: Date.now(),
         username: username,
         firstname: firstname,

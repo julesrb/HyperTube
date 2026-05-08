@@ -8,6 +8,8 @@ type movieResponse struct {
 	Year        string `json:"year"`
 	PosterURL   string `json:"poster_url"`
 	BackdropURL string `json:"backdrop_url"`
+	Note        float32  `json:"note"`
+	Genre       []int    `json:"genres"`
 }
 
 func toMovieResponse(m models.Movie) movieResponse {
@@ -17,6 +19,8 @@ func toMovieResponse(m models.Movie) movieResponse {
 		Year:        m.Year,
 		PosterURL:   m.PosterURL,
 		BackdropURL: m.BackdropURL,
+		Note:        m.Note,
+		Genre:       m.Genre,
 	}
 }
 

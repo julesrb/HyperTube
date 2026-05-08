@@ -28,7 +28,9 @@ Returns the curated list of featured movies.
       "title": "string",
       "year": "string",
       "poster_url": "string",
-      "backdrop_url": "string"
+      "backdrop_url": "string",
+      "note": 8.1,
+      "genres": [878, 12, 18]
     }
   ]
 }

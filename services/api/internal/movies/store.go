@@ -28,7 +28,6 @@ type movieRow struct {
 	PosterURL   string  `db:"poster_url"`
 	BackdropURL string  `db:"backdrop_url"`
 	Genre       []int   `db:"genre"`
-	Runtime     int     `db:"runtime_minutes"`
 	Summary     string  `db:"summary"`
 }
 
@@ -42,7 +41,6 @@ func toMovie(r movieRow) models.Movie {
 		BackdropURL: r.BackdropURL,
 		Note:        r.Note,
 		Genre:       r.Genre,
-		Runtime:     r.Runtime,
 		Summary:     r.Summary,
 	}
 }
@@ -51,7 +49,7 @@ func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
 	rows, err := s.db.Query(ctx, `
 		SELECT m.imdbid, m.tmdbid, m.title, m.year,
 		       m.poster_url, m.backdrop_url, m.note, m.genre,
-		       m.runtime_minutes, m.summary
+		       m.summary
 		FROM movies m
 		JOIN featured_movies f ON f.imdbid = m.imdbid
 		ORDER BY f.position
@@ -76,7 +74,7 @@ func (s *Store) listWatched(ctx context.Context, user_id int) ([]models.Movie, e
 	rows, err := s.db.Query(ctx, `
 		SELECT m.imdbid, m.tmdbid, m.title, m.year,
 		       m.poster_url, m.backdrop_url, m.note, m.genre,
-		       m.runtime_minutes, m.summary
+		       m.summary
 		FROM movies m
 		JOIN watch_history h ON h.imdbid = m.imdbid
 		WHERE h.user_id = $1
@@ -102,7 +100,7 @@ func (s *Store) listDirectStream(ctx context.Context) ([]models.Movie, error) {
 	rows, err := s.db.Query(ctx, `
 		SELECT m.imdbid, m.tmdbid, m.title, m.year,
 		       m.poster_url, m.backdrop_url, m.note, m.genre,
-		       m.runtime_minutes, m.summary
+		       m.summary
 		FROM movies m
 		JOIN direct_stream_movies d ON d.imdbid = m.imdbid
 	`)
@@ -126,7 +124,7 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 	rows, err := s.db.Query(ctx, `
 		SELECT imdbid, tmdbid, title, year,
 		       poster_url, backdrop_url, note, genre,
-		       runtime_minutes, summary
+		       summary
 		FROM movies WHERE imdbid = $1`, id)
 	if err != nil {
 		return nil, err
@@ -146,10 +144,10 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 
 func (s *Store) UpsertMovie(ctx context.Context, m models.Movie) error {
 	_, err := s.db.Exec(ctx, `
-		INSERT INTO movies (imdbid, tmdbid, title, year, poster_url, backdrop_url, note, genre, runtime_minutes, summary)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		INSERT INTO movies (imdbid, tmdbid, title, year, poster_url, backdrop_url, note, genre, summary)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		ON CONFLICT (imdbid) DO NOTHING
-	`, m.ImdbID, m.TmdbID, m.Title, m.Year, m.PosterURL, m.BackdropURL, m.Note, m.Genre, m.Runtime, m.Summary)
+	`, m.ImdbID, m.TmdbID, m.Title, m.Year, m.PosterURL, m.BackdropURL, m.Note, m.Genre, m.Summary)
 	return err
 }
 
@@ -254,7 +252,7 @@ func (s *Store) listSearchResults(ctx context.Context, query string, limit, offs
 	rows, err := s.db.Query(ctx, `
 		SELECT m.imdbid, m.tmdbid, m.title, m.year,
 		       m.poster_url, m.backdrop_url, m.note, m.genre,
-		       m.runtime_minutes, m.summary
+		       m.summary
 		FROM movies m
 		JOIN movie_searches ms ON ms.imdbid = m.imdbid
 		WHERE ms.query = $1

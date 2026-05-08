@@ -59,11 +59,11 @@ func toMovieDetailResponse(m models.Movie, d models.MovieDetails) movieDetailRes
 		BackdropURLExtra: d.ExtraBackdrops,
 		Note:             m.Note,
 		Genre:            m.Genre,
-		Runtime:          m.Runtime,
 		Summary:          defaultSummary,
 		Director:         d.Director,
 		Cast:             d.Cast,
-		Watched:          m.Watched,
-		Progression:      m.Progression,
+		Runtime:		  d.Runtime,
+		Watched:          true,
+		Progression:      12,
 	}
 }

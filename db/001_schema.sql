@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS movies (
     backdrop_url    TEXT        NOT NULL,
     note            REAL        NOT NULL,
     genre           INTEGER[]   NOT NULL,
-    summary         TEXT        NOT NULL,
-    runtime_minutes INTEGER     NOT NULL
+    summary         TEXT        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS torrents (

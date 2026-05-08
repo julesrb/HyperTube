@@ -8,10 +8,10 @@ import {CloseButton} from "@/components/Buttons";
 import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
 import Pagination from "@/components/Pagination";
-import {useResponsiveSize} from "@/script/utils";
+import {useResponsiveSize} from "@/context/utils";
 import {useLocale, useTranslations} from "next-intl";
 import {getMovies} from "@/services/movies";
-import {useGenres} from "../../../context/useGenres";
+import {useGenres} from "@/context/useGenres";
 import {tLocale} from "@/i18n/request";
 
 type tViewType = | "grid" | "list";

@@ -1,16 +1,4 @@
 import {useEffect, useState} from "react";
-import {tMovie} from "@/types/movie";
-
-export function useRandomBackdrop(movie: tMovie) {
-    // const [randomBackdrop] = useState(() => {
-    //     const index = Math.floor(Math.random() * movie.backdrops.length);
-    //     return movie.backdrops[index];
-    // });
-
-    return (movie.backdrops[0]);
-}
-
-
 type tSize = "xs" | "md" | "xl";
 
 export function useResponsiveSize() {

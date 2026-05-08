@@ -9,7 +9,7 @@ import GenreTags from "@/components/GenreTags";
 import Section from "@/components/Section";
 import {useAuth} from "@/context/AuthContext";
 import {tUser} from "@/types/user";
-import {useResponsiveSize} from "@/script/utils";
+import {useResponsiveSize} from "@/context/utils";
 import {useTranslations} from "next-intl";
 import {getMovies} from "@/services/movies";
 

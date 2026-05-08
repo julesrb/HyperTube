@@ -1,6 +1,6 @@
 "use client";
 
-import {movies} from "@/types/movie";
+import {iGenre, iMovie} from "@/types/movie";
 import {ListMovieCard, MoviesCard} from "@/components/MovieCard";
 import React, {useEffect, useRef, useState} from "react";
 import {GridIcon, ListIcon} from "@/components/Icons";
@@ -9,7 +9,10 @@ import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
 import Pagination from "@/components/Pagination";
 import {useResponsiveSize} from "@/script/utils";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
+import {getMovies} from "@/services/movies";
+import {useGenres} from "../../../context/useGenres";
+import {tLocale} from "@/i18n/request";
 
 type tViewType = | "grid" | "list";
 type tSort = "name" | "genre" | "grade" | "year";
@@ -21,13 +24,35 @@ interface iSort {
 
 export default function Page() {
     const searchParams = useSearchParams();
-    const genre = searchParams.get("genre");
+    const genreId = searchParams.get("genre") as number | null;
+    let genre;
+    const locale = useLocale() as tLocale;
+    const {data} = useGenres(locale);
+    if (genreId && data)
+        genre = data.genres.find(e => e.id === genreId);
     const mostRated = searchParams.get("sort");
     const query = searchParams.get("q");
     const [searchValue, setSearchValue] = useState(query === null ? "" : query);
-    const [viewType, setViewType] = useState<tViewType>(genre === null && mostRated === null ? "grid" : "list");
+    const [viewType, setViewType] = useState<tViewType>(genre === undefined && mostRated === null ? "grid" : "list");
     const [sort, setSort] = useState<iSort>({type: mostRated ? "grade" : "name", side: true});
     const [index, setIndex] = useState(0);
+    const [totalPage, setTotalPage] = useState(1);
+    const [movies, setMovies] = useState<iMovie[] | null>(null);
+
+    useEffect(() => {
+        async function loadMovies() {
+            try {
+                const data = await getMovies(searchValue);
+                for (let i = 0; i < data.data.length; i++)
+                    data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
+                setTotalPage(data.meta.page);
+                setMovies(data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        loadMovies();
+    }, [searchValue]);
 
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e === undefined ? "" : e.target.value.toLowerCase()
@@ -40,8 +65,8 @@ export default function Page() {
     return (<div className="flex flex-col gap-4 mx-2 md:mx-4 xl:mx-6">
         <SearchBar searchValue={searchValue} onChange={handleSearchChange} />
         <Filter viewType={viewType} onClick={handleSetViewType}/>
-        <Pagination currenIndex={index} totalPage={5} onClick={changeIndex} >
-            <Results searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort} genre={genre}/>
+        <Pagination currenIndex={index} totalPage={totalPage} onClick={changeIndex} >
+            {movies && <Results movies={movies} searchValue={searchValue} viewType={viewType} sort={sort} changeSort={changeSort} genre={genre}/>}
         </Pagination>
     </div>);
 }
@@ -70,10 +95,10 @@ function Filter({viewType, onClick}: {viewType: tViewType, onClick: (value: tVie
     </div>);
 }
 
-function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue: string, viewType: tViewType, sort: iSort, changeSort: (type: tSort, side: boolean) => void, genre: null | string}) {
+function Results({movies, searchValue, viewType, sort, changeSort, genre}: {movies: iMovie[], searchValue: string, viewType: tViewType, sort: iSort, changeSort: (type: tSort, side: boolean) => void, genre: undefined | iGenre}) {
     const {openModal} = useModal();
-    const [filterGenre, setFilterGenre] = useState<string[]>(genre === null ? [] : [genre])
-    const filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
+    const [filterGenre, setFilterGenre] = useState<iGenre[]>(genre === undefined ? [] : [genre])
+    const filteredMovies = movies === null ? [] : movies.filter((movie) => movie.title.toLowerCase().includes(searchValue.trim()));
     const size = useResponsiveSize();
     const t = useTranslations("movies");
 
@@ -96,8 +121,6 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
         sortedMovies = filteredMovies.sort((a, b) => a.rate - b.rate);
     else if (sort.type === "year")
         sortedMovies = filteredMovies.sort((a, b) => parseInt(a.year) - parseInt(b.year));
-    else if (sort.type === "genre")
-        sortedMovies = filteredMovies.sort((a, b) => a.id - b.id);
     else
         sortedMovies = filteredMovies.sort((a, b) => b.title.localeCompare(a.title));
 
@@ -107,7 +130,7 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     if (filterGenre.length > 0 && size === "xl")
         sortedMovies = sortedMovies.filter(m => {
             for (let i = 0; i < filterGenre.length; i++) {
-                if (!m.genres.includes(filterGenre[i]))
+                if (m.genres && !m.genres.includes(filterGenre[i].id))
                     return false;
             }
             return true;
@@ -120,8 +143,8 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
             changeSort(sortOption, sort.type === sortOption ? !sort.side : true)
     }
 
-    const deleteGenre = (genre: string) => {
-        let newGenre = filterGenre.filter(g => g !== genre);
+    const deleteGenre = (genre: iGenre[]) => {
+        let newGenre = filterGenre.filter(g => !genre.find(deletedGenre => deletedGenre.id === g.id));
         if (newGenre.length === filterGenre.length)
             newGenre = filterGenre.slice(0, 2);
         setFilterGenre(newGenre);
@@ -163,16 +186,19 @@ function Results({searchValue, viewType, sort, changeSort, genre}: {searchValue:
     </div>);
 }
 
-function SelectedGenre({genres, deleteGenre}: {genres: string[], deleteGenre:(genre: string) => void}) {
+function SelectedGenre({genres, deleteGenre}: {genres: iGenre[], deleteGenre:(genre: iGenre[]) => void}) {
     const showGenres = genres.slice(0, 2);
     const t = useTranslations("movies");
-    if (genres.length > 2)
-        showGenres.push(t("selectedGenres.more", {count: genres.length - 2}))
+
     return (<div className="flex gap-2">
         {showGenres.map((genre, index) => (<div key={index}
         className="border flex items-center">
-            <span className="font-hairline tracking-wider text-sm px-2 text-nowrap">{genre}</span>
-            <CloseButton size={20} className="border-l px-1" onClick={() => deleteGenre(genre)} />
+            <span className="font-hairline tracking-wider text-sm px-2 text-nowrap">{genre.name}</span>
+            <CloseButton size={20} className="border-l px-1" onClick={() => deleteGenre([genre])} />
         </div>))}
+        { genres.length > 2 && <div className="border flex items-center">
+            <span className="font-hairline tracking-wider text-sm px-2 text-nowrap">{t("selectedGenres.more", {count: genres.length - 2})}</span>
+            <CloseButton size={20} className="border-l px-1" onClick={() => deleteGenre(genres.slice(2))} />
+        </div>}
     </div>);
 }

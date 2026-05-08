@@ -126,27 +126,13 @@ func (h *MoviesHandler) GetMoviesId(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MoviesHandler) collectTorrents(ctx context.Context, title string) ([]models.Torrent, error) {
-	var perSource [][]models.Torrent
+	var mixed []models.Torrent
 	for _, s := range h.searchers {
 		torrents, err := s.SearchByTitle(ctx, title)
 		if err != nil {
 			return nil, err
 		}
-		perSource = append(perSource, torrents)
-	}
-	maxLen := 0
-	for _, t := range perSource {
-		if len(t) > maxLen {
-			maxLen = len(t)
-		}
-	}
-	mixed := make([]models.Torrent, 0, maxLen*len(perSource))
-	for i := range maxLen {
-		for _, t := range perSource {
-			if i < len(t) {
-				mixed = append(mixed, t[i])
-			}
-		}
+		mixed = append(mixed, torrents...)
 	}
 	return mixed, nil
 }

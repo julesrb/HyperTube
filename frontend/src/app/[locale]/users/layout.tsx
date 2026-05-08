@@ -4,7 +4,7 @@ import {useAuth} from "@/context/AuthContext";
 import {useRouter} from "@/i18n/navigation";
 import React, {useEffect} from "react";
 
-export default function DashboardLayout({children,}: {children: React.ReactNode;}) {
+export default function ProfilePageLayout({children,}: {children: React.ReactNode;}) {
     const {user, loading} = useAuth();
     const router = useRouter();
 

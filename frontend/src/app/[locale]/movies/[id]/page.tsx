@@ -10,9 +10,10 @@ import MoviesHero from "@/components/MovieHero";
 export default function MoviePage() {
     const params = useParams();
     const movie = movies.find((movie) => movie.id === Number(params.id));
+    const t = useTranslations("movie");
 
     if (!movie)
-        notFound();
+        return (<p className="small-text">{t("noResult")}</p>);
 
     return (<div className="flex flex-col gap-4 sm:gap-6 xl:gap-10">
         <MoviesHero movie={movie} items={movie.backdrops} onClick={() => console.log('play movie')} />

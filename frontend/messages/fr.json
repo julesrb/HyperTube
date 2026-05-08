@@ -35,7 +35,8 @@
     "directors": "Réalisateurs",
     "stars": "Acteurs",
     "synopsis": "Synopsis",
-    "posterAlt": "Affiche du film : {title}"
+    "posterAlt": "Affiche du film : {title}",
+    "noResult": "Film introuvable"
   },
   "comments": {
     "title": "Commentaires",

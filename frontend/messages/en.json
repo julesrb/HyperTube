@@ -35,7 +35,8 @@
     "directors": "Directors",
     "stars": "Stars",
     "synopsis": "Synopsis",
-    "posterAlt": "Poster of movie: {title}"
+    "posterAlt": "Poster of movie: {title}",
+    "noResult": "Film not found"
   },
   "comments": {
     "title": "Comments",

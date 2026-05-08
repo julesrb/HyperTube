@@ -35,7 +35,8 @@
     "directors": "Regisseure",
     "stars": "Schauspieler",
     "synopsis": "Zusammenfassung",
-    "posterAlt": "Filmplakat: {title}"
+    "posterAlt": "Filmplakat: {title}",
+    "noResult": "Film nicht gefunden"
   },
   "comments": {
     "title": "Kommentare",

@@ -46,6 +46,36 @@ Returns the curated list of featured movies.
 
 ---
 
+## GET /movies/directstream
+
+Returns movies available for direct streaming.
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "imdb_id": "string",
+      "title": "string",
+      "year": "string",
+      "poster_url": "string",
+      "backdrop_url": "string",
+      "note": 8.1,
+      "genres": [878, 12, 18]
+    }
+  ]
+}
+```
+
+### Error responses
+
+```json
+{ "error": { "code": "INTERNAL_ERROR", "message": "failed to load movies" } }
+```
+
+---
+
 ## GET /movies/search?title=&page=
 
 Searches for movies by title. On first request, fetches from tracker sources, resolves metadata via TMDB, and persists results to the database. Subsequent requests for the same title are served directly from the database. Results are paginated at 12 per page.

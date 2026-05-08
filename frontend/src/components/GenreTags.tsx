@@ -22,13 +22,8 @@ export default function GenreTags({genreIds, genreCount, className = "", limit, 
     if (error)
         return <div>Error</div>;
 
-    if (!genreIds && setFilterGenre) {
-        return <div>pas de genre</div>;
-    }
-    if (genreIds) {
-        console.log('genreIds', genreIds);
+    if (genreIds)
         showGenres = data.genres.filter(g => genreIds.includes(g.id));
-    }
     else if (limit !== undefined && data.genres.length > limit) {
         addLimit = true;
         showGenres = data.genres.slice(0, limit);

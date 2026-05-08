@@ -37,12 +37,24 @@ type archiveResponseBody struct {
 }
 
 type archiveDoc struct {
-	Identifier string `json:"identifier"`
-	Title      string `json:"title"`
-	Year       int    `json:"year"`
-	Downloads  int    `json:"downloads"`
-	Btih       string `json:"btih"`
-	ItemSize   int64  `json:"item_size"`
+	Identifier any   `json:"identifier"`
+	Title      any   `json:"title"`
+	Year       int   `json:"year"`
+	Downloads  int   `json:"downloads"`
+	Btih       any   `json:"btih"`
+	ItemSize   int64 `json:"item_size"`
+}
+
+func anyStr(v any) string {
+	if s, ok := v.(string); ok {
+		return s
+	}
+	if arr, ok := v.([]any); ok && len(arr) > 0 {
+		if s, ok := arr[0].(string); ok {
+			return s
+		}
+	}
+	return ""
 }
 
 func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torrent, error) {
@@ -50,12 +62,10 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 		"q":      {fmt.Sprintf("title:(%s) AND collection:feature_films", title)},
 		"fl[]":   {"identifier,title,year,downloads,btih,item_size"},
 		"sort[]": {"downloads desc"},
-		"rows":   {"10"},
+		"rows":   {"100"},
 		"output": {"json"},
 	}
 	queryURL := c.baseURL + "?" + params.Encode()
-
-	log.Printf("Archive.org query: %s", queryURL)
 	return c.fetch(ctx, queryURL)
 }
 
@@ -99,9 +109,10 @@ func (c *Client) fetch(ctx context.Context, queryURL string) ([]models.Torrent, 
 	}
 
 	torrents := make([]models.Torrent, 0, len(response.Response.Docs))
+	log.Printf("Archive.org returned %d items", len(response.Response.Docs))
 	for _, torrent := range response.Response.Docs {
-		magnetURL := "magnet:?xt=urn:btih:" + torrent.Btih + "&dn=" + url.QueryEscape(torrent.Title)
-		Title, Year := stripYear(torrent.Title, torrent.Year)
+		magnetURL := "magnet:?xt=urn:btih:" + anyStr(torrent.Btih) + "&dn=" + url.QueryEscape(anyStr(torrent.Title))
+		Title, Year := stripYear(anyStr(torrent.Title), torrent.Year)
 		torrents = append(torrents, models.Torrent{
 			ImdbID:   "none",
 			Title:    Title,

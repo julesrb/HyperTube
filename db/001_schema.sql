@@ -53,3 +53,11 @@ CREATE TABLE IF NOT EXISTS comments (
     content     TEXT    NOT NULL,
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS movie_searches (
+    query       TEXT        NOT NULL,
+    imdbid      TEXT        NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    rank        INTEGER     NOT NULL,
+    searched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (query, imdbid)
+)

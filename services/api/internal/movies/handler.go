@@ -29,6 +29,7 @@ type movieStore interface {
 	countSearchResults(ctx context.Context, query string) (int, error)
 	upsertSearchResults(ctx context.Context, query string, imdbIDs []string) error
 	listSearchResults(ctx context.Context, query string, limit, offset int) ([]models.Movie, error)
+	listWatched(ctx context.Context, userID int) ([]models.Movie, error)
 }
 
 type MovieSearcher interface {
@@ -55,6 +56,27 @@ func (h *MoviesHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	movieResponse := make([]movieResponse, len(movies))
+	for i, m := range movies {
+		movieResponse[i] = toMovieResponse(m)
+	}
+	respond.List(w, http.StatusOK, movieResponse)
+}
+
+func (h *MoviesHandler) GetWatchedMovies(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		UserID  int    `json:"user_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
+		return
+	}
+	movies, err := h.store.listWatched(r.Context(), input.UserID)
+	if err != nil {
+		log.Println("db err:", err)
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to load movies")
+		return
+	}
 	movieResponse := make([]movieResponse, len(movies))
 	for i, m := range movies {
 		movieResponse[i] = toMovieResponse(m)

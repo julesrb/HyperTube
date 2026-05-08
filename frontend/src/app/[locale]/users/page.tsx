@@ -1,18 +1,20 @@
 "use client";
 
-import React, {useState} from "react";
-import {movies} from "@/types/movie";
+import React, {useEffect, useState} from "react";
 import {MoviesCard} from "@/components/MovieCard";
 import ProfilePicture from "@/components/ProfilePicture";
-import {tUser} from "@/types/user";
+import {iUser} from "@/types/user";
 import ProfileTab from "@/app/[locale]/users/ProfileTab";
 import AuthTab from "@/app/[locale]/users/AuthTab";
 import {Comments} from "@/components/Comments";
 import {useAuth} from "@/context/AuthContext";
-import {comments} from "@/types/comment";
+import {iComment} from "@/types/comment";
 import Pagination from "@/components/Pagination";
 import {useSearchParams} from "next/navigation";
 import {useLocale, useTranslations} from "next-intl";
+import {iMovie} from "@/types/movie";
+import {getWatchedMovies} from "@/services/movies";
+import {getComments} from "@/services/comments";
 
 export default function Page() {
     const tabs = {profile: ProfileTab, auth: AuthTab, history: MovieHistoryTab, comments: CommentsTab};
@@ -57,22 +59,49 @@ export default function Page() {
     </div>);
 }
 
-function MovieHistoryTab({user}: {user: tUser}) {
+function MovieHistoryTab() {
     const [index, setIndex] = useState(0);
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
     const t = useTranslations("profile");
+    const [watchMovies, setWatchMovies] = useState<iMovie[] | null>(null);
 
-    if (user.watch_history.length === 0)
+    useEffect(() => {
+        async function loadMovies() {
+            try {
+                const data = await getWatchedMovies();
+                for (let i = 0; i < data.data.length; i++)
+                    data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
+                setWatchMovies(data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        loadMovies().then(r => console.log(r));
+    }, []);
+
+    if (!watchMovies || watchMovies.length === 0)
         return (<p className="small-text">{t("noMoviesYet")}</p>);
     return (<Pagination currenIndex={index} onClick={changeIndex} totalPage={3}>
-        <MoviesCard movieSets={user.watch_history.map(m => movies[m.movie_id])}/>
+        <MoviesCard movieSets={watchMovies}/>
     </Pagination>);
 }
 
-function CommentsTab({user}: {user: tUser}) {
-    const allComments = comments.filter(comment => comment.author_id === user.id);
+function CommentsTab({user}: {user: iUser}) {
+    const [postComments, setPostComments] = useState<iComment[]>([]);
+
+    useEffect(() => {
+        async function loadComments() {
+            try {
+                const data = await getComments();
+                setPostComments(data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        loadComments().then(r => console.log(r));
+    }, []);
 
     return (<div className="max-w-3xl w-full mx-auto">
-        <Comments user={user} comments={allComments}/>
+        <Comments user={user} comments={postComments}/>
     </div>);
 }

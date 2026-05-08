@@ -51,7 +51,7 @@ export default function Page() {
                 console.error(error);
             }
         }
-        loadMovies();
+        loadMovies().then(r => console.log(r));
     }, [searchValue]);
 
     const handleSearchChange = (e?: React.ChangeEvent<HTMLInputElement>) => {

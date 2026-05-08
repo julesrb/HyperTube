@@ -25,7 +25,7 @@ export default function MoviePage() {
                 console.error(error);
             }
         }
-        loadMovie();
+        loadMovie().then(r => console.log(r));
     }, [id]);
 
     if (!movie)

@@ -210,7 +210,7 @@ export function ListIcon({color="black", size=20}) {
     </svg>);
 }
 
-export function SortIcon({color="black", size=20}) {
+export function SortIcon({color="black", size=20}) { // todo keep
     const fullColor = `var(--color-${color})`;
 
     return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 18">
@@ -237,7 +237,7 @@ export function CheckFillIcon({className="", size=20}) {
     </svg>);
 }
 
-export function FilterIcon({color="black", size=20}) {
+export function FilterIcon({color="black", size=20}) { // todo keep ?
     const fullColor = `var(--color-${color})`;
 
     return (<svg height={size} width={size} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">

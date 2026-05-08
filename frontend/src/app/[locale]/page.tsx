@@ -50,7 +50,7 @@ export default function HomePage() {
                 console.error(error);
             }
         }
-        loadMovies();
+        loadMovies().then(r => console.log(r));
     }, []);
 
     if (user && movies) {

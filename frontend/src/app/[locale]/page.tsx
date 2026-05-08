@@ -36,7 +36,7 @@ export default function HomePage() {
 
     const [movies, setMovies] = useState<iMovie[] | null>(null);
     const moviesSets = filterAlreadyWatch(user, movies);
-    const mostRated = moviesSets ? structuredClone(moviesSets).sort((a, b) => b.rate - a.rate) : null;
+    const mostRated = moviesSets ? structuredClone(moviesSets).sort((a, b) => b.note - a.note) : null;
     const popular = structuredClone(moviesSets);
 
     useEffect(() => {

@@ -74,7 +74,7 @@ export function ListMovieCard({movie, setFilterGenre} : {movie: iMovie, setFilte
             <td className="hidden sm:table-cell">
                 <div className="flex gap-1 items-center">
                     <StarIcon />
-                    <span className="font-medium">{movie.rate}</span>
+                    <span className="font-medium">{movie.note.toFixed(1)}</span>
                 </div>
             </td>
             <td className="text-right">

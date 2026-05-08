@@ -118,7 +118,7 @@ function Results({movies, searchValue, viewType, sort, changeSort, genre}: {movi
     ];
     let sortedMovies;
     if (sort.type === "grade")
-        sortedMovies = filteredMovies.sort((a, b) => a.rate - b.rate);
+        sortedMovies = filteredMovies.sort((a, b) => a.note - b.note);
     else if (sort.type === "year")
         sortedMovies = filteredMovies.sort((a, b) => parseInt(a.year) - parseInt(b.year));
     else

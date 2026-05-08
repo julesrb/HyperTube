@@ -5,13 +5,11 @@ export interface iMovie {
     poster_url: string
     backdrop_url: string
     genres: number[]
-    rate: number
+    note: number
 }
 
 export interface iMovieDetails extends iMovie {
     "tmdb_id": string
-    "note": number
-    "genres": number[]
     "runtime_minutes": number
     "summary": string
     "director": string

@@ -3,13 +3,13 @@
 import {createContext, useContext, useEffect, useState, ReactNode,} from "react";
 import {tUser} from "@/types/user";
 
-type AuthContextType = {
+interface AuthContextType {
     user: tUser | null;
     login: (user: tUser, token: string) => void;
     logout: () => void;
     loading: boolean;
     updateUser: (patch: Partial<tUser>) => void;
-};
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

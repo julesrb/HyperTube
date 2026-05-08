@@ -1,14 +1,15 @@
 "use client";
 
 import React, {createContext, Dispatch, SetStateAction, useContext, useState} from "react";
+import {iGenre} from "@/types/movie";
 
 type ModalType = | "signin" | "register" | "genre" | "filter-genre" | "forgot-password" | "delete-comment" | null;
 
 interface ModalState {
     type: ModalType;
-    genres?: string[];
-    filterGenre?: [filterGenre: string[], handleFilterGenre: (newGenres: string[]) => void];
-    setFilterGenre?: Dispatch<SetStateAction<string[]>>
+    genres?: number[];
+    filterGenre?: [filterGenre: iGenre[], handleFilterGenre: (newGenres: iGenre[]) => void];
+    setFilterGenre?: Dispatch<SetStateAction<iGenre[]>>
     commentId?: number
     deleteComment?: (commentId: number) => void
 }

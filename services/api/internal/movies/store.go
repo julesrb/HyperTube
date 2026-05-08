@@ -20,18 +20,16 @@ func NewStore(db *pgxpool.Pool) *Store {
 }
 
 type movieRow struct {
-	ImdbID      string   `db:"imdbid"`
-	TmdbID      string   `db:"tmdbid"`
-	Title       string   `db:"title"`
-	Year        string   `db:"year"`
-	Note        float32  `db:"note"`
-	PosterURL   string   `db:"poster_url"`
-	BackdropURL string   `db:"backdrop_url"`
-	Genre       []int    `db:"genre"`
-	Runtime     int      `db:"runtime_minutes"`
-	Summary     string   `db:"summary"`
-	Director    string   `db:"director"`
-	Cast        []string `db:"cast"`
+	ImdbID      string  `db:"imdbid"`
+	TmdbID      string  `db:"tmdbid"`
+	Title       string  `db:"title"`
+	Year        string  `db:"year"`
+	Note        float32 `db:"note"`
+	PosterURL   string  `db:"poster_url"`
+	BackdropURL string  `db:"backdrop_url"`
+	Genre       []int   `db:"genre"`
+	Runtime     int     `db:"runtime_minutes"`
+	Summary     string  `db:"summary"`
 }
 
 func toMovie(r movieRow) models.Movie {
@@ -46,8 +44,6 @@ func toMovie(r movieRow) models.Movie {
 		Genre:       r.Genre,
 		Runtime:     r.Runtime,
 		Summary:     r.Summary,
-		Director:    r.Director,
-		Cast:        r.Cast,
 	}
 }
 
@@ -55,7 +51,7 @@ func (s *Store) listFeatured(ctx context.Context) ([]models.Movie, error) {
 	rows, err := s.db.Query(ctx, `
 		SELECT m.imdbid, m.tmdbid, m.title, m.year,
 		       m.poster_url, m.backdrop_url, m.note, m.genre,
-		       m.runtime_minutes, m.summary, m.director, m."cast"
+		       m.runtime_minutes, m.summary
 		FROM movies m
 		JOIN featured_movies f ON f.imdbid = m.imdbid
 		ORDER BY f.position
@@ -80,7 +76,7 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 	rows, err := s.db.Query(ctx, `
 		SELECT imdbid, tmdbid, title, year,
 		       poster_url, backdrop_url, note, genre,
-		       runtime_minutes, summary, director, "cast"
+		       runtime_minutes, summary
 		FROM movies WHERE imdbid = $1`, id)
 	if err != nil {
 		return nil, err
@@ -100,10 +96,10 @@ func (s *Store) findByID(ctx context.Context, id string) (*models.Movie, error) 
 
 func (s *Store) UpsertMovie(ctx context.Context, m models.Movie) error {
 	_, err := s.db.Exec(ctx, `
-		INSERT INTO movies (imdbid, tmdbid, title, year, poster_url, backdrop_url, note, genre, runtime_minutes, summary, director, "cast")
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		INSERT INTO movies (imdbid, tmdbid, title, year, poster_url, backdrop_url, note, genre, runtime_minutes, summary)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		ON CONFLICT (imdbid) DO NOTHING
-	`, m.ImdbID, m.TmdbID, m.Title, m.Year, m.PosterURL, m.BackdropURL, m.Note, m.Genre, m.Runtime, m.Summary, m.Director, m.Cast)
+	`, m.ImdbID, m.TmdbID, m.Title, m.Year, m.PosterURL, m.BackdropURL, m.Note, m.Genre, m.Runtime, m.Summary)
 	return err
 }
 
@@ -208,7 +204,7 @@ func (s *Store) listSearchResults(ctx context.Context, query string, limit, offs
 	rows, err := s.db.Query(ctx, `
 		SELECT m.imdbid, m.tmdbid, m.title, m.year,
 		       m.poster_url, m.backdrop_url, m.note, m.genre,
-		       m.runtime_minutes, m.summary, m.director, m."cast"
+		       m.runtime_minutes, m.summary
 		FROM movies m
 		JOIN movie_searches ms ON ms.imdbid = m.imdbid
 		WHERE ms.query = $1

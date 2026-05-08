@@ -133,7 +133,7 @@ func (c *Client) GetTopMovies(ctx context.Context) ([]models.Torrent, error) {
 	})
 
 	seen := make(map[string]bool)
-	result := make([]models.Torrent, 0, 9)
+	result := make([]models.Torrent, 0, 11)
 	for _, t := range torrents {
 		if seen[t.ImdbID] {
 			continue

@@ -3,20 +3,18 @@ package models
 import "time"
 
 type Movie struct {
-	ImdbID      string   `json:"imdb_id"`
-	TmdbID      string   `json:"tmdb_id"`
-	Title       string   `json:"title"`
-	Year        string   `json:"year"`
-	PosterURL   string   `json:"poster_url"`
-	BackdropURL string   `json:"backdrop_url"`
-	Genre       []int    `json:"genres"`
-	Runtime     int      `json:"runtime_minutes"`
-	Note        float32  `json:"note"`
-	Summary     string   `json:"summary"`
-	Director    string   `json:"director"`
-	Cast        []string `json:"cast"`
-	Watched     bool     `json:"watched"`
-	Progression float32  `json:"progression"`
+	ImdbID      string  `json:"imdb_id"`
+	TmdbID      string  `json:"tmdb_id"`
+	Title       string  `json:"title"`
+	Year        string  `json:"year"`
+	PosterURL   string  `json:"poster_url"`
+	BackdropURL string  `json:"backdrop_url"`
+	Genre       []int   `json:"genres"`
+	Summary     string  `json:"summary"`
+	Runtime     int     `json:"runtime_minutes"`
+	Note        float32 `json:"note"`
+	Watched     bool    `json:"watched"`
+	Progression float32 `json:"progression"`
 }
 
 type Torrent struct {
@@ -38,9 +36,10 @@ type Subtitle struct {
 }
 
 type MovieDetails struct {
-	Summary  string   `json:"summary"`
-	Director string   `json:"director"`
-	Cast     []string `json:"cast"`
+	Summary        string   `json:"summary"`
+	Director       []string `json:"director"`
+	Cast           []string `json:"cast"`
+	ExtraBackdrops []string `json:"extra_backdrops"`
 }
 
 type Comment struct {

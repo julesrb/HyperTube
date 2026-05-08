@@ -7,7 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 import "dayjs/locale/en";
 import "dayjs/locale/de";
-import Pagination from "@/components/Pagination";
+import Pagination, {computeTotalPage} from "@/components/Pagination";
 import {Button, SecondaryButton, SmallButton} from "@/components/Buttons";
 import ProfilePicture from "@/components/ProfilePicture";
 import {useAuth} from "@/context/AuthContext";
@@ -28,11 +28,14 @@ export function CommentSection({movie}: {movie: iMovie}) {
     const {addNotification} = useNotification();
     const {openModal} = useModal();
     const [actualComments, setComments] = useState<iComment[]>([]);
+    const [index, setIndex] = useState(0);
+    const [totalPage, setTotalPage] = useState(1);
     useEffect(() => {
         async function loadComments() {
             try {
                 const data = await getComments(movie.imdb_id);
                 setComments(data.data);
+                computeTotalPage(data, setTotalPage);
             } catch (error) {
                 console.error(error);
             }
@@ -79,12 +82,11 @@ export function CommentSection({movie}: {movie: iMovie}) {
                 <SmallButton onClick={() => openModal({type: "signin"})}>{t("signInToComment")}</SmallButton>
             }
         </div>
-        <Comments user={user} comments={actualComments} updateComment={updateComment} deleteComment={deleteComment}/>
+        <Comments user={user} totalPage={totalPage} comments={actualComments} updateComment={updateComment} deleteComment={deleteComment} index={index} setIndex={setIndex}/>
     </div>);
 }
 
-export function Comments({user, comments, updateComment, deleteComment}: {user: iUser | null, comments: iComment[], updateComment?: (commentId: number, newContent: string) => void, deleteComment?: (commentId: number) => void}) {
-    const [index, setIndex] = useState(0);
+export function Comments({user, totalPage, index, setIndex, comments, updateComment, deleteComment}: {user: iUser | null, totalPage: number, index: number, setIndex: (idx: number) => void, comments: iComment[], updateComment?: (commentId: number, newContent: string) => void, deleteComment?: (commentId: number) => void}) {
     const locale = useLocale();
     const t = useTranslations("comments");
     if (locale === "fr")
@@ -96,9 +98,9 @@ export function Comments({user, comments, updateComment, deleteComment}: {user: 
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
 
     if (!comments || comments.length === 0)
-        return (<p className="small-text">{t(deleteComment === undefined ? "noCommentsYet" : "noCommentsPrompt")}</p>);
+        return (<p className="small-text mb-10">{t(deleteComment === undefined ? "noCommentsYet" : "noCommentsPrompt")}</p>);
 
-    return (<Pagination currenIndex={index} totalPage={5} onClick={changeIndex}>
+    return (<Pagination currenIndex={index} totalPage={totalPage} onClick={changeIndex}>
         <div className="flex flex-col-reverse gap-6">
             {comments.map((comment, index) => (<Comment key={index} currentUser={user} comment={comment} updateComment={updateComment} deleteComment={deleteComment}/>))}
         </div>

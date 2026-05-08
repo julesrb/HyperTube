@@ -9,7 +9,7 @@ import AuthTab from "@/app/[locale]/users/AuthTab";
 import {Comments} from "@/components/Comments";
 import {useAuth} from "@/context/AuthContext";
 import {iComment} from "@/types/comment";
-import Pagination from "@/components/Pagination";
+import Pagination, {computeTotalPage} from "@/components/Pagination";
 import {useSearchParams} from "next/navigation";
 import {useLocale, useTranslations} from "next-intl";
 import {iMovie} from "@/types/movie";
@@ -64,6 +64,7 @@ function MovieHistoryTab() {
     const changeIndex = (newIndex: number) => {setIndex(newIndex);}
     const t = useTranslations("profile");
     const [watchMovies, setWatchMovies] = useState<iMovie[] | null>(null);
+    const [totalPage, setTotalPage] = useState(1);
 
     useEffect(() => {
         async function loadMovies() {
@@ -71,6 +72,7 @@ function MovieHistoryTab() {
                 const data = await getWatchedMovies();
                 for (let i = 0; i < data.data.length; i++)
                     data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
+                computeTotalPage(data, setTotalPage);
                 setWatchMovies(data.data);
             } catch (error) {
                 console.error(error);
@@ -81,18 +83,21 @@ function MovieHistoryTab() {
 
     if (!watchMovies || watchMovies.length === 0)
         return (<p className="small-text">{t("noMoviesYet")}</p>);
-    return (<Pagination currenIndex={index} onClick={changeIndex} totalPage={3}>
+    return (<Pagination currenIndex={index} onClick={changeIndex} totalPage={totalPage}>
         <MoviesCard movieSets={watchMovies}/>
     </Pagination>);
 }
 
 function CommentsTab({user}: {user: iUser}) {
     const [postComments, setPostComments] = useState<iComment[]>([]);
+    const [index, setIndex] = useState(0);
+    const [totalPage, setTotalPage] = useState(1);
 
     useEffect(() => {
         async function loadComments() {
             try {
                 const data = await getComments();
+                computeTotalPage(data, setTotalPage);
                 setPostComments(data.data);
             } catch (error) {
                 console.error(error);
@@ -102,6 +107,6 @@ function CommentsTab({user}: {user: iUser}) {
     }, []);
 
     return (<div className="max-w-3xl w-full mx-auto">
-        <Comments user={user} comments={postComments}/>
+        <Comments user={user} comments={postComments} index={index} setIndex={setIndex} totalPage={totalPage}/>
     </div>);
 }

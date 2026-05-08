@@ -7,7 +7,7 @@ import {GridIcon, ListIcon} from "@/components/Icons";
 import {CloseButton} from "@/components/Buttons";
 import {useModal} from "@/context/ModalContext";
 import {useSearchParams} from "next/navigation";
-import Pagination from "@/components/Pagination";
+import Pagination, {computeTotalPage} from "@/components/Pagination";
 import {useResponsiveSize} from "@/context/utils";
 import {useLocale, useTranslations} from "next-intl";
 import {getMovies} from "@/services/movies";
@@ -45,8 +45,7 @@ export default function Page() {
                 const data = await getMovies(searchValue, index);
                 for (let i = 0; i < data.data.length; i++)
                     data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
-                if (data.meta)
-                    setTotalPage(Math.ceil(data.meta.total / data.meta.per_page));
+                computeTotalPage(data, setTotalPage);
                 setMovies(data.data);
             } catch (error) {
                 console.error(error);

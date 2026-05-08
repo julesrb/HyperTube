@@ -1,5 +1,8 @@
 import {ReactNode, useState} from "react";
 import {LeftIcon, RightIcon} from "@/components/Icons";
+import {tListResponse} from "@/services/api";
+import {iMovie} from "@/types/movie";
+import {iComment} from "@/types/comment";
 
 export default function Pagination({children, currenIndex, totalPage, onClick} : {children: ReactNode, currenIndex: number, totalPage: number, onClick: (i: number) => void}) {
     const [leftColor, setLeftColor] = useState("gray");
@@ -37,4 +40,9 @@ export default function Pagination({children, currenIndex, totalPage, onClick} :
                 </button>
         </div>}
     </div>);
+}
+
+export function computeTotalPage(data: tListResponse<iMovie[] | iComment[]>, setTotalPage: (total: number) => void) {
+    if (data.meta)
+        setTotalPage(Math.ceil(data.meta.total / data.meta.per_page));
 }

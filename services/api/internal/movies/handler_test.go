@@ -49,13 +49,33 @@ func (s *fakeStore) createComment(ctx context.Context, c models.Comment) (models
 	return models.Comment{}, nil
 }
 
+func (s *fakeStore) countSearchResults(ctx context.Context, query string) (int, error) {
+	return 0, nil
+}
+
+func (s *fakeStore) upsertSearchResults(ctx context.Context, query string, imdbIDs []string) error {
+	return nil
+}
+
+func (s *fakeStore) listSearchResults(ctx context.Context, query string, limit, offset int) ([]models.Movie, error) {
+	return nil, nil
+}
+
+func (s *fakeStore) listWatched(ctx context.Context, user_id int) ([]models.Movie, error) {
+	return nil, nil
+}
+
+func (s *fakeStore) listDirectStream(ctx context.Context) ([]models.Movie, error) {
+	return nil, nil
+}
+
 type fakeTMDB struct{}
 
 func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie, error) {
 	return models.Movie{ImdbID: imdbID}, nil
 }
 
-func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string) (models.MovieDetails, error) {
+func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string, _ string) (models.MovieDetails, error) {
 	return models.MovieDetails{}, nil
 }
 
@@ -81,17 +101,11 @@ func TestGetMovies_OK(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
-		Meta struct {
-			Total int `json:"total"`
-		} `json:"meta"`
 	}
 	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
 	}
 
-	if body.Meta.Total != 2 {
-		t.Errorf("expected total=2, got %d", body.Meta.Total)
-	}
 	if body.Data[0].ImdbID != "1" || body.Data[1].ImdbID != "2" {
 		t.Errorf("unexpected order: %+v", body.Data)
 	}
@@ -110,15 +124,9 @@ func TestGetMovies_Empty(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
-		Meta struct {
-			Total int `json:"total"`
-		} `json:"meta"`
 	}
 	json.NewDecoder(rec.Body).Decode(&body)
 
-	if body.Meta.Total != 0 {
-		t.Errorf("expected total=0, got %d", body.Meta.Total)
-	}
 	if len(body.Data) != 0 {
 		t.Errorf("expected empty data, got %+v", body.Data)
 	}
@@ -159,9 +167,6 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Note:        8.1,
 				Genre:       []int{878, 12, 18},
 				Runtime:     167,
-				Summary:     "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a path of revenge against the conspirators who destroyed his family.",
-				Director:    "Denis Villeneuve",
-				Cast:        []string{"Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Josh Brolin"},
 				Watched:     false,
 			},
 			{
@@ -173,9 +178,6 @@ func TestGetMoviesId_OK(t *testing.T) {
 				Note:        7.4,
 				Genre:       []int{878, 12, 14},
 				Runtime:     197,
-				Summary:     "Following a devastating conflict with the RDA and the death of their eldest son, Jake Sully and Neytiri face a new threat on Pandora.",
-				Director:    "James Cameron",
-				Cast:        []string{"Sam Worthington", "Zoe Saldaña", "Sigourney Weaver", "Stephen Lang"},
 				Watched:     false,
 			},
 		},

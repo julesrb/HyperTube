@@ -11,7 +11,6 @@ import (
 	"hypertube/api/internal/movies/archive.org"
 	"hypertube/api/internal/movies/c411"
 	"hypertube/api/internal/movies/tmdb"
-	// "hypertube/api/internal/comments"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -108,14 +107,16 @@ func newRouter(moviesHandler *movies.MoviesHandler, commentsHandler *comments.Co
 
 	// Movies
 	mux.HandleFunc("GET /api/v1/movies", moviesHandler.GetMovies)
-	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies) //TODO paginate fesult
+	mux.HandleFunc("GET /api/v1/movies/watched", moviesHandler.GetWatchedMovies)
+	mux.HandleFunc("GET /api/v1/movies/directstream", moviesHandler.GetDirectStreamMovies)
+	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies)
 	mux.HandleFunc("GET /api/v1/movies/{id}", moviesHandler.GetMoviesId)
 	mux.HandleFunc("GET /api/v1/movies/{id}/torrents", moviesHandler.GetMovieTorrents)
-	mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.GetComments) //TODO paginate fesult
+	mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.GetComments)
 	mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.PostComment)
 
 	// // Comments
-	mux.HandleFunc("GET /api/v1/comments", commentsHandler.List) //TODO paginate fesult
+	mux.HandleFunc("GET /api/v1/comments", commentsHandler.List)
 	mux.HandleFunc("GET /api/v1/comments/{id}", commentsHandler.Get)
 	mux.HandleFunc("PATCH /api/v1/comments/{id}", commentsHandler.Update)
 	mux.HandleFunc("DELETE /api/v1/comments/{id}", commentsHandler.Delete)

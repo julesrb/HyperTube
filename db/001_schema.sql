@@ -7,10 +7,8 @@ CREATE TABLE IF NOT EXISTS movies (
     backdrop_url    TEXT        NOT NULL,
     note            REAL        NOT NULL,
     genre           INTEGER[]   NOT NULL,
-    runtime_minutes INTEGER     NOT NULL,
     summary         TEXT        NOT NULL,
-    director        TEXT        NOT NULL,
-    "cast"          TEXT[]      
+    runtime_minutes INTEGER     NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS torrents (
@@ -42,8 +40,14 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS watch_history (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    movie_id    TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
     watched_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS direct_stream_movies (
+    imdbid      TEXT    NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (imdbid)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
@@ -53,3 +57,11 @@ CREATE TABLE IF NOT EXISTS comments (
     content     TEXT    NOT NULL,
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS movie_searches (
+    query       TEXT        NOT NULL,
+    imdbid      TEXT        NOT NULL REFERENCES movies(imdbid) ON DELETE CASCADE,
+    rank        INTEGER     NOT NULL,
+    searched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (query, imdbid)
+)

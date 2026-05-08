@@ -76,7 +76,6 @@ func (item *torznabItem) attr(name string) string {
 func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torrent, error) {
 	params := url.Values{"t": {"movie"}, "cat": {"2000"}, "q": {title}, "apikey": {c.apiKey}}
 	queryURL := c.baseURL + "torznab?" + params.Encode()
-	log.Printf("C411 query: %s", queryURL)
 	return c.fetch(ctx, queryURL)
 }
 
@@ -84,7 +83,6 @@ func (c *Client) SearchByTitle(ctx context.Context, title string) ([]models.Torr
 func (c *Client) FetchTop(ctx context.Context, limit int) ([]models.Torrent, error) {
 	params := url.Values{"t": {"movie"}, "q": {""}, "cat": {"2000"}, "limit": {strconv.Itoa(limit)}, "apikey": {c.apiKey}}
 	queryURL := c.baseURL + "torznab?" + params.Encode()
-	log.Printf("C411 top query: %s", queryURL)
 	return c.fetch(ctx, queryURL)
 }
 
@@ -100,6 +98,7 @@ func (c *Client) fetch(ctx context.Context, queryURL string) ([]models.Torrent, 
 	}
 
 	torrents := make([]models.Torrent, 0, len(feed.Channel.Items))
+	log.Printf("C411 returned %d items", len(feed.Channel.Items))
 	for _, item := range feed.Channel.Items {
 		imdbID := item.attr("imdbid")
 		if imdbID == "" {
@@ -134,14 +133,14 @@ func (c *Client) GetTopMovies(ctx context.Context) ([]models.Torrent, error) {
 	})
 
 	seen := make(map[string]bool)
-	result := make([]models.Torrent, 0, 9)
+	result := make([]models.Torrent, 0, 11)
 	for _, t := range torrents {
 		if seen[t.ImdbID] {
 			continue
 		}
 		seen[t.ImdbID] = true
 		result = append(result, t)
-		if len(result) == 9 {
+		if len(result) == 12 {
 			break
 		}
 	}

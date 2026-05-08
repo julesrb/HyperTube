@@ -10,7 +10,7 @@ export function getMovies(search_title?: string, page?: number) {
 }
 
 export function getWatchedMovies() {
-    return apiFetch<tListResponse<iMovie[]>>("users/watch/movies");
+    return apiFetch<tListResponse<iMovie[]>>("/movies/watched");
 }
 
 export function getMovie(id: string) {

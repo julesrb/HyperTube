@@ -49,13 +49,14 @@ services:
     env_file: .env
     ports:
       - "8081:8081"
+    volumes:
+      - ./services/torrent-stream/internal/transcode/test:/app/internal/transcode/test
     # network_mode: "service:vpn"
     # profiles: [vpn]
     # depends_on:
     #   vpn:
     #     condition: service_healthy
-    # volumes:
-    #   - torrents:/data/torrents
+    # - torrents:/data/torrents
 
   # torrent-stream-novpn:
   #   build: ./services/torrent-stream

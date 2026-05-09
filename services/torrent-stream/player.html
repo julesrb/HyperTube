@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HyperTube — dev player</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
+    h1 { font-size: 1rem; letter-spacing: 0.05em; opacity: 0.5; }
+    #controls { display: flex; gap: 8px; }
+    button { background: #e50914; border: none; color: #fff; padding: 6px 14px; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #f40612; }
+    video { width: min(860px, 95vw); background: #000; border-radius: 6px; }
+    #status { font-size: 0.8rem; opacity: 0.5; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <h1>torrent-stream / dev player</h1>
+  <div id="controls">
+    <button onclick="play()">Play</button>
+  </div>
+  <video id="video" controls></video>
+  <div id="status"></div>
+
+  <script>
+    const BASE = window.location.origin;
+    const status = document.getElementById('status');
+    const video  = document.getElementById('video');
+    let hls = null;
+
+    async function play() {
+      const id = 'rubber';
+
+      if (hls) { hls.destroy(); hls = null; }
+      video.src = '';
+      status.textContent = 'Initialising stream…';
+
+      const init = await fetch(`${BASE}/stream/${id}`);
+      if (!init.ok) { status.textContent = `Init failed: ${init.status}`; return; }
+
+      const indexUrl = `${BASE}/stream/${id}/index`;
+      status.textContent = 'Loading playlist…';
+
+      if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(indexUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          status.textContent = 'Playing via hls.js';
+          video.play();
+        });
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) status.textContent = `HLS error: ${data.type}`;
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = indexUrl;
+        video.addEventListener('loadedmetadata', () => { video.play(); });
+        status.textContent = 'Playing via native HLS';
+      } else {
+        status.textContent = 'HLS not supported in this browser';
+      }
+    }
+  </script>
+</body>
+</html>

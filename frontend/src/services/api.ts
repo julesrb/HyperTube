@@ -13,7 +13,9 @@ export type tResponse<T> = {
     data: T;
 };
 
-export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+export async function apiFetch<T>(endpoint: string, language?: string, options: RequestInit = {}): Promise<T> {
+    if (!language)
+        language = "en-US";
     const token = localStorage.getItem("token");
     const response = await fetch(
         `${API_URL}${endpoint}`,
@@ -23,6 +25,7 @@ export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): 
                 "Content-Type": "application/json",
                 ...(token && {
                     Authorization: `Bearer ${token}`,
+                    "Accept-Language": language
                 }),
                 ...options.headers,
             },

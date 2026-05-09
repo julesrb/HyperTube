@@ -10,11 +10,12 @@ import Section from "@/components/Section";
 import {useAuth} from "@/context/AuthContext";
 import {iUser} from "@/types/user";
 import {useResponsiveSize} from "@/context/utils";
-import {useTranslations} from "next-intl";
+import {Locale, useLocale, useTranslations} from "next-intl";
 import {getMovies} from "@/services/movies";
 
 export default function HomePage() {
     const {user} = useAuth();
+    const locale = useLocale() as Locale;
     const t = useTranslations("home");
     let continueWatching;
     const size = useResponsiveSize();
@@ -43,7 +44,7 @@ export default function HomePage() {
     useEffect(() => {
         async function loadMovies() {
             try {
-                const data = await getMovies();
+                const data = await getMovies(locale);
                 for (let i = 0; i < data.data.length; i++)
                     data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
                 setMovies(data.data);
@@ -59,7 +60,7 @@ export default function HomePage() {
             try {
                 const data = await getMovies("directstream");
                 for (let i = 0; i < data.data.length; i++)
-                    data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/original/");
+                    data.data[i].backdrop_url = data.data[i].backdrop_url.replace("/w500/", "/w1280/");
                 setDirctedWatchMovies(data.data);
             } catch (error) {
                 console.error(error);

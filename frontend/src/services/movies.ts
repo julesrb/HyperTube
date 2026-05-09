@@ -10,10 +10,10 @@ export function getMovies(locale: string, search_title?: string, page?: number, 
     return apiFetch<tListResponse<iMovie[]>>(endpoint, locale, {signal: signal});
 }
 
-export function getWatchedMovies() {
-    return apiFetch<tListResponse<iMovie[]>>("/movies/watched");
+export function getWatchedMovies(locale: string) {
+    return apiFetch<tListResponse<iMovie[]>>("/movies/watched", locale);
 }
 
-export function getMovie(id: string) {
-    return apiFetch<tResponse<iMovieDetails>>(`/movies/${id}`);
+export function getMovie(id: string, locale: string) {
+    return apiFetch<tResponse<iMovieDetails>>(`/movies/${id}`, locale);
 }

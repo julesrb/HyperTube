@@ -43,17 +43,19 @@ services:
   #     timeout: 5s
   #     retries: 5
 
-  # torrent-stream:
-  #   build: ./services/torrent-stream
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   network_mode: "service:vpn"
-  #   profiles: [vpn]
-  #   depends_on:
-  #     vpn:
-  #       condition: service_healthy
-  #   volumes:
-  #     - torrents:/data/torrents
+  torrent-stream:
+    build: ./services/torrent-stream
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8081:8081"
+    # network_mode: "service:vpn"
+    # profiles: [vpn]
+    # depends_on:
+    #   vpn:
+    #     condition: service_healthy
+    # volumes:
+    #   - torrents:/data/torrents
 
   # torrent-stream-novpn:
   #   build: ./services/torrent-stream

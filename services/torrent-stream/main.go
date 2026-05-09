@@ -33,6 +33,10 @@ func main() {
         w.WriteHeader(http.StatusOK)
     })
 
+    mux.HandleFunc("GET /player", func(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "./player.html")
+    })
+
     mux.HandleFunc("GET /stream/{id}", stream.InitStream) // start torrent and prepapre for trancoding and streaming
 	mux.HandleFunc("GET /stream/{id}/index", stream.GetIndex) // serve the HLS index 
 	mux.HandleFunc("GET /stream/{id}/{segment}", stream.GetSegment) // serve the HLS segments

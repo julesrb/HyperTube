@@ -10,5 +10,7 @@ FROM alpine:3.20
 RUN apk add --no-cache ffmpeg
 WORKDIR /app
 COPY --from=builder /app/torrent-stream .
+COPY player.html .
+COPY internal/transcode/test/ ./internal/transcode/test/
 EXPOSE 8081
 CMD ["./torrent-stream"]

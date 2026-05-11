@@ -26,7 +26,7 @@ TEST_DEPS=(
   "curl jq"
 )
 TEST_DESCRIPTIONS=(
-  "Validates public routes, registration, login, protected-route failures, and authenticated movie search/detail/torrent flows."
+  "Validates public routes, registration, login, protected-route failures, JWT user context, comment ownership, and authenticated movie flows."
   "Checks 42 OAuth login startup, state-cookie handling, callback CSRF protection, and provider-denial behavior; unconfigured OAuth is handled as an expected safe state."
   "Prints readable request/response examples for health, movie listing, movie lookup, torrent lookup, registration, and login. Best for quick manual inspection."
 )

@@ -38,6 +38,7 @@ SKIPPED=0
 FEATURED_MOVIE_ID=""
 AUTH_TOKEN=""
 REGISTERED_USER_ID=""
+USER_CONTEXT_COMMENT_ID=""
 
 RESET=""
 BOLD=""
@@ -336,6 +337,10 @@ login_payload() {
   jq -n --arg email "$email" --arg password "$password" '{email:$email, password:$password}'
 }
 
+extract_token_from_body() {
+  jq -r '.data.access_token // empty' "$LAST_BODY_FILE" 2>/dev/null
+}
+
 test_public_routes() {
   section "Public routes and route surface"
 
@@ -609,6 +614,119 @@ test_live_movie_routes() {
   fi
 }
 
+test_authenticated_user_context_routes() {
+  local movie_id
+  local forged_user_id
+  local create_payload
+  local update_payload
+  local delete_payload
+  local intruder_run_id
+  local intruder_email
+  local intruder_username
+  local intruder_password
+  local intruder_token
+  local payload
+
+  section "Authenticated user context and comment ownership"
+
+  if [[ -z "$AUTH_TOKEN" || -z "$REGISTERED_USER_ID" ]]; then
+    skip "User context routes" "login did not return both token and user id"
+    return
+  fi
+
+  request "GET" "/movies/watched" "" "$AUTH_TOKEN"
+  if expect_status "Watched movies uses token user without request body" "200"; then
+    assert_list_envelope "Watched movies"
+  fi
+
+  movie_id="$FEATURED_MOVIE_ID"
+  if [[ -z "$movie_id" ]]; then
+    request "GET" "/movies"
+    if [[ "$LAST_STATUS" == "200" ]]; then
+      movie_id="$(jq -r '.data[0].imdb_id // empty' "$LAST_BODY_FILE")"
+    fi
+  fi
+
+  if [[ -z "$movie_id" ]]; then
+    skip "Comment ownership routes" "no seeded movie id is available"
+    return
+  fi
+
+  forged_user_id=$((REGISTERED_USER_ID + 100000))
+  create_payload="$(
+    jq -n \
+      --argjson user_id "$forged_user_id" \
+      --arg movie_id "tt-forged-body" \
+      --arg content "api ownership test comment" \
+      '{user_id: $user_id, movie_id: $movie_id, content: $content}'
+  )"
+
+  request "POST" "/movies/$movie_id/comments" "$create_payload" "$AUTH_TOKEN"
+  if expect_status "Create comment ignores forged body user_id and movie_id" "201"; then
+    assert_jq_eq "Create comment uses token user_id" '.data.user_id | tostring' "$REGISTERED_USER_ID"
+    assert_jq_eq "Create comment uses path movie_id" '.data.movie_id' "$movie_id"
+    USER_CONTEXT_COMMENT_ID="$(jq -r '.data.id // empty' "$LAST_BODY_FILE")"
+  fi
+
+  if [[ -z "$USER_CONTEXT_COMMENT_ID" ]]; then
+    skip "Comment update/delete ownership checks" "comment creation did not return an id"
+    return
+  fi
+
+  update_payload="$(
+    jq -n \
+      --argjson user_id "$forged_user_id" \
+      --arg content "api ownership test comment edited" \
+      '{user_id: $user_id, content: $content}'
+  )"
+
+  request "PATCH" "/comments/$USER_CONTEXT_COMMENT_ID" "$update_payload" "$AUTH_TOKEN"
+  if expect_status "Update comment ignores forged body user_id" "200"; then
+    assert_jq_eq "Update comment keeps token user_id" '.data.user_id | tostring' "$REGISTERED_USER_ID"
+    assert_jq_eq "Update comment changes content" '.data.content' "api ownership test comment edited"
+  fi
+
+  intruder_run_id="${API_TEST_RUN_ID:-$(date +%s)-$$-$RANDOM}-intruder"
+  intruder_email="intruder+${intruder_run_id}@example.com"
+  intruder_username="intruder_${intruder_run_id//[^A-Za-z0-9]/_}"
+  intruder_username="${intruder_username:0:32}"
+  intruder_password="intruder-password-$intruder_run_id"
+
+  payload="$(register_payload "$intruder_email" "$intruder_username" "Intruder" "Tester" "$intruder_password")"
+  request "POST" "/auth/register" "$payload"
+  if [[ "$LAST_STATUS" == "201" ]]; then
+    intruder_token="$(extract_token_from_body)"
+    pass "Intruder user registered for ownership checks"
+  else
+    request "POST" "/auth/login" "$(login_payload "$intruder_email" "$intruder_password")"
+    if [[ "$LAST_STATUS" == "200" ]]; then
+      intruder_token="$(extract_token_from_body)"
+      pass "Intruder user logged in for ownership checks"
+    else
+      intruder_token=""
+      skip "Intruder ownership checks" "could not register or log in second user"
+    fi
+  fi
+
+  if [[ -n "$intruder_token" ]]; then
+    expect_error_case \
+      "Different authenticated user cannot update owned comment" \
+      "PATCH" "/comments/$USER_CONTEXT_COMMENT_ID" "404" "NOT_FOUND" "comment not found" \
+      "$(jq -n --arg content "intruder edit" '{content: $content}')" "$intruder_token"
+
+    expect_error_case \
+      "Different authenticated user cannot delete owned comment" \
+      "DELETE" "/comments/$USER_CONTEXT_COMMENT_ID" "404" "NOT_FOUND" "comment not found" \
+      "" "$intruder_token"
+  fi
+
+  delete_payload="$(jq -n --argjson user_id "$forged_user_id" '{user_id: $user_id}')"
+  request "DELETE" "/comments/$USER_CONTEXT_COMMENT_ID" "$delete_payload" "$AUTH_TOKEN"
+  if expect_status "Owner can delete comment even with forged body user_id" "200"; then
+    assert_jq_true "Delete comment returns null data" '.data == null'
+  fi
+}
+
 main() {
   local failed_color
   local skipped_color
@@ -624,6 +742,7 @@ main() {
   test_public_routes
   test_auth_validation_and_success
   test_protected_route_errors
+  test_authenticated_user_context_routes
   test_live_movie_routes
 
   section "Summary"

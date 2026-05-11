@@ -91,7 +91,7 @@ Stories:
   user              New user registration, login, browse, search, detail, torrents.
   featured          Anonymous featured movie browsing, then authenticated detail access.
   search-fallback   Search recovery flow with backup query and featured fallback.
-  comments          Authenticated comment create, read, update, delete flow.
+  comments          Authenticated comment flow, including JWT-owned update/delete checks.
   forty-two-auth    42 OAuth route safety and callback validation.
   forty-two-cli     Manual real 42 OAuth login flow from the terminal.
   database          Database snapshot utility.

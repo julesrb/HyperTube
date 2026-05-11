@@ -5,7 +5,8 @@
 # User story:
 #   As a signed-in user, I want to comment on a movie, edit my comment, and
 #   delete it again, so I can take part in a movie discussion while controlling
-#   my own contribution.
+#   my own contribution. The backend must derive comment ownership from the JWT,
+#   not from a user_id sent by the client.
 #
 # Usage:
 #   ./user_stories/scripts/demo_comments_story.sh
@@ -36,6 +37,7 @@ MOVIE_ID="${MOVIE_ID:-}"
 
 TOKEN=""
 USER_ID=""
+FORGED_USER_ID=""
 COMMENT_ID=""
 
 TMP_FILES=()
@@ -136,6 +138,8 @@ print_summary() {
   printf '  BASE_URL: %s\n' "$BASE_URL"
   printf '  DEMO_EMAIL: %s\n' "$DEMO_EMAIL"
   printf '  DEMO_USERNAME: %s\n' "$DEMO_USERNAME"
+  printf '  USER_ID: %s\n' "${USER_ID:-<not logged in>}"
+  printf '  FORGED_BODY_USER_ID: %s\n' "${FORGED_USER_ID:-<not set>}"
   printf '  MOVIE_ID: %s\n' "${MOVIE_ID:-<not selected>}"
   printf '  COMMENT_ID: %s\n' "${COMMENT_ID:-<not created>}"
 }
@@ -325,6 +329,25 @@ body_has_comment_id() {
   ' <<<"$body" >/dev/null 2>&1
 }
 
+comment_matches_owner_and_movie() {
+  local body="$1"
+  local user_id="$2"
+  local movie_id="$3"
+
+  jq -e --argjson user_id "$user_id" --arg movie_id "$movie_id" '
+    .data.user_id == $user_id and .data.movie_id == $movie_id
+  ' <<<"$body" >/dev/null 2>&1
+}
+
+comment_matches_owner() {
+  local body="$1"
+  local user_id="$2"
+
+  jq -e --argjson user_id "$user_id" '
+    .data.user_id == $user_id
+  ' <<<"$body" >/dev/null 2>&1
+}
+
 REGISTER_PAYLOAD="$(
   jq -n \
     --arg email "$DEMO_EMAIL" \
@@ -405,6 +428,7 @@ TOKEN="$(extract_token "$HTTP_BODY")"
 USER_ID="$(extract_user_id "$HTTP_BODY")"
 
 if [[ -n "$TOKEN" && -n "$USER_ID" ]]; then
+  FORGED_USER_ID=$((USER_ID + 100000))
   record_result "Store auth context" "OK" "JWT token and user ID $USER_ID were found."
   print_result "OK" "JWT token and user ID $USER_ID were found."
 elif [[ -n "$TOKEN" ]]; then
@@ -465,11 +489,11 @@ else
 fi
 
 heading 7 "Post Comment"
-explain "The CLI posts a new comment on the selected movie as the signed-in user."
+explain "The CLI intentionally sends a forged user_id and movie_id in the JSON body. The backend should ignore both and use the JWT user plus URL movie."
 CREATE_COMMENT_PAYLOAD="$(
   jq -n \
-    --argjson user_id "$USER_ID" \
-    --arg movie_id "$MOVIE_ID" \
+    --argjson user_id "$FORGED_USER_ID" \
+    --arg movie_id "tt-forged-body" \
     --arg content "$COMMENT_TEXT" \
     '{user_id: $user_id, movie_id: $movie_id, content: $content}'
 )"
@@ -479,9 +503,13 @@ print_response "$HTTP_STATUS" "$HTTP_BODY" "$CURL_ERROR"
 
 if is_success_status "$HTTP_STATUS"; then
   COMMENT_ID="$(extract_comment_id "$HTTP_BODY")"
-  if [[ -n "$COMMENT_ID" ]]; then
-    record_result "Post comment" "OK" "Created comment ID $COMMENT_ID."
-    print_result "OK" "Created comment ID $COMMENT_ID."
+  if [[ -n "$COMMENT_ID" ]] && comment_matches_owner_and_movie "$HTTP_BODY" "$USER_ID" "$MOVIE_ID"; then
+    record_result "Post comment" "OK" "Created comment ID $COMMENT_ID using JWT user $USER_ID and URL movie $MOVIE_ID."
+    print_result "OK" "Created comment ID $COMMENT_ID using JWT user $USER_ID and URL movie $MOVIE_ID."
+  elif [[ -n "$COMMENT_ID" ]]; then
+    record_result "Post comment" "FAIL" "Comment was created, but ownership did not match the JWT user or URL movie."
+    print_result "FAIL" "Comment was created, but ownership did not match the JWT user or URL movie."
+    abort_critical "Comment ownership did not come from the JWT user and URL movie."
   else
     record_result "Post comment" "FAIL" "Comment was created, but no comment ID was returned."
     print_result "FAIL" "Comment was created, but no comment ID was returned."
@@ -511,11 +539,11 @@ else
 fi
 
 heading 9 "Edit Comment"
-explain "The CLI edits the comment content using the comment update endpoint."
+explain "The CLI edits the comment while again sending a forged user_id. The backend should still use the JWT user as the owner check."
 UPDATE_COMMENT_URL="$BASE_URL/api/v1/comments/$COMMENT_ID"
 UPDATE_COMMENT_PAYLOAD="$(
   jq -n \
-    --argjson user_id "$USER_ID" \
+    --argjson user_id "$FORGED_USER_ID" \
     --arg content "$UPDATED_COMMENT_TEXT" \
     '{user_id: $user_id, content: $content}'
 )"
@@ -523,9 +551,12 @@ print_request "PATCH" "$UPDATE_COMMENT_URL" "$UPDATE_COMMENT_PAYLOAD" "true"
 request "PATCH" "$UPDATE_COMMENT_URL" "$UPDATE_COMMENT_PAYLOAD" "true"
 print_response "$HTTP_STATUS" "$HTTP_BODY" "$CURL_ERROR"
 
-if is_success_status "$HTTP_STATUS"; then
-  record_result "Edit comment" "OK" "Comment ID $COMMENT_ID was updated."
-  print_result "OK" "Comment ID $COMMENT_ID was updated."
+if is_success_status "$HTTP_STATUS" && comment_matches_owner "$HTTP_BODY" "$USER_ID"; then
+  record_result "Edit comment" "OK" "Comment ID $COMMENT_ID was updated as JWT user $USER_ID."
+  print_result "OK" "Comment ID $COMMENT_ID was updated as JWT user $USER_ID."
+elif is_success_status "$HTTP_STATUS"; then
+  record_result "Edit comment" "FAIL" "Comment update succeeded, but response owner did not match JWT user $USER_ID."
+  print_result "FAIL" "Comment update succeeded, but response owner did not match JWT user $USER_ID."
 else
   record_result "Edit comment" "WARN" "Comment update failed."
   print_result "WARN" "Comment update failed."
@@ -546,10 +577,10 @@ else
 fi
 
 heading 11 "Delete Comment"
-explain "The CLI deletes the comment as cleanup and verifies that the endpoint accepts the owner user ID."
+explain "The CLI deletes the comment as cleanup while sending a forged body user_id. The backend should authorize the delete from the JWT."
 DELETE_COMMENT_PAYLOAD="$(
   jq -n \
-    --argjson user_id "$USER_ID" \
+    --argjson user_id "$FORGED_USER_ID" \
     '{user_id: $user_id}'
 )"
 print_request "DELETE" "$UPDATE_COMMENT_URL" "$DELETE_COMMENT_PAYLOAD" "true"

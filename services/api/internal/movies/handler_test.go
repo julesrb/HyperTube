@@ -76,7 +76,12 @@ func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie,
 }
 
 func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string, _ string) (models.MovieDetails, error) {
-	return models.MovieDetails{}, nil
+	return models.MovieDetails{
+		Summary:  "A desert planet epic.",
+		Director: []string{"Denis Villeneuve"},
+		Cast:     []string{"Timothee Chalamet"},
+		Runtime:  166,
+	}, nil
 }
 
 func (f *fakeTMDB) FindByName(ctx context.Context, title string, year int) (models.Movie, error) {
@@ -101,6 +106,11 @@ func TestGetMovies_OK(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
+		Meta struct {
+			Total   int `json:"total"`
+			Page    int `json:"page"`
+			PerPage int `json:"per_page"`
+		} `json:"meta"`
 	}
 	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
@@ -108,6 +118,10 @@ func TestGetMovies_OK(t *testing.T) {
 
 	if body.Data[0].ImdbID != "1" || body.Data[1].ImdbID != "2" {
 		t.Errorf("unexpected order: %+v", body.Data)
+	}
+
+	if body.Meta.Total != 2 || body.Meta.Page != 0 || body.Meta.PerPage != 2 {
+		t.Errorf("unexpected meta: %+v", body.Meta)
 	}
 }
 
@@ -124,11 +138,20 @@ func TestGetMovies_Empty(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
+		Meta struct {
+			Total   int `json:"total"`
+			Page    int `json:"page"`
+			PerPage int `json:"per_page"`
+		} `json:"meta"`
 	}
 	json.NewDecoder(rec.Body).Decode(&body)
 
 	if len(body.Data) != 0 {
 		t.Errorf("expected empty data, got %+v", body.Data)
+	}
+
+	if body.Meta.Total != 0 || body.Meta.Page != 0 || body.Meta.PerPage != 0 {
+		t.Errorf("unexpected meta: %+v", body.Meta)
 	}
 }
 
@@ -189,7 +212,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 	}
 
 	var body struct {
-		Data movieResponse `json:"data"`
+		Data movieDetailResponse `json:"data"`
 	}
 	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
@@ -197,6 +220,10 @@ func TestGetMoviesId_OK(t *testing.T) {
 
 	if body.Data.Title != "Dune: Part Two" {
 		t.Errorf("expected movie Title 'Dune: Part Two', got %q", body.Data.Title)
+	}
+
+	if body.Data.Director != "Denis Villeneuve" {
+		t.Errorf("expected director 'Denis Villeneuve', got %q", body.Data.Director)
 	}
 }
 

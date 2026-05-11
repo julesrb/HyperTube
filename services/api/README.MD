@@ -32,7 +32,8 @@ Returns the curated list of featured movies.
       "note": 8.1,
       "genres": [878, 12, 18]
     }
-  ]
+  ],
+  "meta": { "total": 12, "page": 0, "per_page": 12 }
 }
 ```
 
@@ -64,7 +65,8 @@ Returns movies available for direct streaming.
       "note": 8.1,
       "genres": [878, 12, 18]
     }
-  ]
+  ],
+  "meta": { "total": 2, "page": 0, "per_page": 2 }
 }
 ```
 
@@ -143,7 +145,8 @@ Returns the watch history for a user, ordered by most recently watched.
       "note": 8.1,
       "genres": [878, 12, 18]
     }
-  ]
+  ],
+  "meta": { "total": 3, "page": 0, "per_page": 3 }
 }
 ```
 
@@ -188,7 +191,7 @@ Returns full metadata for a single movie. Summary, director, and cast are fetche
     "note": 8.1,
     "genres": [878, 12, 18],
     "summary": "string",
-    "director": ["string"],
+    "director": "string",
     "cast": ["string"],
     "extra_backdrops": ["string"],
     "watched": false,
@@ -238,7 +241,8 @@ Returns available torrent sources for a movie.
       "language": "string",
       "seeds": "string"
     }
-  ]
+  ],
+  "meta": { "total": 4, "page": 0, "per_page": 4 }
 }
 ```
 
@@ -275,7 +279,8 @@ Returns comments posted on a movie, ordered by most recent first.
       "content": "string",
       "updated_at": "2026-05-06T12:00:00Z"
     }
-  ]
+  ],
+  "meta": { "total": 8, "page": 0, "per_page": 8 }
 }
 ```
 
@@ -353,7 +358,8 @@ Returns all comments across all movies.
       "content": "string",
       "updated_at": "2026-05-06T12:00:00Z"
     }
-  ]
+  ],
+  "meta": { "total": 8, "page": 0, "per_page": 8 }
 }
 ```
 

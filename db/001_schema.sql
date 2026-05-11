@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS citext;
+
 CREATE TABLE IF NOT EXISTS movies (
     imdbid          TEXT        PRIMARY KEY,
     tmdbid          TEXT        NOT NULL,
@@ -32,8 +34,26 @@ CREATE TABLE IF NOT EXISTS featured_movies (
 );
 
 CREATE TABLE IF NOT EXISTS users (
-    id       SERIAL PRIMARY KEY,
-    username TEXT   NOT NULL UNIQUE
+    id            SERIAL PRIMARY KEY,
+    email         CITEXT      NOT NULL UNIQUE,
+    username      TEXT        NOT NULL UNIQUE,
+    first_name    TEXT        NOT NULL,
+    last_name     TEXT        NOT NULL,
+    password_hash TEXT,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS oauth_accounts (
+    id               SERIAL PRIMARY KEY,
+    user_id          INTEGER     NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider         TEXT        NOT NULL,
+    provider_user_id TEXT        NOT NULL,
+    provider_email   CITEXT,
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (provider, provider_user_id),
+    UNIQUE (user_id, provider)
 );
 
 CREATE TABLE IF NOT EXISTS watch_history (

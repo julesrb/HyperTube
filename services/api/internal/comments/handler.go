@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"hypertube/api/internal/models"
-	"hypertube/api/internal/respond"
 	"log"
 	"net/http"
+
+	"hypertube/api/internal/auth"
+	"hypertube/api/internal/models"
+	"hypertube/api/internal/respond"
 )
 
 type CommentsHandler struct {
@@ -55,19 +57,27 @@ func (h *CommentsHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *CommentsHandler) Update(w http.ResponseWriter, r *http.Request) {
+	userID, ok := auth.UserIDFromContext(r.Context())
+	if !ok {
+		respond.Error(w, http.StatusUnauthorized, "UNAUTHORIZED", "missing user context")
+		return
+	}
+
 	id := r.PathValue("id")
 	var input struct {
 		Content string `json:"content"`
-		UserID  int    `json:"user_id"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		log.Println("decode err:", err)
 		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
 		return
 	}
-	// TODO implement authorization to ensure user can only update their own comments
-	comment, err := h.store.update(r.Context(), input.Content, id, input.UserID)
+	comment, err := h.store.update(r.Context(), input.Content, id, int(userID))
 	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			respond.Error(w, http.StatusNotFound, "NOT_FOUND", "comment not found")
+			return
+		}
 		log.Println("db err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to update comment")
 		return
@@ -76,20 +86,21 @@ func (h *CommentsHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *CommentsHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-	var input struct {
-		UserID int `json:"user_id"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		log.Println("decode err:", err)
-		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
+	userID, ok := auth.UserIDFromContext(r.Context())
+	if !ok {
+		respond.Error(w, http.StatusUnauthorized, "UNAUTHORIZED", "missing user context")
 		return
 	}
-	// TODO implement authorization to ensure user can only update their own comments
-	err := h.store.delete(r.Context(), id, input.UserID)
+
+	id := r.PathValue("id")
+	err := h.store.delete(r.Context(), id, int(userID))
 	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			respond.Error(w, http.StatusNotFound, "NOT_FOUND", "comment not found")
+			return
+		}
 		log.Println("db err:", err)
-		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to update comment")
+		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to delete comment")
 		return
 	}
 	respond.Item(w, http.StatusOK, nil)

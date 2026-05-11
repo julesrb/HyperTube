@@ -1,20 +1,24 @@
 # Auth Documentation
 
 This document explains the current authentication setup in this repository.
-Important: the root README still mentions OAuth2, GitHub/42 login, and password
-reset. In the current codebase, only the database preparation for OAuth exists.
-The active implementation is email/password authentication with bcrypt and
-JWT bearer tokens.
+Important: the root README still mentions GitHub OAuth and password reset. In
+the current backend, those are not active. The active implementation is
+email/password authentication with bcrypt, JWT bearer tokens, and optional 42
+OAuth when the 42 environment variables are configured.
 
 ## Summary
 
 - Backend: Go API with Chi router under `/api/v1`.
 - Registration: `POST /api/v1/auth/register`.
 - Login: `POST /api/v1/auth/login`.
+- 42 OAuth: `GET /api/v1/auth/42/login` and
+  `GET /api/v1/auth/42/callback`, active when configured.
 - Token: JWT with `HS256`, `user_id` claim, `iss`, `sub`, `iat`, `nbf`, `exp`.
 - Lifetime: 15 minutes (`expires_in: 900`).
 - Transport: `Authorization: Bearer <access_token>`.
 - Backend protection: `auth.RequireAuth(tokenManager)` in `services/api/main.go`.
+- User-owned backend actions must use the `user_id` from the validated token,
+  not a `user_id` sent by the client.
 - Frontend protection: currently local only, via `AuthContext` and `localStorage`.
 - Frontend API integration: not finished yet. The service files are empty and
   login/register currently use mock data.
@@ -25,6 +29,7 @@ JWT bearer tokens.
 | --- | --- | --- |
 | Router and protection boundary | `services/api/main.go` | Registers public routes and the protected route group. |
 | Auth handler | `services/api/internal/auth/handler.go` | Register/login, JSON parsing, response envelope. |
+| 42 OAuth | `services/api/internal/auth/oauth.go` | 42 authorization URL, callback, state cookie, 42 profile exchange. |
 | JWT | `services/api/internal/auth/jwt.go` | Creates and validates tokens. |
 | Middleware | `services/api/internal/auth/middleware.go` | Checks bearer header, validates token, writes `user_id` into context. |
 | Passwords | `services/api/internal/auth/password.go` | bcrypt hashing and password comparison. |
@@ -126,8 +131,8 @@ erDiagram
     users ||--o{ watch_history : has
 ```
 
-`oauth_accounts` exists in the schema, but there are currently no OAuth2 routes,
-OAuth2 handlers, or provider implementations in the backend.
+`oauth_accounts` links a local user to a configured OAuth provider account. The
+backend currently implements 42 OAuth; GitHub OAuth is not implemented.
 
 ## Registration
 
@@ -356,8 +361,10 @@ if !ok {
 }
 ```
 
-The movie handlers do not currently use this context yet. They only protect
-access; they do not perform user-specific logic.
+User-owned handlers must use this value as the source of truth. The client may
+send display data or action data, but it must not be trusted to decide which
+`user_id` is acting. For example, watched movies and comment writes use the
+token user ID from this context.
 
 ## Backend Routes
 
@@ -368,20 +375,24 @@ All routes are mounted under `/api/v1`.
 | `GET /health` | Active | Public | Inline healthcheck |
 | `POST /auth/register` | Active | Public | `authHandler.Register` |
 | `POST /auth/login` | Active | Public | `authHandler.Login` |
+| `GET /auth/42/login` | Active when configured | Public | `authHandler.LoginFortyTwo` |
+| `GET /auth/42/callback` | Active when configured | Public | `authHandler.CallbackFortyTwo` |
 | `GET /movies` | Active | Public | `moviesHandler.GetMovies` |
+| `GET /movies/watched` | Active | Protected | `moviesHandler.GetWatchedMovies` |
+| `GET /movies/directstream` | Active | Protected | `moviesHandler.GetDirectStreamMovies` |
 | `GET /movies/search?title=...` | Active | Protected | `moviesHandler.SearchMovies` |
 | `GET /movies/{id}` | Active | Protected | `moviesHandler.GetMoviesId` |
 | `GET /movies/{id}/torrents` | Active | Protected | `moviesHandler.GetMovieTorrents` |
+| `GET /movies/{id}/comments` | Active | Protected | `moviesHandler.GetComments` |
+| `POST /movies/{id}/comments` | Active | Protected | `moviesHandler.PostComment` |
+| `GET /comments` | Active | Protected | `commentsHandler.List` |
+| `GET /comments/{id}` | Active | Protected | `commentsHandler.Get` |
+| `PATCH /comments/{id}` | Active | Protected | `commentsHandler.Update` |
+| `DELETE /comments/{id}` | Active | Protected | `commentsHandler.Delete` |
 | `GET /users` | Commented | Not registered | Not active yet |
 | `GET /users/{id}` | Commented | Not registered | Not active yet |
 | `PATCH /users/{id}` | Commented | Not registered | Not active yet |
-| `GET /movies/{id}/comments` | Commented | Not registered | Not active yet |
-| `POST /movies/{id}/comments` | Commented | Not registered | Not active yet |
-| `GET /comments` | Commented | Not registered | Not active yet |
-| `GET /comments/{id}` | Commented | Not registered | Not active yet |
 | `POST /comments` | Commented | Not registered | Not active yet |
-| `PATCH /comments/{id}` | Commented | Not registered | Not active yet |
-| `DELETE /comments/{id}` | Commented | Not registered | Not active yet |
 
 Route tree:
 
@@ -395,12 +406,17 @@ flowchart TD
     Public --> Health[GET /health]
     Public --> Register[POST /auth/register]
     Public --> Login[POST /auth/login]
+    Public --> FortyTwo[GET /auth/42/login + callback]
     Public --> Movies[GET /movies]
 
     Root --> Protected
+    Protected --> Watched[GET /movies/watched]
+    Protected --> DirectStream[GET /movies/directstream]
     Protected --> Search[GET /movies/search]
     Protected --> Details[GET /movies/:id]
     Protected --> Torrents[GET /movies/:id/torrents]
+    Protected --> MovieComments[GET/POST /movies/:id/comments]
+    Protected --> Comments[GET/PATCH/DELETE /comments]
 ```
 
 ## Where to Change Backend Route Protection
@@ -790,11 +806,13 @@ curl -sS 'http://localhost:8080/api/v1/movies/search?title=dune' \
 - There are no refresh tokens. After 15 minutes, the user must log in again.
 - Logout does not invalidate the token on the server.
 - The middleware does not check whether the user still exists in the database.
-- OAuth2, password reset, and user management routes are not active yet.
+- 42 OAuth is implemented, but GitHub OAuth, password reset, and user
+  management routes are not active yet.
 - If the frontend and API run on different origins, the API still needs CORS
   configuration or the frontend must use a proxy.
-- The root README is partly stale: it describes OAuth2 as active, while the code
-  currently uses JWT after email/password login.
+- The root README is partly stale: it still mentions GitHub OAuth and password
+  reset as planned/subject features, while the backend currently implements
+  email/password, JWT, and 42 OAuth only.
 
 ## Tests
 

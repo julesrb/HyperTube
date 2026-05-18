@@ -1,0 +1,454 @@
+#!/usr/bin/env bash
+
+set -uo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+API_TEST_DIR="$SCRIPT_DIR/api"
+
+BASE_URL="${BASE_URL:-http://localhost:8080/api/v1}"
+BASE_URL="${BASE_URL%/}"
+
+TEST_IDS=("comprehensive" "forty-two" "basic")
+TEST_TITLES=(
+  "Comprehensive API E2E"
+  "42 OAuth Route Smoke Test"
+  "Basic Curl Walkthrough"
+)
+TEST_FILES=(
+  "comprehensive_api_test.sh"
+  "forty_two_auth_api_test.sh"
+  "basic_api_test.sh"
+)
+TEST_DEPS=(
+  "curl jq sed date tr"
+  "curl jq sed awk grep mktemp"
+  "curl jq"
+)
+TEST_DESCRIPTIONS=(
+  "Validates public routes, registration, login, protected-route failures, JWT user context, comment ownership, and authenticated movie flows."
+  "Checks 42 OAuth login startup, state-cookie handling, callback CSRF protection, and provider-denial behavior; unconfigured OAuth is handled as an expected safe state."
+  "Prints readable request/response examples for health, movie listing, movie lookup, torrent lookup, registration, and login. Best for quick manual inspection."
+)
+
+RESET=""
+BOLD=""
+DIM=""
+RED=""
+GREEN=""
+YELLOW=""
+CYAN=""
+REVERSE=""
+
+if [[ -z "${NO_COLOR:-}" && ( -t 1 || "${FORCE_COLOR:-}" == "1" || "${CLICOLOR_FORCE:-}" == "1" ) ]]; then
+  RESET=$'\033[0m'
+  BOLD=$'\033[1m'
+  DIM=$'\033[2m'
+  RED=$'\033[31m'
+  GREEN=$'\033[32m'
+  YELLOW=$'\033[33m'
+  CYAN=$'\033[36m'
+  REVERSE=$'\033[7m'
+fi
+
+usage() {
+  cat <<USAGE
+Hypertube API Test Runner
+
+Usage:
+  tests/start_me
+  tests/start_me --list
+  tests/start_me --run <test|all>
+  tests/start_me --help
+
+Tests:
+  comprehensive    Comprehensive API E2E smoke/e2e coverage.
+  forty-two        42 OAuth route surface and callback validation.
+  basic            Readable curl walkthrough for manual inspection.
+  all              Run every test in the order shown above.
+
+Environment:
+  BASE_URL         API base URL. Default: http://localhost:8080/api/v1
+  NO_COLOR=1      Disable color output.
+  FORCE_COLOR=1   Force color output.
+
+Interactive controls:
+  Up/Down or j/k  Move selection.
+  Enter           Run selected item.
+  1-5             Jump to an item.
+  q or Esc        Quit.
+USAGE
+}
+
+terminal_width() {
+  local width
+
+  width="${COLUMNS:-}"
+  if [[ -z "$width" && -t 1 ]] && command -v tput >/dev/null 2>&1; then
+    width="$(tput cols 2>/dev/null || true)"
+  fi
+  if [[ -z "$width" || ! "$width" =~ ^[0-9]+$ ]]; then
+    width=88
+  fi
+  if (( width > 100 )); then
+    width=100
+  elif (( width < 64 )); then
+    width=64
+  fi
+
+  printf '%s' "$width"
+}
+
+rule() {
+  local width
+
+  width="$(terminal_width)"
+  printf '%*s\n' "$width" '' | tr ' ' '-'
+}
+
+print_wrapped() {
+  local indent="$1"
+  local color="$2"
+  local text="$3"
+  local width
+  local max_len
+  local line=""
+  local word
+
+  width="$(terminal_width)"
+  max_len=$((width - ${#indent}))
+  if (( max_len < 24 )); then
+    max_len=24
+  fi
+
+  for word in $text; do
+    if [[ -z "$line" ]]; then
+      line="$word"
+    elif (( ${#line} + ${#word} + 1 <= max_len )); then
+      line="$line $word"
+    else
+      printf '%s%b%s%b\n' "$indent" "$color" "$line" "$RESET"
+      line="$word"
+    fi
+  done
+
+  if [[ -n "$line" ]]; then
+    printf '%s%b%s%b\n' "$indent" "$color" "$line" "$RESET"
+  fi
+}
+
+print_header() {
+  printf '%b%s%b\n' "${BOLD}${CYAN}" "Hypertube API Test Runner" "$RESET"
+  printf '%b%s%b\n' "$DIM" "Interactive test selection for the API shell suite." "$RESET"
+  rule
+}
+
+list_tests() {
+  local i
+
+  print_header
+  printf '  %b%-16s%b %s\n' "$DIM" "BASE_URL" "$RESET" "$BASE_URL"
+  printf '  %b%-16s%b %s\n' "$DIM" "Test folder" "$RESET" "$API_TEST_DIR"
+  echo
+
+  for i in "${!TEST_IDS[@]}"; do
+    printf '  %b%d. %s%b\n' "$BOLD" "$((i + 1))" "${TEST_TITLES[$i]}" "$RESET"
+    printf '     %bID:%b %s\n' "$DIM" "$RESET" "${TEST_IDS[$i]}"
+    print_wrapped "     " "" "${TEST_DESCRIPTIONS[$i]}"
+    printf '     %bCommand:%b %s\n' "$DIM" "$RESET" "api/${TEST_FILES[$i]}"
+    echo
+  done
+
+  printf '  %b4. Run All%b\n' "$BOLD" "$RESET"
+  print_wrapped "     " "" "Runs every test above and keeps a compact pass/fail summary."
+}
+
+normalize_query() {
+  local value="$1"
+
+  value="$(printf '%s' "$value" | tr '[:upper:]' '[:lower:]')"
+  value="${value//_/-}"
+  value="${value// /-}"
+  printf '%s' "$value"
+}
+
+resolve_test_index() {
+  local query
+
+  query="$(normalize_query "$1")"
+  case "$query" in
+    1|comprehensive|comprehensive-api|e2e|smoke)
+      printf '0'
+      ;;
+    2|42|forty-two|forty-two-auth|oauth|oauth42|oauth-42)
+      printf '1'
+      ;;
+    3|basic|curl|walkthrough)
+      printf '2'
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+missing_dependencies() {
+  local deps="$1"
+  local dep
+  local missing=()
+
+  for dep in $deps; do
+    if ! command -v "$dep" >/dev/null 2>&1; then
+      missing+=("$dep")
+    fi
+  done
+
+  if (( ${#missing[@]} > 0 )); then
+    printf '%s\n' "${missing[*]}"
+    return 1
+  fi
+}
+
+print_run_banner() {
+  local index="$1"
+
+  echo
+  rule
+  printf '%bRunning:%b %s\n' "${BOLD}${CYAN}" "$RESET" "${TEST_TITLES[$index]}"
+  printf '%bPurpose:%b %s\n' "$DIM" "$RESET" "${TEST_DESCRIPTIONS[$index]}"
+  printf '%bCommand:%b %s\n' "$DIM" "$RESET" "BASE_URL=$BASE_URL api/${TEST_FILES[$index]}"
+  rule
+  echo
+}
+
+run_test_index() {
+  local index="$1"
+  local test_path
+  local missing
+  local status
+
+  test_path="$API_TEST_DIR/${TEST_FILES[$index]}"
+  if [[ ! -f "$test_path" ]]; then
+    printf '%bMissing test file:%b %s\n' "$RED" "$RESET" "$test_path" >&2
+    return 66
+  fi
+
+  missing="$(missing_dependencies "${TEST_DEPS[$index]}" || true)"
+  if [[ -n "$missing" ]]; then
+    printf '%bCannot run %s.%b Missing command(s): %s\n' "$RED" "${TEST_TITLES[$index]}" "$RESET" "$missing" >&2
+    return 127
+  fi
+
+  print_run_banner "$index"
+  (
+    cd "$REPO_ROOT" || exit 1
+    BASE_URL="$BASE_URL" bash "$test_path"
+  )
+  status=$?
+
+  echo
+  if [[ "$status" -eq 0 ]]; then
+    printf '%bPASS%b %s completed successfully.\n' "$GREEN" "$RESET" "${TEST_TITLES[$index]}"
+  else
+    printf '%bFAIL%b %s exited with status %d.\n' "$RED" "$RESET" "${TEST_TITLES[$index]}" "$status"
+  fi
+
+  return "$status"
+}
+
+run_all_tests() {
+  local i
+  local status
+  local failed=0
+  local passed=0
+  local results=()
+
+  for i in "${!TEST_IDS[@]}"; do
+    run_test_index "$i"
+    status=$?
+    results+=("${TEST_TITLES[$i]}:$status")
+    if [[ "$status" -eq 0 ]]; then
+      passed=$((passed + 1))
+    else
+      failed=$((failed + 1))
+    fi
+  done
+
+  echo
+  rule
+  printf '%bRun summary%b\n' "${BOLD}${CYAN}" "$RESET"
+  for i in "${!results[@]}"; do
+    status="${results[$i]##*:}"
+    if [[ "$status" -eq 0 ]]; then
+      printf '  %bPASS%b %s\n' "$GREEN" "$RESET" "${results[$i]%:*}"
+    else
+      printf '  %bFAIL%b %s (exit %s)\n' "$RED" "$RESET" "${results[$i]%:*}" "$status"
+    fi
+  done
+  printf '  %bPassed%b %d\n' "$DIM" "$RESET" "$passed"
+  printf '  %bFailed%b %d\n' "$DIM" "$RESET" "$failed"
+
+  if [[ "$failed" -ne 0 ]]; then
+    return 1
+  fi
+}
+
+run_requested() {
+  local target
+  local index
+
+  target="${1:-}"
+  if [[ -z "$target" ]]; then
+    printf 'Missing test name. Run with --list to see available tests.\n' >&2
+    return 64
+  fi
+
+  if [[ "$(normalize_query "$target")" == "all" || "$target" == "4" ]]; then
+    run_all_tests
+    return $?
+  fi
+
+  if ! index="$(resolve_test_index "$target")"; then
+    printf 'Unknown test: %s\n\n' "$target" >&2
+    usage >&2
+    return 64
+  fi
+
+  run_test_index "$index"
+}
+
+draw_menu() {
+  local selected="$1"
+  local total_options=5
+  local i
+  local label
+  local description
+  local marker
+  local number
+
+  printf '\033[H\033[2J'
+  print_header
+  printf '  %b%-14s%b %s\n' "$DIM" "BASE_URL" "$RESET" "$BASE_URL"
+  printf '  %b%-14s%b %s\n' "$DIM" "Controls" "$RESET" "Up/Down, j/k, Enter, 1-$total_options, q"
+  echo
+
+  for i in 0 1 2 3 4; do
+    marker=" "
+    number="$((i + 1))"
+
+    if [[ "$i" -lt "${#TEST_IDS[@]}" ]]; then
+      label="${TEST_TITLES[$i]}"
+      description="${TEST_DESCRIPTIONS[$i]}"
+    elif [[ "$i" -eq 3 ]]; then
+      label="Run All Tests"
+      description="Runs the full API test suite in order and prints a compact summary at the end."
+    else
+      label="Quit"
+      description="Leave the test runner without starting a test."
+    fi
+
+    if [[ "$i" -eq "$selected" ]]; then
+      marker=">"
+      printf '  %b%s %s. %s%b\n' "${REVERSE}${BOLD}" "$marker" "$number" "$label" "$RESET"
+      print_wrapped "    " "$CYAN" "$description"
+    else
+      printf '  %b%s%b %s. %s\n' "$DIM" "$marker" "$RESET" "$number" "$label"
+      print_wrapped "    " "$DIM" "$description"
+    fi
+    echo
+  done
+}
+
+pause_after_run() {
+  if [[ -t 0 && -t 1 ]]; then
+    echo
+    printf '%bPress Enter to return to the menu.%b' "$DIM" "$RESET"
+    IFS= read -r _
+  fi
+}
+
+interactive_menu() {
+  local selected=0
+  local key
+  local rest
+
+  if [[ ! -t 0 || ! -t 1 ]]; then
+    usage >&2
+    return 64
+  fi
+
+  printf '\033[?25l'
+  trap 'printf "\033[?25h"; exit 130' INT TERM
+  trap 'printf "\033[?25h"' EXIT
+
+  while true; do
+    draw_menu "$selected"
+    IFS= read -rsn1 key || return 130
+
+    case "$key" in
+      $'\033')
+        rest=""
+        IFS= read -rsn2 -t 0.05 rest || true
+        case "$rest" in
+          "[A")
+            selected=$(( (selected + 4) % 5 ))
+            ;;
+          "[B")
+            selected=$(( (selected + 1) % 5 ))
+            ;;
+          *)
+            return 0
+            ;;
+        esac
+        ;;
+      k|K)
+        selected=$(( (selected + 4) % 5 ))
+        ;;
+      j|J)
+        selected=$(( (selected + 1) % 5 ))
+        ;;
+      1|2|3|4|5)
+        selected=$((key - 1))
+        ;;
+      q|Q)
+        return 0
+        ;;
+      "")
+        printf '\033[?25h'
+        if [[ "$selected" -le 2 ]]; then
+          run_test_index "$selected"
+          pause_after_run
+        elif [[ "$selected" -eq 3 ]]; then
+          run_all_tests
+          pause_after_run
+        else
+          return 0
+        fi
+        printf '\033[?25l'
+        ;;
+    esac
+  done
+}
+
+main() {
+  case "${1:-}" in
+    -h|--help)
+      usage
+      ;;
+    --list|list)
+      list_tests
+      ;;
+    --run|run)
+      shift
+      run_requested "${1:-}"
+      ;;
+    "")
+      interactive_menu
+      ;;
+    *)
+      run_requested "$1"
+      ;;
+  esac
+}
+
+main "$@"

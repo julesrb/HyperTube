@@ -3,6 +3,7 @@ package respond
 import (
 	"encoding/json"
 	"net/http"
+	"reflect"
 )
 
 type Meta struct {
@@ -36,7 +37,11 @@ func Data(w http.ResponseWriter, status int, data any) {
 }
 
 func List(w http.ResponseWriter, status int, data any) {
-	JSON(w, status, envelope{Data: data})
+	total := listLength(data)
+	JSON(w, status, envelope{
+		Data: data,
+		Meta: &Meta{Total: total, Page: 0, PerPage: total},
+	})
 }
 
 func ListPaginated(w http.ResponseWriter, status int, data any, total, page, perPage int) {
@@ -54,4 +59,18 @@ func Error(w http.ResponseWriter, status int, code, message string) {
 	JSON(w, status, errorResponse{
 		Error: errorBody{Code: code, Message: message},
 	})
+}
+
+func listLength(data any) int {
+	v := reflect.ValueOf(data)
+	if !v.IsValid() {
+		return 0
+	}
+
+	switch v.Kind() {
+	case reflect.Array, reflect.Slice:
+		return v.Len()
+	default:
+		return 0
+	}
 }

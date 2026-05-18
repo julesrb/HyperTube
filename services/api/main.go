@@ -6,12 +6,14 @@ import (
 	"net/http"
 	"os"
 
+	"hypertube/api/internal/auth"
 	"hypertube/api/internal/comments"
 	"hypertube/api/internal/movies"
 	"hypertube/api/internal/movies/archive.org"
 	"hypertube/api/internal/movies/c411"
 	"hypertube/api/internal/movies/tmdb"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -20,6 +22,23 @@ func main() {
 
 	db := connectDB(ctx)
 	defer db.Close()
+
+	tokenManager, err := auth.NewTokenManager(os.Getenv("JWT_SECRET"), getEnv("JWT_ISSUER", "hypertube-api"))
+	if err != nil {
+		log.Fatalf("init JWT manager: %v", err)
+	}
+
+	authStore := auth.NewStore(db)
+	fortyTwoRedirectURL := getEnv("FORTYTWO_REDIRECT_URL", "http://localhost:8080/api/v1/auth/42/callback")
+	authHandler := auth.NewHandler(authStore, tokenManager,
+		auth.WithFrontendAuthCallbackURL(getEnv("FRONTEND_AUTH_CALLBACK_URL", "http://localhost:4200/auth/callback")),
+		auth.WithFortyTwoOAuth(auth.NewFortyTwoOAuth(auth.FortyTwoOAuthConfig{
+			ClientID:     os.Getenv("FORTYTWO_CLIENT_ID"),
+			ClientSecret: os.Getenv("FORTYTWO_CLIENT_SECRET"),
+			RedirectURL:  fortyTwoRedirectURL,
+		})),
+	)
+
 	movieStore := movies.NewStore(db)
 	commentStore := comments.NewStore(db)
 
@@ -44,7 +63,7 @@ func main() {
 
 	addr := ":" + getEnv("PORT", "8080")
 	log.Printf("api listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, newRouter(moviesHandler, commentsHandler)))
+	log.Fatal(http.ListenAndServe(addr, newRouter(moviesHandler, commentsHandler, authHandler, tokenManager)))
 }
 
 func connectDB(ctx context.Context) *pgxpool.Pool {
@@ -87,41 +106,50 @@ func seedFeatured(ctx context.Context, c411Client *c411.Client, tmdbClient *tmdb
 	}
 }
 
-func newRouter(moviesHandler *movies.MoviesHandler, commentsHandler *comments.CommentsHandler) *http.ServeMux {
-	mux := http.NewServeMux()
+func newRouter(
+	moviesHandler *movies.MoviesHandler,
+	commentsHandler *comments.CommentsHandler,
+	authHandler *auth.Handler,
+	tokenManager *auth.TokenManager,
+) chi.Router {
+	r := chi.NewRouter()
 
-	// Health check
-	mux.HandleFunc("GET /api/v1/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
+
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/register", authHandler.Register)
+			r.Post("/login", authHandler.Login)
+			r.Get("/42/login", authHandler.LoginFortyTwo)
+			r.Get("/42/callback", authHandler.CallbackFortyTwo)
+		})
+
+		r.Get("/movies", moviesHandler.GetMovies)
+
+		r.Group(func(r chi.Router) {
+			r.Use(auth.RequireAuth(tokenManager))
+
+			r.Get("/movies/watched", moviesHandler.GetWatchedMovies)
+			r.Get("/movies/directstream", moviesHandler.GetDirectStreamMovies)
+			r.Get("/movies/search", moviesHandler.SearchMovies)
+			r.Get("/movies/{id}", moviesHandler.GetMoviesId)
+			r.Get("/movies/{id}/torrents", moviesHandler.GetMovieTorrents)
+			r.Get("/movies/{id}/comments", moviesHandler.GetComments)
+			r.Post("/movies/{id}/comments", moviesHandler.PostComment)
+
+			r.Get("/comments", commentsHandler.List)
+			r.Get("/comments/{id}", commentsHandler.Get)
+			r.Patch("/comments/{id}", commentsHandler.Update)
+			r.Delete("/comments/{id}", commentsHandler.Delete)
+		})
 	})
 
-	// // Auth
-	// mux.HandleFunc("POST /api/v1/oauth/token", nil)
-	// mux.HandleFunc("GET /api/v1/oauth/callback/42", nil)
-	// mux.HandleFunc("GET /api/v1/oauth/callback/github", nil)
+	// Backward-compatible callback path for the original environment template.
+	r.Get("/oauth/callback/42", authHandler.CallbackFortyTwo)
 
-	// // Users
-	// mux.HandleFunc("GET /api/v1/users", nil)
-	// mux.HandleFunc("GET /api/v1/users/{id}", nil)
-	// mux.HandleFunc("PATCH /api/v1/users/{id}", nil)
-
-	// Movies
-	mux.HandleFunc("GET /api/v1/movies", moviesHandler.GetMovies)
-	mux.HandleFunc("GET /api/v1/movies/watched", moviesHandler.GetWatchedMovies)
-	mux.HandleFunc("GET /api/v1/movies/directstream", moviesHandler.GetDirectStreamMovies)
-	mux.HandleFunc("GET /api/v1/movies/search", moviesHandler.SearchMovies)
-	mux.HandleFunc("GET /api/v1/movies/{id}", moviesHandler.GetMoviesId)
-	mux.HandleFunc("GET /api/v1/movies/{id}/torrents", moviesHandler.GetMovieTorrents)
-	mux.HandleFunc("GET /api/v1/movies/{id}/comments", moviesHandler.GetComments)
-	mux.HandleFunc("POST /api/v1/movies/{id}/comments", moviesHandler.PostComment)
-
-	// // Comments
-	mux.HandleFunc("GET /api/v1/comments", commentsHandler.List)
-	mux.HandleFunc("GET /api/v1/comments/{id}", commentsHandler.Get)
-	mux.HandleFunc("PATCH /api/v1/comments/{id}", commentsHandler.Update)
-	mux.HandleFunc("DELETE /api/v1/comments/{id}", commentsHandler.Delete)
-
-	return mux
+	return r
 }
 
 func getEnv(key, fallback string) string {

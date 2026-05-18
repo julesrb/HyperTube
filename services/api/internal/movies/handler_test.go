@@ -6,14 +6,18 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"hypertube/api/internal/auth"
 	"hypertube/api/internal/models"
 )
 
 type fakeStore struct {
-	movies []models.Movie
-	err    error
+	movies            []models.Movie
+	err               error
+	listWatchedUserID int
+	createdComment    models.Comment
 }
 
 func (f *fakeStore) listFeatured(_ context.Context) ([]models.Movie, error) {
@@ -46,7 +50,9 @@ func (s *fakeStore) listComments(ctx context.Context, imdbId string) ([]models.C
 }
 
 func (s *fakeStore) createComment(ctx context.Context, c models.Comment) (models.Comment, error) {
-	return models.Comment{}, nil
+	s.createdComment = c
+	c.ID = 1
+	return c, nil
 }
 
 func (s *fakeStore) countSearchResults(ctx context.Context, query string) (int, error) {
@@ -62,6 +68,7 @@ func (s *fakeStore) listSearchResults(ctx context.Context, query string, limit, 
 }
 
 func (s *fakeStore) listWatched(ctx context.Context, user_id int) ([]models.Movie, error) {
+	s.listWatchedUserID = user_id
 	return nil, nil
 }
 
@@ -76,7 +83,12 @@ func (f *fakeTMDB) FindByIMDBID(_ context.Context, imdbID string) (models.Movie,
 }
 
 func (f *fakeTMDB) GetMovieDetails(_ context.Context, _ string, _ string) (models.MovieDetails, error) {
-	return models.MovieDetails{}, nil
+	return models.MovieDetails{
+		Summary:  "A desert planet epic.",
+		Director: []string{"Denis Villeneuve"},
+		Cast:     []string{"Timothee Chalamet"},
+		Runtime:  166,
+	}, nil
 }
 
 func (f *fakeTMDB) FindByName(ctx context.Context, title string, year int) (models.Movie, error) {
@@ -101,6 +113,11 @@ func TestGetMovies_OK(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
+		Meta struct {
+			Total   int `json:"total"`
+			Page    int `json:"page"`
+			PerPage int `json:"per_page"`
+		} `json:"meta"`
 	}
 	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
@@ -108,6 +125,10 @@ func TestGetMovies_OK(t *testing.T) {
 
 	if body.Data[0].ImdbID != "1" || body.Data[1].ImdbID != "2" {
 		t.Errorf("unexpected order: %+v", body.Data)
+	}
+
+	if body.Meta.Total != 2 || body.Meta.Page != 0 || body.Meta.PerPage != 2 {
+		t.Errorf("unexpected meta: %+v", body.Meta)
 	}
 }
 
@@ -124,11 +145,20 @@ func TestGetMovies_Empty(t *testing.T) {
 
 	var body struct {
 		Data []movieResponse `json:"data"`
+		Meta struct {
+			Total   int `json:"total"`
+			Page    int `json:"page"`
+			PerPage int `json:"per_page"`
+		} `json:"meta"`
 	}
 	json.NewDecoder(rec.Body).Decode(&body)
 
 	if len(body.Data) != 0 {
 		t.Errorf("expected empty data, got %+v", body.Data)
+	}
+
+	if body.Meta.Total != 0 || body.Meta.Page != 0 || body.Meta.PerPage != 0 {
+		t.Errorf("unexpected meta: %+v", body.Meta)
 	}
 }
 
@@ -189,7 +219,7 @@ func TestGetMoviesId_OK(t *testing.T) {
 	}
 
 	var body struct {
-		Data movieResponse `json:"data"`
+		Data movieDetailResponse `json:"data"`
 	}
 	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
@@ -197,6 +227,10 @@ func TestGetMoviesId_OK(t *testing.T) {
 
 	if body.Data.Title != "Dune: Part Two" {
 		t.Errorf("expected movie Title 'Dune: Part Two', got %q", body.Data.Title)
+	}
+
+	if body.Data.Director != "Denis Villeneuve" {
+		t.Errorf("expected director 'Denis Villeneuve', got %q", body.Data.Director)
 	}
 }
 
@@ -227,4 +261,60 @@ func TestGetMoviesId_NotFound(t *testing.T) {
 	if body.Error.Code != "NOT_FOUND" {
 		t.Errorf("expected NOT_FOUND, got %q", body.Error.Code)
 	}
+}
+
+func TestGetWatchedMoviesUsesAuthenticatedUserID(t *testing.T) {
+	store := &fakeStore{}
+	h := &MoviesHandler{store: store}
+
+	req := httptest.NewRequest(http.MethodGet, "/movies/watched", strings.NewReader(`{"user_id":999}`))
+	rec := httptest.NewRecorder()
+
+	serveWithUser(t, 42, http.HandlerFunc(h.GetWatchedMovies)).ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
+	}
+	if store.listWatchedUserID != 42 {
+		t.Fatalf("expected token user id 42, got %d", store.listWatchedUserID)
+	}
+}
+
+func TestPostCommentUsesAuthenticatedUserIDAndPathMovieID(t *testing.T) {
+	store := &fakeStore{}
+	h := &MoviesHandler{store: store}
+
+	req := httptest.NewRequest(http.MethodPost, "/movies/tt123/comments", strings.NewReader(`{"user_id":999,"movie_id":"tt999","content":"hello"}`))
+	req.SetPathValue("id", "tt123")
+	rec := httptest.NewRecorder()
+
+	serveWithUser(t, 42, http.HandlerFunc(h.PostComment)).ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", rec.Code, rec.Body.String())
+	}
+	if store.createdComment.UserID != 42 {
+		t.Fatalf("expected token user id 42, got %d", store.createdComment.UserID)
+	}
+	if store.createdComment.MovieID != "tt123" {
+		t.Fatalf("expected path movie id tt123, got %q", store.createdComment.MovieID)
+	}
+}
+
+func serveWithUser(t *testing.T, userID int64, next http.Handler) http.Handler {
+	t.Helper()
+
+	tokens, err := auth.NewTokenManager("0123456789abcdef0123456789abcdef", "hypertube-test")
+	if err != nil {
+		t.Fatalf("new token manager: %v", err)
+	}
+	token, _, err := tokens.CreateAccessToken(userID)
+	if err != nil {
+		t.Fatalf("create token: %v", err)
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.Header.Set("Authorization", "Bearer "+token)
+		auth.RequireAuth(tokens)(next).ServeHTTP(w, r)
+	})
 }

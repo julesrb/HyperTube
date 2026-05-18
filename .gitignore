@@ -4,6 +4,7 @@
 # Go binaries
 services/api/api
 services/torrent-stream/torrent-stream
+.tmp/
 
 # Node
 node_modules/

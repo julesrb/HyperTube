@@ -36,7 +36,7 @@ type movieDetailResponse struct {
 	Genre            []int    `json:"genres"`
 	Runtime          int      `json:"runtime_minutes"`
 	Summary          string   `json:"summary"`
-	Director         []string `json:"director"`
+	Director         string   `json:"director"`
 	Cast             []string `json:"cast"`
 	Watched          bool     `json:"watched"`
 	Progression      float32  `json:"progression"`
@@ -60,10 +60,17 @@ func toMovieDetailResponse(m models.Movie, d models.MovieDetails) movieDetailRes
 		Note:             m.Note,
 		Genre:            m.Genre,
 		Summary:          defaultSummary,
-		Director:         d.Director,
+		Director:         firstDirector(d.Director),
 		Cast:             d.Cast,
-		Runtime:		  d.Runtime,
+		Runtime:          d.Runtime,
 		Watched:          true,
 		Progression:      12,
 	}
+}
+
+func firstDirector(directors []string) string {
+	if len(directors) == 0 {
+		return ""
+	}
+	return directors[0]
 }

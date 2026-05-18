@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"hypertube/api/internal/auth"
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
 )
@@ -65,14 +66,13 @@ func (h *MoviesHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MoviesHandler) GetWatchedMovies(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		UserID int `json:"user_id"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respond.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request body")
+	userID, ok := auth.UserIDFromContext(r.Context())
+	if !ok {
+		respond.Error(w, http.StatusUnauthorized, "UNAUTHORIZED", "missing user context")
 		return
 	}
-	movies, err := h.store.listWatched(r.Context(), input.UserID)
+
+	movies, err := h.store.listWatched(r.Context(), int(userID))
 	if err != nil {
 		log.Println("db err:", err)
 		respond.Error(w, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to load movies")
@@ -278,9 +278,13 @@ func (h *MoviesHandler) GetComments(w http.ResponseWriter, r *http.Request) {
 
 // CreateComment posts a new comment on a movie.
 func (h *MoviesHandler) PostComment(w http.ResponseWriter, r *http.Request) {
+	userID, ok := auth.UserIDFromContext(r.Context())
+	if !ok {
+		respond.Error(w, http.StatusUnauthorized, "UNAUTHORIZED", "missing user context")
+		return
+	}
+
 	var input struct {
-		UserID  int    `json:"user_id"`
-		MovieID string `json:"movie_id"`
 		Content string `json:"content"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -289,8 +293,8 @@ func (h *MoviesHandler) PostComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	comment := models.Comment{
-		UserID:  input.UserID,
-		MovieID: input.MovieID,
+		UserID:  int(userID),
+		MovieID: r.PathValue("id"),
 		Content: input.Content,
 	}
 	if comment, err := h.store.createComment(r.Context(), comment); err != nil {

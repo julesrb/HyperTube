@@ -41,6 +41,30 @@ func TestRouterAuthLoginIsPublic(t *testing.T) {
 	}
 }
 
+func TestRouterOAuthTokenIsPublic(t *testing.T) {
+	router, _ := newTestRouter(t)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(`grant_type=client_credentials`))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected public OAuth token route to return 400 for unsupported grant, got %d: %s", rec.Code, rec.Body.String())
+	}
+
+	var body struct {
+		Error string `json:"error"`
+	}
+	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if body.Error != "unsupported_grant_type" {
+		t.Fatalf("expected unsupported_grant_type, got %q", body.Error)
+	}
+}
+
 func TestRouterProtectedMovieRoutesRequireBearerToken(t *testing.T) {
 	router, _ := newTestRouter(t)
 

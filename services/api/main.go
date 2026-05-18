@@ -126,6 +126,8 @@ func newRouter(
 			r.Get("/42/callback", authHandler.CallbackFortyTwo)
 		})
 
+		r.Post("/oauth/token", authHandler.OAuthToken)
+
 		r.Get("/movies", moviesHandler.GetMovies)
 
 		r.Group(func(r chi.Router) {
@@ -148,6 +150,7 @@ func newRouter(
 
 	// Backward-compatible callback path for the original environment template.
 	r.Get("/oauth/callback/42", authHandler.CallbackFortyTwo)
+	r.Post("/oauth/token", authHandler.OAuthToken)
 
 	return r
 }

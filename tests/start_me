@@ -9,24 +9,28 @@ API_TEST_DIR="$SCRIPT_DIR/api"
 BASE_URL="${BASE_URL:-http://localhost:8080/api/v1}"
 BASE_URL="${BASE_URL%/}"
 
-TEST_IDS=("comprehensive" "forty-two" "basic")
+TEST_IDS=("comprehensive" "oauth-token" "forty-two" "basic")
 TEST_TITLES=(
   "Comprehensive API E2E"
+  "OAuth2 Token API"
   "42 OAuth Route Smoke Test"
   "Basic Curl Walkthrough"
 )
 TEST_FILES=(
   "comprehensive_api_test.sh"
+  "oauth_token_api_test.sh"
   "forty_two_auth_api_test.sh"
   "basic_api_test.sh"
 )
 TEST_DEPS=(
   "curl jq sed date tr"
+  "curl jq sed date tr grep"
   "curl jq sed awk grep mktemp"
   "curl jq"
 )
 TEST_DESCRIPTIONS=(
   "Validates public routes, registration, login, protected-route failures, JWT user context, comment ownership, and authenticated movie flows."
+  "Validates POST /oauth/token password grant behavior, OAuth2 error bodies, root route alias, and Bearer token access to protected routes."
   "Checks 42 OAuth login startup, state-cookie handling, callback CSRF protection, and provider-denial behavior; unconfigured OAuth is handled as an expected safe state."
   "Prints readable request/response examples for health, movie listing, movie lookup, torrent lookup, registration, and login. Best for quick manual inspection."
 )
@@ -63,6 +67,7 @@ Usage:
 
 Tests:
   comprehensive    Comprehensive API E2E smoke/e2e coverage.
+  oauth-token      OAuth2 password grant and token route behavior.
   forty-two        42 OAuth route surface and callback validation.
   basic            Readable curl walkthrough for manual inspection.
   all              Run every test in the order shown above.
@@ -75,7 +80,7 @@ Environment:
 Interactive controls:
   Up/Down or j/k  Move selection.
   Enter           Run selected item.
-  1-5             Jump to an item.
+  1-6             Jump to an item.
   q or Esc        Quit.
 USAGE
 }
@@ -159,7 +164,7 @@ list_tests() {
     echo
   done
 
-  printf '  %b4. Run All%b\n' "$BOLD" "$RESET"
+  printf '  %b5. Run All%b\n' "$BOLD" "$RESET"
   print_wrapped "     " "" "Runs every test above and keeps a compact pass/fail summary."
 }
 
@@ -180,11 +185,14 @@ resolve_test_index() {
     1|comprehensive|comprehensive-api|e2e|smoke)
       printf '0'
       ;;
-    2|42|forty-two|forty-two-auth|oauth|oauth42|oauth-42)
+    2|oauth-token|oauth2|oauth2-token|token|password-grant)
       printf '1'
       ;;
-    3|basic|curl|walkthrough)
+    3|42|forty-two|forty-two-auth|oauth|oauth42|oauth-42)
       printf '2'
+      ;;
+    4|basic|curl|walkthrough)
+      printf '3'
       ;;
     *)
       return 1
@@ -303,7 +311,7 @@ run_requested() {
     return 64
   fi
 
-  if [[ "$(normalize_query "$target")" == "all" || "$target" == "4" ]]; then
+  if [[ "$(normalize_query "$target")" == "all" || "$target" == "5" ]]; then
     run_all_tests
     return $?
   fi
@@ -319,7 +327,7 @@ run_requested() {
 
 draw_menu() {
   local selected="$1"
-  local total_options=5
+  local total_options=6
   local i
   local label
   local description
@@ -332,14 +340,14 @@ draw_menu() {
   printf '  %b%-14s%b %s\n' "$DIM" "Controls" "$RESET" "Up/Down, j/k, Enter, 1-$total_options, q"
   echo
 
-  for i in 0 1 2 3 4; do
+  for i in 0 1 2 3 4 5; do
     marker=" "
     number="$((i + 1))"
 
     if [[ "$i" -lt "${#TEST_IDS[@]}" ]]; then
       label="${TEST_TITLES[$i]}"
       description="${TEST_DESCRIPTIONS[$i]}"
-    elif [[ "$i" -eq 3 ]]; then
+    elif [[ "$i" -eq 4 ]]; then
       label="Run All Tests"
       description="Runs the full API test suite in order and prints a compact summary at the end."
     else
@@ -391,10 +399,10 @@ interactive_menu() {
         IFS= read -rsn2 -t 0.05 rest || true
         case "$rest" in
           "[A")
-            selected=$(( (selected + 4) % 5 ))
+            selected=$(( (selected + 5) % 6 ))
             ;;
           "[B")
-            selected=$(( (selected + 1) % 5 ))
+            selected=$(( (selected + 1) % 6 ))
             ;;
           *)
             return 0
@@ -402,12 +410,12 @@ interactive_menu() {
         esac
         ;;
       k|K)
-        selected=$(( (selected + 4) % 5 ))
+        selected=$(( (selected + 5) % 6 ))
         ;;
       j|J)
-        selected=$(( (selected + 1) % 5 ))
+        selected=$(( (selected + 1) % 6 ))
         ;;
-      1|2|3|4|5)
+      1|2|3|4|5|6)
         selected=$((key - 1))
         ;;
       q|Q)
@@ -415,10 +423,10 @@ interactive_menu() {
         ;;
       "")
         printf '\033[?25h'
-        if [[ "$selected" -le 2 ]]; then
+        if [[ "$selected" -le 3 ]]; then
           run_test_index "$selected"
           pause_after_run
-        elif [[ "$selected" -eq 3 ]]; then
+        elif [[ "$selected" -eq 4 ]]; then
           run_all_tests
           pause_after_run
         else

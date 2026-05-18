@@ -145,6 +145,7 @@ POST   /auth/register
 POST   /auth/login
 GET    /auth/42/login
 GET    /auth/42/callback
+POST   /oauth/token
 
 GET    /users
 GET    /users/:id
@@ -169,6 +170,7 @@ DELETE /comments/:id
 - Registration: email, username, first name, last name, password (bcrypt)
 - 42 OAuth when configured
 - JWT on login/OAuth callback, validated on every protected request
+- OAuth2 password grant at `POST /oauth/token`, returning a Bearer access token for protected API routes
 - GitHub OAuth and password reset are not implemented yet
 
 ---

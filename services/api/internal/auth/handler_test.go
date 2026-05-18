@@ -63,6 +63,19 @@ func (s *memoryUserStore) FindUserByEmail(_ context.Context, email string) (mode
 	return user, nil
 }
 
+func (s *memoryUserStore) FindUserByLogin(_ context.Context, login string) (models.User, error) {
+	login = strings.TrimSpace(login)
+	if email, ok := normalizeEmail(login); ok {
+		if user, ok := s.usersByEmail[email]; ok {
+			return user, nil
+		}
+	}
+	if user, ok := s.usersByUsername[login]; ok {
+		return user, nil
+	}
+	return models.User{}, ErrUserNotFound
+}
+
 func (s *memoryUserStore) FindOrCreateOAuthUser(_ context.Context, params OAuthUserParams) (models.User, error) {
 	params = normalizeOAuthUserParams(params)
 	key := oauthAccountKey(params.Provider, params.ProviderUserID)
@@ -294,6 +307,159 @@ func TestLoginRejectsUnknownUserAndWrongPassword(t *testing.T) {
 			}
 			if got := decodeErrorEnvelope(t, rec).Error.Code; got != "INVALID_CREDENTIALS" {
 				t.Fatalf("expected INVALID_CREDENTIALS, got %q", got)
+			}
+		})
+	}
+}
+
+func TestOAuthTokenPasswordGrantReturnsBearerToken(t *testing.T) {
+	store := newMemoryUserStore()
+	tokens := newTestTokenManager(t)
+	handler := NewHandler(store, tokens)
+	passwordHash, err := HashPassword("correct-horse-battery")
+	if err != nil {
+		t.Fatalf("hash password: %v", err)
+	}
+	user, err := store.CreateUser(context.Background(), CreateUserParams{
+		Email:        "alice@example.com",
+		Username:     "alice_1",
+		FirstName:    "Alice",
+		LastName:     "Example",
+		PasswordHash: passwordHash,
+	})
+	if err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+
+	form := url.Values{}
+	form.Set("grant_type", "password")
+	form.Set("username", "alice_1")
+	form.Set("password", "correct-horse-battery")
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+
+	handler.OAuthToken(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
+	}
+	var response oauthTokenResponse
+	if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if response.AccessToken == "" {
+		t.Fatal("expected access token")
+	}
+	if response.TokenType != "Bearer" {
+		t.Fatalf("expected Bearer token type, got %q", response.TokenType)
+	}
+	if response.ExpiresIn != int64(AccessTokenTTL.Seconds()) {
+		t.Fatalf("expected expires_in %d, got %d", int64(AccessTokenTTL.Seconds()), response.ExpiresIn)
+	}
+	claims, err := tokens.ValidateAccessToken(response.AccessToken)
+	if err != nil {
+		t.Fatalf("token should validate: %v", err)
+	}
+	if claims.UserID != user.ID {
+		t.Fatalf("expected token user id %d, got %d", user.ID, claims.UserID)
+	}
+}
+
+func TestOAuthTokenPasswordGrantAcceptsEmailLogin(t *testing.T) {
+	store := newMemoryUserStore()
+	handler := NewHandler(store, newTestTokenManager(t))
+	passwordHash, err := HashPassword("correct-horse-battery")
+	if err != nil {
+		t.Fatalf("hash password: %v", err)
+	}
+	if _, err := store.CreateUser(context.Background(), CreateUserParams{
+		Email:        "alice@example.com",
+		Username:     "alice_1",
+		FirstName:    "Alice",
+		LastName:     "Example",
+		PasswordHash: passwordHash,
+	}); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+
+	body := `{"grant_type":"password","username":"Alice@Example.COM","password":"correct-horse-battery"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	handler.OAuthToken(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestOAuthTokenRejectsInvalidGrant(t *testing.T) {
+	store := newMemoryUserStore()
+	handler := NewHandler(store, newTestTokenManager(t))
+	passwordHash, err := HashPassword("right-password")
+	if err != nil {
+		t.Fatalf("hash password: %v", err)
+	}
+	if _, err := store.CreateUser(context.Background(), CreateUserParams{
+		Email:        "alice@example.com",
+		Username:     "alice_1",
+		FirstName:    "Alice",
+		LastName:     "Example",
+		PasswordHash: passwordHash,
+	}); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+
+	tests := []struct {
+		name      string
+		form      url.Values
+		wantError string
+	}{
+		{
+			name: "missing grant type",
+			form: url.Values{
+				"username": {"alice_1"},
+				"password": {"right-password"},
+			},
+			wantError: "invalid_request",
+		},
+		{
+			name: "unsupported grant type",
+			form: url.Values{
+				"grant_type": {"client_credentials"},
+			},
+			wantError: "unsupported_grant_type",
+		},
+		{
+			name: "wrong password",
+			form: url.Values{
+				"grant_type": {"password"},
+				"username":   {"alice_1"},
+				"password":   {"wrong-password"},
+			},
+			wantError: "invalid_grant",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(tt.form.Encode()))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			rec := httptest.NewRecorder()
+
+			handler.OAuthToken(rec, req)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400, got %d: %s", rec.Code, rec.Body.String())
+			}
+			var response oauthErrorResponse
+			if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
+				t.Fatalf("decode response: %v", err)
+			}
+			if response.Error != tt.wantError {
+				t.Fatalf("expected error %q, got %q", tt.wantError, response.Error)
 			}
 		})
 	}

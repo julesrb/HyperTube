@@ -14,6 +14,7 @@ SCRIPT_IDS=(
   "featured"
   "search-fallback"
   "comments"
+  "oauth-token"
   "forty-two-auth"
   "forty-two-cli"
   "database"
@@ -23,6 +24,7 @@ SCRIPT_TITLES=(
   "Featured Movie Visitor Journey"
   "Search Fallback Journey"
   "Comment Lifecycle Journey"
+  "OAuth2 Token Journey"
   "42 OAuth Safety Journey"
   "Manual 42 CLI Login Journey"
   "Database Snapshot"
@@ -32,6 +34,7 @@ SCRIPT_FILES=(
   "demo_featured_movie_story.sh"
   "demo_search_fallback_story.sh"
   "demo_comments_story.sh"
+  "demo_oauth_token_story.sh"
   "demo_42_auth_story.sh"
   "demo_42_cli_login_story.sh"
   "show_db_contents.sh"
@@ -43,6 +46,7 @@ SCRIPT_DEPS=(
   "curl jq"
   "curl jq sed"
   "curl jq sed"
+  "curl jq sed"
   ""
 )
 SCRIPT_DESCRIPTIONS=(
@@ -50,12 +54,13 @@ SCRIPT_DESCRIPTIONS=(
   "Starts as an anonymous visitor on featured movies, then signs in when detail and torrent routes require authentication."
   "Demonstrates recovery from a weak search query by trying a backup query and falling back to featured movie data when needed."
   "Signs in, selects a movie, posts a comment, verifies it, edits it, fetches it by ID, and deletes it again."
+  "Registers a password user, exchanges credentials through POST /oauth/token, reuses the Bearer token, and demonstrates OAuth2 error bodies."
   "Validates the 42 OAuth start and callback safety paths, including missing provider configuration, state checks, and denied consent."
   "Guides a developer through real 42 OAuth consent from the terminal, then uses the returned JWT on a protected movie search."
   "Prints a readable snapshot of the Hypertube database via Docker Compose or psql. This is a utility, not part of Run All Walkthroughs."
 )
 
-WALKTHROUGH_COUNT=6
+WALKTHROUGH_COUNT=7
 
 RESET=""
 BOLD=""
@@ -92,6 +97,7 @@ Stories:
   featured          Anonymous featured movie browsing, then authenticated detail access.
   search-fallback   Search recovery flow with backup query and featured fallback.
   comments          Authenticated comment flow, including JWT-owned update/delete checks.
+  oauth-token       OAuth2 password grant and bearer-token walkthrough.
   forty-two-auth    42 OAuth route safety and callback validation.
   forty-two-cli     Manual real 42 OAuth login flow from the terminal.
   database          Database snapshot utility.
@@ -190,7 +196,7 @@ list_stories() {
   done
 
   printf '  %b%d. Run All Walkthroughs%b\n' "$BOLD" "$((${#SCRIPT_IDS[@]} + 1))" "$RESET"
-  print_wrapped "     " "" "Runs the six user-facing walkthrough stories in order. The database snapshot is excluded because it is an inspection utility."
+  print_wrapped "     " "" "Runs the seven user-facing walkthrough stories in order. The database snapshot is excluded because it is an inspection utility."
 }
 
 normalize_query() {
@@ -219,14 +225,17 @@ resolve_script_index() {
     4|comments|comment|comment-lifecycle|movie-comments)
       printf '3'
       ;;
-    5|42|forty-two|forty-two-auth|oauth|oauth-safety)
+    5|oauth-token|oauth2|oauth2-token|token|password-grant)
       printf '4'
       ;;
-    6|forty-two-cli|42-cli|manual-42|manual-oauth|cli-login)
+    6|42|forty-two|forty-two-auth|oauth|oauth-safety)
       printf '5'
       ;;
-    7|database|db|snapshot|show-db)
+    7|forty-two-cli|42-cli|manual-42|manual-oauth|cli-login)
       printf '6'
+      ;;
+    8|database|db|snapshot|show-db)
+      printf '7'
       ;;
     *)
       return 1
@@ -396,7 +405,7 @@ draw_menu() {
       description="${SCRIPT_DESCRIPTIONS[$i]}"
     elif [[ "$i" -eq "$run_all_index" ]]; then
       label="Run All Walkthroughs"
-      description="Runs the six user-facing walkthrough stories in order. The database snapshot stays manual."
+      description="Runs the seven user-facing walkthrough stories in order. The database snapshot stays manual."
     else
       label="Quit"
       description="Leave the user story runner without starting a script."

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	"hypertube/api/internal/models"
 	"hypertube/api/internal/respond"
@@ -17,6 +18,9 @@ type Handler struct {
 	tokens                  *TokenManager
 	fortyTwo                oauthProvider
 	frontendAuthCallbackURL string
+	passwordResetMailer     passwordResetMailer
+	passwordResetURL        string
+	passwordResetTTL        time.Duration
 }
 
 type HandlerOption func(*Handler)
@@ -33,8 +37,28 @@ func WithFrontendAuthCallbackURL(callbackURL string) HandlerOption {
 	}
 }
 
+func WithPasswordResetMailer(mailer passwordResetMailer) HandlerOption {
+	return func(h *Handler) {
+		h.passwordResetMailer = mailer
+	}
+}
+
+func WithPasswordResetURL(resetURL string) HandlerOption {
+	return func(h *Handler) {
+		h.passwordResetURL = resetURL
+	}
+}
+
+func WithPasswordResetTTL(ttl time.Duration) HandlerOption {
+	return func(h *Handler) {
+		if ttl > 0 {
+			h.passwordResetTTL = ttl
+		}
+	}
+}
+
 func NewHandler(store userStore, tokens *TokenManager, opts ...HandlerOption) *Handler {
-	handler := &Handler{store: store, tokens: tokens}
+	handler := &Handler{store: store, tokens: tokens, passwordResetTTL: 30 * time.Minute}
 	for _, opt := range opts {
 		opt(handler)
 	}

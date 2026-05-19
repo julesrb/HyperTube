@@ -5,9 +5,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"hypertube/api/internal/auth"
 	"hypertube/api/internal/comments"
+	"hypertube/api/internal/email"
 	"hypertube/api/internal/movies"
 	"hypertube/api/internal/movies/archive.org"
 	"hypertube/api/internal/movies/c411"
@@ -30,14 +32,20 @@ func main() {
 
 	authStore := auth.NewStore(db)
 	fortyTwoRedirectURL := getEnv("FORTYTWO_REDIRECT_URL", "http://localhost:8080/api/v1/auth/42/callback")
-	authHandler := auth.NewHandler(authStore, tokenManager,
+	authOptions := []auth.HandlerOption{
 		auth.WithFrontendAuthCallbackURL(getEnv("FRONTEND_AUTH_CALLBACK_URL", "http://localhost:4200/auth/callback")),
+		auth.WithPasswordResetURL(getEnv("PASSWORD_RESET_URL", "http://localhost:4200/{locale}/reset-password")),
+		auth.WithPasswordResetTTL(getPasswordResetTTL()),
 		auth.WithFortyTwoOAuth(auth.NewFortyTwoOAuth(auth.FortyTwoOAuthConfig{
 			ClientID:     os.Getenv("FORTYTWO_CLIENT_ID"),
 			ClientSecret: os.Getenv("FORTYTWO_CLIENT_SECRET"),
 			RedirectURL:  fortyTwoRedirectURL,
 		})),
-	)
+	}
+	if passwordResetMailer := newPasswordResetMailer(); passwordResetMailer != nil {
+		authOptions = append(authOptions, auth.WithPasswordResetMailer(passwordResetMailer))
+	}
+	authHandler := auth.NewHandler(authStore, tokenManager, authOptions...)
 
 	movieStore := movies.NewStore(db)
 	commentStore := comments.NewStore(db)
@@ -122,6 +130,8 @@ func newRouter(
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/register", authHandler.Register)
 			r.Post("/login", authHandler.Login)
+			r.Post("/password-reset", authHandler.RequestPasswordReset)
+			r.Post("/reset-password", authHandler.ResetPassword)
 			r.Get("/42/login", authHandler.LoginFortyTwo)
 			r.Get("/42/callback", authHandler.CallbackFortyTwo)
 		})
@@ -153,6 +163,33 @@ func newRouter(
 	r.Post("/oauth/token", authHandler.OAuthToken)
 
 	return r
+}
+
+func newPasswordResetMailer() *email.BrevoMailer {
+	if os.Getenv("BREVO_API_KEY") == "" {
+		return nil
+	}
+	mailer, err := email.NewBrevoMailer(email.BrevoConfig{
+		APIKey:    os.Getenv("BREVO_API_KEY"),
+		FromEmail: os.Getenv("MAIL_FROM_EMAIL"),
+		FromName:  os.Getenv("MAIL_FROM_NAME"),
+	})
+	if err != nil {
+		log.Fatalf("init Brevo mailer: %v", err)
+	}
+	return mailer
+}
+
+func getPasswordResetTTL() time.Duration {
+	rawTTL := os.Getenv("PASSWORD_RESET_TTL")
+	if rawTTL == "" {
+		return 30 * time.Minute
+	}
+	ttl, err := time.ParseDuration(rawTTL)
+	if err != nil {
+		log.Fatalf("parse PASSWORD_RESET_TTL: %v", err)
+	}
+	return ttl
 }
 
 func getEnv(key, fallback string) string {

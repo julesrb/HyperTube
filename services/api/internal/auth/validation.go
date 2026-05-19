@@ -35,8 +35,8 @@ func validateRegisterRequest(req registerRequest) (CreateUserParams, string, boo
 		return CreateUserParams{}, "last_name is required and must be at most 100 characters", false
 	}
 
-	if len(req.Password) < minPasswordBytes || len(req.Password) > maxPasswordBytes {
-		return CreateUserParams{}, "password must be between 8 and 72 bytes", false
+	if validationMessage, ok := validatePassword(req.Password); !ok {
+		return CreateUserParams{}, validationMessage, false
 	}
 
 	return CreateUserParams{
@@ -56,6 +56,13 @@ func validateLoginRequest(req loginRequest) (string, string, bool) {
 		return "", "password is required", false
 	}
 	return email, "", true
+}
+
+func validatePassword(password string) (string, bool) {
+	if len(password) < minPasswordBytes || len(password) > maxPasswordBytes {
+		return "password must be between 8 and 72 bytes", false
+	}
+	return "", true
 }
 
 func normalizeEmail(raw string) (string, bool) {

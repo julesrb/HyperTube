@@ -17,6 +17,7 @@ SCRIPT_IDS=(
   "oauth-token"
   "forty-two-auth"
   "forty-two-cli"
+  "password-reset"
   "database"
 )
 SCRIPT_TITLES=(
@@ -27,6 +28,7 @@ SCRIPT_TITLES=(
   "OAuth2 Token Journey"
   "42 OAuth Safety Journey"
   "Manual 42 CLI Login Journey"
+  "Password Reset Journey"
   "Database Snapshot"
 )
 SCRIPT_FILES=(
@@ -37,6 +39,7 @@ SCRIPT_FILES=(
   "demo_oauth_token_story.sh"
   "demo_42_auth_story.sh"
   "demo_42_cli_login_story.sh"
+  "demo_password_reset_story.sh"
   "show_db_contents.sh"
 )
 SCRIPT_DEPS=(
@@ -44,6 +47,7 @@ SCRIPT_DEPS=(
   "curl jq"
   "curl jq"
   "curl jq"
+  "curl jq sed"
   "curl jq sed"
   "curl jq sed"
   "curl jq sed"
@@ -57,10 +61,11 @@ SCRIPT_DESCRIPTIONS=(
   "Registers a password user, exchanges credentials through POST /oauth/token, reuses the Bearer token, and demonstrates OAuth2 error bodies."
   "Validates the 42 OAuth start and callback safety paths, including missing provider configuration, state checks, and denied consent."
   "Guides a developer through real 42 OAuth consent from the terminal, then uses the returned JWT on a protected movie search."
+  "Requests a password reset email, checks account-enumeration-safe responses, and optionally consumes RESET_TOKEN to verify the new password."
   "Prints a readable snapshot of the Hypertube database via Docker Compose or psql. This is a utility, not part of Run All Walkthroughs."
 )
 
-WALKTHROUGH_COUNT=7
+WALKTHROUGH_COUNT=8
 
 RESET=""
 BOLD=""
@@ -100,6 +105,7 @@ Stories:
   oauth-token       OAuth2 password grant and bearer-token walkthrough.
   forty-two-auth    42 OAuth route safety and callback validation.
   forty-two-cli     Manual real 42 OAuth login flow from the terminal.
+  password-reset    Password reset request and token-consumption walkthrough.
   database          Database snapshot utility.
   all               Run every walkthrough story except the database snapshot.
 
@@ -111,7 +117,7 @@ Environment:
 Interactive controls:
   Up/Down or j/k    Move selection.
   Enter             Run selected item.
-  1-9               Jump to an item.
+  1-9               Jump to a story or utility.
   q or Esc          Quit.
 USAGE
 }
@@ -196,7 +202,7 @@ list_stories() {
   done
 
   printf '  %b%d. Run All Walkthroughs%b\n' "$BOLD" "$((${#SCRIPT_IDS[@]} + 1))" "$RESET"
-  print_wrapped "     " "" "Runs the seven user-facing walkthrough stories in order. The database snapshot is excluded because it is an inspection utility."
+  print_wrapped "     " "" "Runs the eight user-facing walkthrough stories in order. The database snapshot is excluded because it is an inspection utility."
 }
 
 normalize_query() {
@@ -234,8 +240,11 @@ resolve_script_index() {
     7|forty-two-cli|42-cli|manual-42|manual-oauth|cli-login)
       printf '6'
       ;;
-    8|database|db|snapshot|show-db)
+    8|password-reset|password|reset|forgot-password)
       printf '7'
+      ;;
+    9|database|db|snapshot|show-db)
+      printf '8'
       ;;
     *)
       return 1
@@ -393,7 +402,7 @@ draw_menu() {
   printf '\033[H\033[2J'
   print_header
   printf '  %b%-14s%b %s\n' "$DIM" "BASE_URL" "$RESET" "$BASE_URL"
-  printf '  %b%-14s%b %s\n' "$DIM" "Controls" "$RESET" "Up/Down, j/k, Enter, 1-$total_options, q"
+  printf '  %b%-14s%b %s\n' "$DIM" "Controls" "$RESET" "Up/Down, j/k, Enter, 1-${#SCRIPT_IDS[@]}, q"
   echo
 
   for ((i = 0; i < total_options; i++)); do
@@ -405,7 +414,7 @@ draw_menu() {
       description="${SCRIPT_DESCRIPTIONS[$i]}"
     elif [[ "$i" -eq "$run_all_index" ]]; then
       label="Run All Walkthroughs"
-      description="Runs the seven user-facing walkthrough stories in order. The database snapshot stays manual."
+      description="Runs the eight user-facing walkthrough stories in order. The database snapshot stays manual."
     else
       label="Quit"
       description="Leave the user story runner without starting a script."

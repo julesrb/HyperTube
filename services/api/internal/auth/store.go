@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"hypertube/api/internal/models"
 
@@ -14,8 +15,9 @@ import (
 )
 
 var (
-	ErrUserNotFound  = errors.New("user not found")
-	ErrDuplicateUser = errors.New("duplicate user")
+	ErrUserNotFound              = errors.New("user not found")
+	ErrDuplicateUser             = errors.New("duplicate user")
+	ErrInvalidPasswordResetToken = errors.New("invalid password reset token")
 )
 
 type userStore interface {
@@ -23,6 +25,8 @@ type userStore interface {
 	FindUserByEmail(ctx context.Context, email string) (models.User, error)
 	FindUserByLogin(ctx context.Context, login string) (models.User, error)
 	FindOrCreateOAuthUser(ctx context.Context, params OAuthUserParams) (models.User, error)
+	CreatePasswordResetToken(ctx context.Context, params CreatePasswordResetTokenParams) error
+	ResetPasswordWithToken(ctx context.Context, tokenHash string, passwordHash string) (models.User, error)
 }
 
 type Store struct {
@@ -44,6 +48,12 @@ type OAuthUserParams struct {
 	Username       string
 	FirstName      string
 	LastName       string
+}
+
+type CreatePasswordResetTokenParams struct {
+	UserID    int64
+	TokenHash string
+	ExpiresAt time.Time
 }
 
 func NewStore(db *pgxpool.Pool) *Store {
@@ -158,6 +168,51 @@ func (s *Store) FindOrCreateOAuthUser(ctx context.Context, params OAuthUserParam
 	}
 
 	if err := insertOAuthAccount(ctx, tx, user.ID, params); err != nil {
+		return models.User{}, err
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
+func (s *Store) CreatePasswordResetToken(ctx context.Context, params CreatePasswordResetTokenParams) error {
+	_, err := s.db.Exec(ctx, `
+		INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+		VALUES ($1, $2, $3)
+	`, params.UserID, params.TokenHash, params.ExpiresAt)
+	return err
+}
+
+func (s *Store) ResetPasswordWithToken(ctx context.Context, tokenHash string, passwordHash string) (models.User, error) {
+	tx, err := s.db.Begin(ctx)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer tx.Rollback(ctx)
+
+	var userID int64
+	err = tx.QueryRow(ctx, `
+		UPDATE password_reset_tokens
+		SET used_at = NOW()
+		WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW()
+		RETURNING user_id
+	`, tokenHash).Scan(&userID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return models.User{}, ErrInvalidPasswordResetToken
+		}
+		return models.User{}, err
+	}
+
+	user, err := scanUser(tx.QueryRow(ctx, `
+		UPDATE users
+		SET password_hash = $1, updated_at = NOW()
+		WHERE id = $2
+		RETURNING id, email, username, first_name, last_name, COALESCE(password_hash, ''), created_at, updated_at
+	`, passwordHash, userID))
+	if err != nil {
 		return models.User{}, err
 	}
 

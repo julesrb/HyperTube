@@ -20,6 +20,13 @@ type memoryUserStore struct {
 	usersByEmail    map[string]models.User
 	usersByUsername map[string]models.User
 	oauthAccounts   map[string]int64
+	resetTokens     map[string]memoryPasswordResetToken
+}
+
+type memoryPasswordResetToken struct {
+	userID    int64
+	expiresAt time.Time
+	used      bool
 }
 
 func newMemoryUserStore() *memoryUserStore {
@@ -27,6 +34,7 @@ func newMemoryUserStore() *memoryUserStore {
 		usersByEmail:    make(map[string]models.User),
 		usersByUsername: make(map[string]models.User),
 		oauthAccounts:   make(map[string]int64),
+		resetTokens:     make(map[string]memoryPasswordResetToken),
 	}
 }
 
@@ -118,6 +126,34 @@ func (s *memoryUserStore) findUserByID(userID int64) (models.User, error) {
 
 func oauthAccountKey(provider string, providerUserID string) string {
 	return fmt.Sprintf("%s:%s", provider, providerUserID)
+}
+
+func (s *memoryUserStore) CreatePasswordResetToken(_ context.Context, params CreatePasswordResetTokenParams) error {
+	s.resetTokens[params.TokenHash] = memoryPasswordResetToken{
+		userID:    params.UserID,
+		expiresAt: params.ExpiresAt,
+	}
+	return nil
+}
+
+func (s *memoryUserStore) ResetPasswordWithToken(_ context.Context, tokenHash string, passwordHash string) (models.User, error) {
+	token, ok := s.resetTokens[tokenHash]
+	if !ok || token.used || !token.expiresAt.After(time.Now().UTC()) {
+		return models.User{}, ErrInvalidPasswordResetToken
+	}
+
+	user, err := s.findUserByID(token.userID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	token.used = true
+	s.resetTokens[tokenHash] = token
+	user.PasswordHash = passwordHash
+	user.UpdatedAt = time.Now().UTC()
+	s.usersByEmail[user.Email] = user
+	s.usersByUsername[user.Username] = user
+	return user, nil
 }
 
 func TestRegisterAndLoginHappyPath(t *testing.T) {

@@ -774,6 +774,120 @@ func TestFortyTwoLoginRequiresConfiguredProvider(t *testing.T) {
 	}
 }
 
+func TestGitHubLoginRedirectsWithStateCookie(t *testing.T) {
+	store := newMemoryUserStore()
+	tokens := newTestTokenManager(t)
+	provider := &fakeOAuthProvider{authURL: "https://github.com/login/oauth/authorize"}
+	handler := NewHandler(store, tokens, WithGitHubOAuth(provider))
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/auth/github/login", nil)
+	rec := httptest.NewRecorder()
+
+	handler.LoginGitHub(rec, req)
+
+	if rec.Code != http.StatusFound {
+		t.Fatalf("expected 302, got %d: %s", rec.Code, rec.Body.String())
+	}
+	if provider.lastState == "" {
+		t.Fatal("expected generated OAuth state")
+	}
+	location := rec.Header().Get("Location")
+	if !strings.Contains(location, "state="+provider.lastState) {
+		t.Fatalf("expected redirect location to include state, got %q", location)
+	}
+
+	cookie := rec.Result().Cookies()[0]
+	if cookie.Name != githubOAuthStateCookieName {
+		t.Fatalf("expected state cookie %q, got %q", githubOAuthStateCookieName, cookie.Name)
+	}
+	if cookie.Value != provider.lastState {
+		t.Fatalf("expected cookie state %q, got %q", provider.lastState, cookie.Value)
+	}
+	if !cookie.HttpOnly {
+		t.Fatal("state cookie must be HttpOnly")
+	}
+}
+
+func TestGitHubCallbackCreatesUserAndToken(t *testing.T) {
+	store := newMemoryUserStore()
+	tokens := newTestTokenManager(t)
+	provider := &fakeOAuthProvider{
+		identity: OAuthIdentity{
+			Provider:       githubProvider,
+			ProviderUserID: "98765",
+			Email:          "gh.user@example.com",
+			Username:       "gh_user",
+			FirstName:      "Git",
+			LastName:       "Hub",
+		},
+	}
+	handler := NewHandler(store, tokens, WithGitHubOAuth(provider))
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/auth/github/callback?code=valid-code&state=test-state", nil)
+	req.AddCookie(&http.Cookie{Name: githubOAuthStateCookieName, Value: "test-state"})
+	rec := httptest.NewRecorder()
+
+	handler.CallbackGitHub(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
+	}
+
+	response := decodeAuthEnvelope(t, rec)
+	if response.Data.User.Email != "gh.user@example.com" {
+		t.Fatalf("expected GitHub email, got %q", response.Data.User.Email)
+	}
+	if response.Data.User.Username != "gh_user" {
+		t.Fatalf("expected GitHub login as username, got %q", response.Data.User.Username)
+	}
+	if _, err := tokens.ValidateAccessToken(response.Data.AccessToken); err != nil {
+		t.Fatalf("GitHub auth token should validate: %v", err)
+	}
+
+	secondReq := httptest.NewRequest(http.MethodGet, "/api/v1/auth/github/callback?code=valid-code&state=second-state", nil)
+	secondReq.AddCookie(&http.Cookie{Name: githubOAuthStateCookieName, Value: "second-state"})
+	secondRec := httptest.NewRecorder()
+
+	handler.CallbackGitHub(secondRec, secondReq)
+	secondResponse := decodeAuthEnvelope(t, secondRec)
+	if secondResponse.Data.User.ID != response.Data.User.ID {
+		t.Fatalf("expected repeat GitHub login to reuse user id %d, got %d", response.Data.User.ID, secondResponse.Data.User.ID)
+	}
+}
+
+func TestGitHubCallbackRejectsInvalidState(t *testing.T) {
+	store := newMemoryUserStore()
+	tokens := newTestTokenManager(t)
+	provider := &fakeOAuthProvider{identity: OAuthIdentity{Provider: githubProvider, ProviderUserID: "1", Username: "gh"}}
+	handler := NewHandler(store, tokens, WithGitHubOAuth(provider))
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/auth/github/callback?code=valid-code&state=bad-state", nil)
+	req.AddCookie(&http.Cookie{Name: githubOAuthStateCookieName, Value: "good-state"})
+	rec := httptest.NewRecorder()
+
+	handler.CallbackGitHub(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d: %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestGitHubLoginRequiresConfiguredProvider(t *testing.T) {
+	handler := NewHandler(newMemoryUserStore(), newTestTokenManager(t))
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/auth/github/login", nil)
+	rec := httptest.NewRecorder()
+
+	handler.LoginGitHub(rec, req)
+
+	if rec.Code != http.StatusServiceUnavailable {
+		t.Fatalf("expected 503, got %d: %s", rec.Code, rec.Body.String())
+	}
+	if got := decodeErrorEnvelope(t, rec).Error.Code; got != "OAUTH_NOT_CONFIGURED" {
+		t.Fatalf("expected OAUTH_NOT_CONFIGURED, got %q", got)
+	}
+}
+
 func findCookie(t *testing.T, rec *httptest.ResponseRecorder, name string) *http.Cookie {
 	t.Helper()
 

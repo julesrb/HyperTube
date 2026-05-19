@@ -17,6 +17,7 @@ type Handler struct {
 	store                   userStore
 	tokens                  *TokenManager
 	fortyTwo                oauthProvider
+	github                  oauthProvider
 	frontendAuthCallbackURL string
 	passwordResetMailer     passwordResetMailer
 	passwordResetURL        string
@@ -28,6 +29,12 @@ type HandlerOption func(*Handler)
 func WithFortyTwoOAuth(provider oauthProvider) HandlerOption {
 	return func(h *Handler) {
 		h.fortyTwo = provider
+	}
+}
+
+func WithGitHubOAuth(provider oauthProvider) HandlerOption {
+	return func(h *Handler) {
+		h.github = provider
 	}
 }
 

@@ -32,6 +32,7 @@ func main() {
 
 	authStore := auth.NewStore(db)
 	fortyTwoRedirectURL := getEnv("FORTYTWO_REDIRECT_URL", "http://localhost:8080/api/v1/auth/42/callback")
+	githubRedirectURL := getEnv("GITHUB_REDIRECT_URL", "http://localhost:8080/api/v1/auth/github/callback")
 	authOptions := []auth.HandlerOption{
 		auth.WithFrontendAuthCallbackURL(getEnv("FRONTEND_AUTH_CALLBACK_URL", "http://localhost:4200/auth/callback")),
 		auth.WithPasswordResetURL(getEnv("PASSWORD_RESET_URL", "http://localhost:4200/{locale}/reset-password")),
@@ -40,6 +41,11 @@ func main() {
 			ClientID:     os.Getenv("FORTYTWO_CLIENT_ID"),
 			ClientSecret: os.Getenv("FORTYTWO_CLIENT_SECRET"),
 			RedirectURL:  fortyTwoRedirectURL,
+		})),
+		auth.WithGitHubOAuth(auth.NewGitHubOAuth(auth.GitHubOAuthConfig{
+			ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
+			ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
+			RedirectURL:  githubRedirectURL,
 		})),
 	}
 	if passwordResetMailer := newPasswordResetMailer(); passwordResetMailer != nil {
@@ -134,6 +140,8 @@ func newRouter(
 			r.Post("/reset-password", authHandler.ResetPassword)
 			r.Get("/42/login", authHandler.LoginFortyTwo)
 			r.Get("/42/callback", authHandler.CallbackFortyTwo)
+			r.Get("/github/login", authHandler.LoginGitHub)
+			r.Get("/github/callback", authHandler.CallbackGitHub)
 		})
 
 		r.Post("/oauth/token", authHandler.OAuthToken)
@@ -160,6 +168,7 @@ func newRouter(
 
 	// Backward-compatible callback path for the original environment template.
 	r.Get("/oauth/callback/42", authHandler.CallbackFortyTwo)
+	r.Get("/oauth/callback/github", authHandler.CallbackGitHub)
 	r.Post("/oauth/token", authHandler.OAuthToken)
 
 	return r

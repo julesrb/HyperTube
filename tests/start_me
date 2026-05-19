@@ -9,11 +9,12 @@ API_TEST_DIR="$SCRIPT_DIR/api"
 BASE_URL="${BASE_URL:-http://localhost:8080/api/v1}"
 BASE_URL="${BASE_URL%/}"
 
-TEST_IDS=("comprehensive" "oauth-token" "forty-two" "basic" "password-reset")
+TEST_IDS=("comprehensive" "oauth-token" "forty-two" "github" "basic" "password-reset")
 TEST_TITLES=(
   "Comprehensive API E2E"
   "OAuth2 Token API"
   "42 OAuth Route Smoke Test"
+  "GitHub OAuth Route Smoke Test"
   "Basic Curl Walkthrough"
   "Password Reset API"
 )
@@ -21,12 +22,14 @@ TEST_FILES=(
   "comprehensive_api_test.sh"
   "oauth_token_api_test.sh"
   "forty_two_auth_api_test.sh"
+  "github_auth_api_test.sh"
   "basic_api_test.sh"
   "password_reset_api_test.sh"
 )
 TEST_DEPS=(
   "curl jq sed date tr"
   "curl jq sed date tr grep"
+  "curl jq sed awk grep mktemp"
   "curl jq sed awk grep mktemp"
   "curl jq"
   "curl jq sed"
@@ -35,6 +38,7 @@ TEST_DESCRIPTIONS=(
   "Validates public routes, registration, login, protected-route failures, JWT user context, comment ownership, and authenticated movie flows."
   "Validates POST /oauth/token password grant behavior, OAuth2 error bodies, root route alias, and Bearer token access to protected routes."
   "Checks 42 OAuth login startup, state-cookie handling, callback CSRF protection, and provider-denial behavior; unconfigured OAuth is handled as an expected safe state."
+  "Checks GitHub OAuth login startup, state-cookie handling, callback CSRF protection, and provider-denial behavior; unconfigured OAuth is handled as an expected safe state."
   "Prints readable request/response examples for health, movie listing, movie lookup, torrent lookup, registration, and login. Best for quick manual inspection."
   "Validates password-reset request validation, missing-mailer behavior, reset-token validation, and invalid or expired token errors."
 )
@@ -73,6 +77,7 @@ Tests:
   comprehensive    Comprehensive API E2E smoke/e2e coverage.
   oauth-token      OAuth2 password grant and token route behavior.
   forty-two        42 OAuth route surface and callback validation.
+  github           GitHub OAuth route surface and callback validation.
   basic            Readable curl walkthrough for manual inspection.
   password-reset   Password reset route validation and invalid-token behavior.
   all              Run every test in the order shown above.
@@ -85,7 +90,7 @@ Environment:
 Interactive controls:
   Up/Down or j/k  Move selection.
   Enter           Run selected item.
-  1-7             Jump to an item.
+  1-8             Jump to an item.
   q or Esc        Quit.
 USAGE
 }
@@ -169,7 +174,7 @@ list_tests() {
     echo
   done
 
-  printf '  %b6. Run All%b\n' "$BOLD" "$RESET"
+  printf '  %b%d. Run All%b\n' "$BOLD" "$((${#TEST_IDS[@]} + 1))" "$RESET"
   print_wrapped "     " "" "Runs every test above and keeps a compact pass/fail summary."
 }
 
@@ -196,11 +201,14 @@ resolve_test_index() {
     3|42|forty-two|forty-two-auth|oauth|oauth42|oauth-42)
       printf '2'
       ;;
-    4|basic|curl|walkthrough)
+    4|github|github-auth|github-oauth)
       printf '3'
       ;;
-    5|password-reset|password|reset|forgot-password)
+    5|basic|curl|walkthrough)
       printf '4'
+      ;;
+    6|password-reset|password|reset|forgot-password)
+      printf '5'
       ;;
     *)
       return 1
@@ -319,7 +327,7 @@ run_requested() {
     return 64
   fi
 
-  if [[ "$(normalize_query "$target")" == "all" || "$target" == "6" ]]; then
+  if [[ "$(normalize_query "$target")" == "all" || "$target" == "$((${#TEST_IDS[@]} + 1))" ]]; then
     run_all_tests
     return $?
   fi
@@ -335,12 +343,18 @@ run_requested() {
 
 draw_menu() {
   local selected="$1"
-  local total_options=7
+  local total_options
+  local run_all_index
+  local quit_index
   local i
   local label
   local description
   local marker
   local number
+
+  total_options="$((${#TEST_IDS[@]} + 2))"
+  run_all_index="${#TEST_IDS[@]}"
+  quit_index="$((run_all_index + 1))"
 
   printf '\033[H\033[2J'
   print_header
@@ -348,14 +362,14 @@ draw_menu() {
   printf '  %b%-14s%b %s\n' "$DIM" "Controls" "$RESET" "Up/Down, j/k, Enter, 1-$total_options, q"
   echo
 
-  for i in 0 1 2 3 4 5 6; do
+  for ((i = 0; i < total_options; i++)); do
     marker=" "
     number="$((i + 1))"
 
     if [[ "$i" -lt "${#TEST_IDS[@]}" ]]; then
       label="${TEST_TITLES[$i]}"
       description="${TEST_DESCRIPTIONS[$i]}"
-    elif [[ "$i" -eq 5 ]]; then
+    elif [[ "$i" -eq "$run_all_index" ]]; then
       label="Run All Tests"
       description="Runs the full API test suite in order and prints a compact summary at the end."
     else
@@ -387,11 +401,18 @@ interactive_menu() {
   local selected=0
   local key
   local rest
+  local total_options
+  local run_all_index
+  local quit_index
 
   if [[ ! -t 0 || ! -t 1 ]]; then
     usage >&2
     return 64
   fi
+
+  total_options="$((${#TEST_IDS[@]} + 2))"
+  run_all_index="${#TEST_IDS[@]}"
+  quit_index="$((run_all_index + 1))"
 
   printf '\033[?25l'
   trap 'printf "\033[?25h"; exit 130' INT TERM
@@ -407,10 +428,10 @@ interactive_menu() {
         IFS= read -rsn2 -t 0.05 rest || true
         case "$rest" in
           "[A")
-            selected=$(( (selected + 6) % 7 ))
+            selected=$(((selected + total_options - 1) % total_options))
             ;;
           "[B")
-            selected=$(( (selected + 1) % 7 ))
+            selected=$(((selected + 1) % total_options))
             ;;
           *)
             return 0
@@ -418,12 +439,12 @@ interactive_menu() {
         esac
         ;;
       k|K)
-        selected=$(( (selected + 6) % 7 ))
+        selected=$(((selected + total_options - 1) % total_options))
         ;;
       j|J)
-        selected=$(( (selected + 1) % 7 ))
+        selected=$(((selected + 1) % total_options))
         ;;
-      1|2|3|4|5|6|7)
+      1|2|3|4|5|6|7|8)
         selected=$((key - 1))
         ;;
       q|Q)
@@ -431,13 +452,13 @@ interactive_menu() {
         ;;
       "")
         printf '\033[?25h'
-        if [[ "$selected" -le 4 ]]; then
+        if [[ "$selected" -lt "${#TEST_IDS[@]}" ]]; then
           run_test_index "$selected"
           pause_after_run
-        elif [[ "$selected" -eq 5 ]]; then
+        elif [[ "$selected" -eq "$run_all_index" ]]; then
           run_all_tests
           pause_after_run
-        else
+        elif [[ "$selected" -eq "$quit_index" ]]; then
           return 0
         fi
         printf '\033[?25l'

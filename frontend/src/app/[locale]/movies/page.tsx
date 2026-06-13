@@ -76,7 +76,7 @@ function SearchBar({searchValue, onChange}: {searchValue: string, onChange: (e?:
 
     return (<div className="flex items-center px-6">
         <input ref={inputRef} type="search" placeholder={t("searchPlaceholder")} value={searchValue} onChange={onChange}
-        className="w-full bg-white text-5xl md:text-7xl xl:text-9xl font-condensed uppercase border-b focus:border-b-2"></input>
+        className="w-full bg-white text-5xl md:text-6xl xl:text-8xl font-condensed uppercase border-b focus:border-b-2"></input>
         <CloseButton className="absolute right-10" onClickAction={() => onChange()} disabled={searchValue.length === 0}/>
     </div>);
 }

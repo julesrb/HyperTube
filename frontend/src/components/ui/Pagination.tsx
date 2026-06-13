@@ -19,7 +19,7 @@ export default function Pagination({children, currenIndex, totalPage, onClick} :
             onClick(index);
     }
 
-    return (<div className="w-full mb-4">
+    return (<div className="w-full sm:px-23">
         {children}
         {totalPage > 1 &&
             <div className="flex w-full gap-2 justify-center my-4">

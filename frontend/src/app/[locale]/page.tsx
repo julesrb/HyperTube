@@ -71,7 +71,7 @@ export default function HomePage() {
         <MoviesHero movies={shuffleArray(featured).slice(0, 5)} />
         <GenreTags genreCount={genreCount} className="justify-center w-full my-6 md:my-8"/>
 
-        <div className="flex flex-col gap-4 px-4 sm:gap-6 sm:px-6" >
+        <div className="flex flex-col gap-4 px-4 sm:gap-6 sm:px-28" >
             {(continueWatching && continueWatching.length > 0) &&
             <Section title={t("continueWatching")} href="/users?tab=history">
                 <MoviesCard movieSets={continueWatching} setLimit={true} />

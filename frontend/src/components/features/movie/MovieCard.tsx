@@ -13,7 +13,7 @@ export default function MovieCard({movie, user, className, showTitle = true} : {
         if (watchMovie)
             watchingPercent = watchMovie.watch_percent;
     }
-    const containerClass = "relative aspect-10/7 overflow-hidden border";
+    const containerClass = "relative aspect-10/6 overflow-hidden";
     const [isLoaded, setIsLoaded] = useState(false);
     useEffect(() => {
         console.log("poster loaded", isLoaded);

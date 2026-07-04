@@ -1,6 +1,9 @@
 .env
 *.env
 
+# Cloudflare Tunnel credentials
+srcs/requirements/cloudflared/creds.json
+
 # Go binaries
 services/api/api
 services/torrent-stream/torrent-stream

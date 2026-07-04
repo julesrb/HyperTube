@@ -2,7 +2,7 @@ import {refreshAccessToken} from "@/services/auth.service";
 import {ApiError} from "@/services/ApiError";
 
 type ApiOptions = RequestInit & {body?: unknown};
-export const API_URL = "http://localhost:8080/api/v1";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 export default async function apiClient<T>(endpoint: string, locale?: string, options?: ApiOptions): Promise<T> {
     const token = localStorage.getItem("token");

@@ -68,10 +68,22 @@ services:
         NEXT_PUBLIC_OPENSUBTITLES_API_KEY: ${NEXT_PUBLIC_OPENSUBTITLES_API_KEY}
         NEXT_PUBLIC_OPENSUBTITLES_USERNAME: ${NEXT_PUBLIC_OPENSUBTITLES_USERNAME}
         NEXT_PUBLIC_OPENSUBTITLES_PASSWORD: ${NEXT_PUBLIC_OPENSUBTITLES_PASSWORD}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     restart: unless-stopped
     ports:
       - "4200:4200"
     depends_on:
+      - api
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --config /etc/cloudflared/config.yml run ${CLOUDFLARE_TUNNEL_ID}
+    volumes:
+      - ./requirements/cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./requirements/cloudflared/creds.json:/etc/cloudflared/creds.json:ro
+    depends_on:
+      - frontend
       - api
 
 volumes:

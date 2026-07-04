@@ -1,0 +1,8 @@
+credentials-file: /etc/cloudflared/creds.json
+
+ingress:
+  - hostname: app.seeyousoon.uk
+    service: http://frontend:4200
+  - hostname: api.seeyousoon.uk
+    service: http://api:8080
+  - service: http_status:404

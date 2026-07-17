@@ -1,29 +1,97 @@
-.PHONY: up up-vpn down build logs api stream frontend
+####################################################### VARIABLE #######################################################
+NAME		:=	hypertube
+SRCS_D		:=	srcs
+ENV_EXEMPLE	:=	.env.exemple
+DATA_DIR	:=	$(SRCS_D)/data
+ENV_FILE	:=	$(SRCS_D)/.env
+COMPOSE_F	:=	$(SRCS_D)/docker-compose.yml
+SERVICE		?=	#Leave blank
 
-up:
-	docker compose up --build
+######################################################## FLAGS #########################################################
+FLAGS		=	-f $(COMPOSE_F)
+COMPOSE		=	docker compose
+DSHELL		=	/bin/sh
 
-up-vpn:
-	docker compose --profile vpn up --build
+######################################################## RULES #########################################################
+.DEFAULT_GOAL = all
 
-down:
-	docker compose down
+.PHONY: all
+all			:	$(NAME)
 
-build:
-	docker compose build
+$(NAME)		:
+			mkdir -p $(DATA_DIR)
+			$(COMPOSE) $(FLAGS) up --build $(SERVICE)
 
-logs:
-	docker compose logs -f
+CMDS		:=	up build down ps ls images events top
+.PHONY: $(CMDS)
+$(CMDS)		:
+			$(COMPOSE) $(FLAGS) $@ $(SERVICE)
 
-api:
-	cd services/api && go run .
+.PHONY: detach
+detach		:
+			$(COMPOSE) $(FLAGS) up --$@ $(SERVICE)
 
-stream:
-	cd services/torrent-stream && go run .
+.PHONY: logs
+logs		:	build
+			$(COMPOSE) $(FLAGS) $@ -f $(SERVICE)
 
-frontend:
-	cd frontend && npm run dev
+.PHONY: exec
+exec		:
+			$(COMPOSE) $(FLAGS) $@ $(SERVICE) $(DSHELL)
 
-tidy:
-	cd services/api && go mod tidy
-	cd services/torrent-stream && go mod tidy
+.PHONY: env
+env			:
+			./launch.d/01generatePasswordsAndKeys.sh
+
+.PHONY: clean
+clean		:
+			$(COMPOSE) $(FLAGS) down --rmi local --remove-orphans
+
+.PHONY: vclean
+vclean		:
+			$(COMPOSE) $(FLAGS) down -v --remove-orphans
+			rm -rf $(ENV_FILE)
+			rm -rf $(DATA_DIR)
+
+PHONY: fclean
+fclean		:
+			$(COMPOSE) $(FLAGS) down -v --rmi all --remove-orphans
+			rm -rf $(ENV_FILE)
+			rm -rf $(DATA_DIR)
+
+.PHONY: image-ls image-rm
+image-ls	:
+			docker image ls -a
+image-rm	:
+			docker image rm `docker image ls -qa`
+
+.PHONY: container-ls container-rm
+container-ls:
+			docker container ls -a
+container-rm:
+			docker container rm `docker container ls -qa`
+
+.PHONY: volume-ls volume-rm
+volume-ls	:
+			docker volume ls
+volume-rm	:
+			docker volume rm `docker volume ls -qa`
+
+.PHONY: network-ls network-rm
+network-ls	:
+			docker network ls
+network-rm	:
+			docker network rm `docker network ls -qa`
+
+.PHONY: prune
+prune		:
+			docker system prune -af
+
+.PHONY: sre
+sre			:	clean all
+
+.PHONY: vre
+vre			:	vclean all
+
+.PHONY: re
+re			:	fclean env all

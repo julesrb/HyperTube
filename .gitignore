@@ -2,19 +2,27 @@
 *.env
 
 # Go binaries
-services/api/api
-services/torrent-stream/torrent-stream
+srcs/requirements/api/api
+.tmp/
 
 # Node
 node_modules/
 frontend/.next/
 frontend/out/
 
-# Torrent cache
-data/
+# Torrent data
+srcs/data/*
 
 # IDE
 .idea/
 .vscode/
 *.swp
 .claude/
+
+# macOS
+.DS_Store
+**/.DS_Store
+services/torrent-transcode/.torrent.db
+.gitignore
+services/torrent-transcode/.torrent.db-shm
+services/torrent-transcode/.torrent.db-wal

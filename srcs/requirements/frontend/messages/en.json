@@ -1,0 +1,216 @@
+{
+  "nav": {
+    "search": "Search",
+    "account": "Account",
+    "logout": "Logout",
+    "signin": "Sign in",
+    "createAccount": "Create account"
+  },
+  "home": {
+    "continueWatching": "Continue watching",
+    "featured": "Featured",
+    "popular": "Popular",
+    "mostRated": "Most rated",
+    "directStream": "Direct Streaming"
+  },
+  "movies": {
+    "searchPlaceholder": "Search for a movie...",
+    "noResults": "No movie found",
+    "noResultsResetFilter": "No results. Reset filters?",
+    "sort": {
+      "title": "Title",
+      "year": "Year",
+      "genre": "Genre",
+      "rating": "Rating"
+    },
+    "selectedGenres": {
+      "more": "+ {count} more"
+    }
+  },
+  "movie": {
+    "watch": "Watch",
+    "length": "Length",
+    "genre": "Genre",
+    "directors": "Directors",
+    "stars": "Stars",
+    "synopsis": "Synopsis",
+    "posterAlt": "Poster of movie: {title}",
+    "movieDownloading": "The movie is being downloaded. This may take up to 1 minute. Please wait...",
+    "torrentError": "An error occurred while downloading the movie. Please try again with a different torrent or try again later.",
+    "chooseAnotherTorrent": "Choose another torrent",
+    "decreaseSubDelay": "Decrease subtitle delay",
+    "increaseSubDelay": "Increase subtitle delay"
+  },
+  "comments": {
+    "title": "Comments",
+    "signInToComment": "Sign in to post a comment",
+    "edited": "Edited",
+    "readMore": "Read more",
+    "collapse": "Collapse",
+    "saveChange": "Save changes",
+    "cancel": "Cancel",
+    "writeComment": "Write a comment...",
+    "publishComment": "Publish comment",
+    "noCommentsYet": "You haven't posted any comments yet.",
+    "noCommentsPrompt": "No comments yet. Be the first to post one!"
+  },
+  "profile": {
+    "memberSince": "Member since {date}",
+    "tabs": {
+      "profile": "Profile",
+      "auth": "Password",
+      "history": "History",
+      "comments": "Comments",
+      "avatar": "Avatar",
+      "api": "API"
+    },
+    "remove": "Remove",
+    "noMoviesYet": "You haven't seen any films yet.",
+    "application": {
+      "seeAPIDocumentation": "See API documentation",
+      "noApplicationsYet": "You haven't created any applications yet.",
+      "createApplication": "Create application",
+      "createModal": {
+        "title": "Create application",
+        "name": "Name of the application",
+        "redirect_uri": "Redirect URI",
+        "submit": "Create"
+      },
+      "editModal": {
+        "title": "Edit application",
+        "name": "Name of the application",
+        "redirect_uri": "Redirect URI",
+        "submit": "Save changes"
+      }
+    },
+    "fields": {
+      "submit": "Save changes",
+      "email": "Email",
+      "first_name": "Firstname",
+      "last_name": "Lastname",
+      "username": "Username"
+    }
+  },
+  "common": {
+    "profilePictureAlt": "Profile picture"
+  },
+  "auth": {
+    "signin": {
+      "title": "Sign in",
+      "titleLoginRequired": "Sign in to continue",
+      "login": "Email or username",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account yet?",
+      "register": "Create one",
+      "oAuth": "Sign in with"
+    },
+    "register": {
+      "title": "Join Hypertube",
+      "titleLoginRequired": "Create an account to continue",
+      "email": "Email",
+      "first_name": "Firstname",
+      "last_name": "Lastname",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign up",
+      "haveAccount": "Already have an account?",
+      "signin": "Sign in",
+      "oAuth": "Sign up with"
+    },
+    "forgotPassword": {
+      "title": "Reset password",
+      "email": "Email",
+      "submit": "Send"
+    },
+    "resetPassword": {
+      "title": "Set new password",
+      "new-password": "New password",
+      "confirm-new-password": "Confirm new password",
+      "submit": "Set a new password"
+    },
+    "changePassword": {
+      "current-password": "Current password",
+      "new-password": "New password",
+      "confirm-new-password": "Confirm new password",
+      "submit": "Change"
+    },
+    "oauth": {
+      "loadingAuth": "Signing in..."
+    }
+  },
+  "modal": {
+    "deleteConfirmation": {
+      "title": "Are you sure?",
+      "confirm": "Yes",
+      "cancel": "No"
+    },
+    "genre": {
+      "title": "Film genres"
+    },
+    "filterGenre": {
+      "title": "Select genres",
+      "apply": "Apply",
+      "reset": "Reset"
+    },
+    "selectTorrent": {
+      "title": "Select a torrent",
+      "gb": "GB",
+      "columns": {
+        "source": "Source",
+        "quality": "Quality",
+        "size": "Size",
+        "language": "Language",
+        "seeds": "Seeds"
+      },
+      "choose": "Select"
+    }
+  },
+  "validationErrors": {
+    "invalidLoginOrPassword": "Invalid email, username, or password",
+    "emailInvalid": "Invalid email address.",
+    "usernameTooShort": "Username is too short.",
+    "usernameTooLong": "Username is too long.",
+    "usernameInvalid": "Username is invalid.",
+    "firstnameTooLong": "Firstname is too long.",
+    "firstnameInvalid": "Firstname is invalid.",
+    "lastnameTooLong": "Lastname is too long.",
+    "lastnameInvalid": "Lastname is invalid.",
+    "passwordTooShort": "Password is too short.",
+    "passwordTooLong": "Password is too long.",
+    "passwordSameAsOld": "New password must be different from the current password.",
+    "passwordsDontMatch": "Passwords do not match.",
+    "redirectURIStartHTTP": "URI must start with http:// or https:// and be a valid URL.",
+    "redirectURIInvalid": "URI must be a valid URL.",
+    "requiredField": "This field is required.",
+    "atLeastOneField": "At least one field must be filled."
+  },
+  "notifications": {
+    "success": {
+      "textCopied": "{label} copied to clipboard.",
+      "applicationCreated": "Application created. Copy the `client_secret` now. It won’t be shown again.",
+      "applicationEdited": "Application updated.",
+      "passwordChanged": "Your password has been updated.",
+      "newPasswordSet": "Your new password has been set, you can now sign in with your new password.",
+      "emailResetPassword": "An email has been sent to reset your password.",
+      "infoChanged": "Your profile information has been updated.",
+      "login": "You are now successfully signed in.",
+      "commentChange": "Your comment has been updated.",
+      "accountCreatedSuccess": "Account successfully created!"
+    },
+    "error": {
+      "unknown": "An error occurred. Please try again later.",
+      "network": "Unable to contact the server. Please check your internet connection.",
+      "loginRequired": "You must be signed in to access this page.",
+      "notFoundFilm": "Film not found",
+      "notFoundUser": "User not found",
+      "missingToken": "Token is missing.",
+      "invalidToken": "Token is invalid or has expired.",
+      "invalidQueryParameter": "Invalid query parameter.",
+      "notFound": "Page {path} not found.",
+      "torrentNotFound": "Torrent not found. This film may not be available for streaming yet. Please try again later.",
+      "subtitleNotFound": "No subtitles available in this language."
+    }
+  }
+}

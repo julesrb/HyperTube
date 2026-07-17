@@ -11,12 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services/api
+        working-directory: srcs/requirements/api
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: "1.25"
+          cache-dependency-path: srcs/requirements/api/go.sum
       - run: go build ./...
       - run: go vet ./...
       - run: go test ./...
@@ -26,12 +27,38 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services/torrent-stream
+        working-directory: srcs/requirements/torrent-transcode
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: "1.25"
+          cache-dependency-path: srcs/requirements/torrent-transcode/go.sum
       - run: go build ./...
       - run: go vet ./...
       - run: go test ./...
+
+  frontend:
+    name: Frontend (React + Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: srcs/requirements/frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: srcs/requirements/frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: srcs/requirements/frontend
+      - name: Run lint
+        run: npm run lint
+        working-directory: srcs/requirements/frontend
+      - name: Build Next.js
+        run: npm run build
+        working-directory: srcs/requirements/frontend

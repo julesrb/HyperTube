@@ -1,0 +1,216 @@
+{
+  "nav": {
+    "search": "Rechercher",
+    "account": "Compte",
+    "logout": "Déconnexion",
+    "signin": "Connexion",
+    "createAccount": "Créer un compte"
+  },
+  "home": {
+    "continueWatching": "Continuer à regarder",
+    "featured": "À découvrir",
+    "popular": "Populaires",
+    "mostRated": "Les mieux notés",
+    "directStream": "Streaming Direct"
+  },
+  "movies": {
+    "searchPlaceholder": "Rechercher un film...",
+    "noResults": "Aucun film trouvé",
+    "noResultsResetFilter": "Aucun résultat. Réinitialiser les filtres ?",
+    "sort": {
+      "title": "Titre",
+      "year": "Année",
+      "genre": "Genre",
+      "rating": "Note"
+    },
+    "selectedGenres": {
+      "more": "+ {count} de plus"
+    }
+  },
+  "movie": {
+    "watch": "Regarder",
+    "length": "Durée",
+    "genre": "Genre",
+    "directors": "Réalisateurs",
+    "stars": "Acteurs",
+    "synopsis": "Synopsis",
+    "posterAlt": "Affiche du film : {title}",
+    "movieDownloading": "Le téléchargement du film est en cours. Cela peut prendre jusqu'à 1 minute. Veuillez patienter...",
+    "torrentError": "Erreur lors du téléchargement du film. Veuillez réessayer avec un torrent différent ou réessayer plus tard.",
+    "chooseAnotherTorrent": "Choisir un autre torrent",
+    "decreaseSubDelay": "Diminuer le délai des sous-titres",
+    "increaseSubDelay": "Augmenter le délai des sous-titres"
+  },
+  "comments": {
+    "title": "Commentaires",
+    "signInToComment": "Connectez-vous pour pouvoir poster un commentaire",
+    "edited": "Édité",
+    "readMore": "Lire la suite",
+    "collapse": "Réduire",
+    "saveChange": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "writeComment": "Écrire un commentaire...",
+    "publishComment": "Publier le commentaire",
+    "noCommentsYet": "Vous n'avez encore publié aucun commentaire.",
+    "noCommentsPrompt": "Aucun commentaire pour le moment. Soyez le premier à en publier un !"
+  },
+  "profile": {
+    "memberSince": "Membre depuis {date}",
+    "tabs": {
+      "profile": "Profil",
+      "auth": "Mot de passe",
+      "history": "Historique",
+      "comments": "Commentaires",
+      "avatar": "Avatar",
+      "api": "API"
+    },
+    "remove": "Supprimer",
+    "noMoviesYet": "Vous n'avez encore vu aucun film.",
+    "application": {
+      "seeAPIDocumentation": "Voir la documentation de l'API",
+      "noApplicationsYet": "Vous n'avez encore créé aucune application.",
+      "createApplication": "Créer une application",
+      "createModal": {
+        "title": "Créer une application",
+        "name": "Nom de l'application",
+        "redirect_uri": "URI de redirection",
+        "submit": "Créer"
+      },
+      "editModal": {
+        "title": "Modifier l'application",
+        "name": "Nom de l'application",
+        "redirect_uri": "URI de redirection",
+        "submit": "Enregistrer les modifications"
+      }
+    },
+    "fields": {
+      "submit": "Enregistrer les modifications",
+      "email": "E-mail",
+      "first_name": "Prénom",
+      "last_name": "Nom",
+      "username": "Nom d'utilisateur"
+    }
+  },
+  "common": {
+    "profilePictureAlt": "Photo de profil"
+  },
+  "auth": {
+    "signin": {
+      "title": "Connexion",
+      "titleLoginRequired": "Connectez-vous pour continuer",
+      "login": "E-mail ou nom d'utilisateur",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "noAccount": "Vous n'avez pas encore de compte ?",
+      "register": "Inscrivez-vous",
+      "oAuth": "Connectez-vous avec"
+    },
+    "register": {
+      "title": "Rejoindre Hypertube",
+      "titleLoginRequired": "Créez un compte pour continuer",
+      "email": "E-mail",
+      "first_name": "Prénom",
+      "last_name": "Nom",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "submit": "S'inscrire",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signin": "Connectez-vous",
+      "oAuth": "Inscrivez-vous avec"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "email": "E-mail",
+      "submit": "Envoyer"
+    },
+    "resetPassword": {
+      "title": "Définir un nouveau mot de passe",
+      "new-password": "Nouveau mot de passe",
+      "confirm-new-password": "Confirmer le nouveau mot de passe",
+      "submit": "Définir le mot de passe"
+    },
+    "changePassword": {
+      "current-password": "Mot de passe actuel",
+      "new-password": "Nouveau mot de passe",
+      "confirm-new-password": "Confirmer le nouveau mot de passe",
+      "submit": "Modifier"
+    },
+    "oauth": {
+      "loadingAuth": "Connexion en cours..."
+    }
+  },
+  "modal": {
+    "deleteConfirmation": {
+      "title": "Etes-vous sûr de vouloir supprimer ?",
+      "confirm": "Oui",
+      "cancel": "Non"
+    },
+    "genre": {
+      "title": "Genres du film"
+    },
+    "filterGenre": {
+      "title": "Sélectionner des genres",
+      "apply": "Appliquer",
+      "reset": "Réinitialiser"
+    },
+    "selectTorrent": {
+      "title": "Sélectionner un torrent",
+      "gb": "Go",
+      "columns": {
+        "source": "Source",
+        "quality": "Qualité",
+        "size": "Taille",
+        "language": "Langue",
+        "seeds": "Seeds"
+      },
+      "choose": "Choisir"
+    }
+  },
+  "validationErrors": {
+    "invalidLoginOrPassword": "Email, nom d'utilisateur ou mot de passe invalide",
+    "emailInvalid": "L'adresse e-mail n'est pas valide.",
+    "usernameTooShort": "Le nom d'utilisateur est trop court.",
+    "usernameTooLong": "Le nom d'utilisateur est trop long.",
+    "usernameInvalid": "Nom d’utilisateur invalide.",
+    "firstnameTooLong": "Le prénom est trop long.",
+    "firstnameInvalid": "Le prénom est invalide.",
+    "lastnameTooLong": "Le nom est trop long.",
+    "lastnameInvalid": "Le nom est invalide.",
+    "passwordTooShort": "Le mot de passe est trop court.",
+    "passwordTooLong": "Le mot de passe est trop long.",
+    "passwordSameAsOld": "Le nouveau mot de passe doit être différent de l'ancien.",
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas.",
+    "redirectURIStartHTTP": "L'URI doit commencer par `http://` ou `https://`.",
+    "redirectURIInvalid": "L'URI doit être une URL valide.",
+    "requiredField": "Ce champ est obligatoire.",
+    "atLeastOneField": "Au moins un champ doit être rempli."
+  },
+  "notifications": {
+    "success": {
+      "textCopied": "{label} copié dans le presse-papiers.",
+      "applicationEdited": "Application modifiée avec succès.",
+      "applicationCreated": "Application créée. Copiez le `client_secret` maintenant. Il ne sera plus affiché ensuite.",
+      "passwordChanged": "Votre mot de passe a bien été modifié.",
+      "newPasswordSet": "Votre nouveau mot de passe a été défini, vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "emailResetPassword": "Un e-mail vient de vous être envoyé pour réinitialiser votre mot de passe.",
+      "infoChanged": "Vos informations ont bien été mises à jour.",
+      "login": "Vous êtes maintenant connecté avec succès.",
+      "commentChange": "La modification de votre commentaire a bien été mise à jour.",
+      "accountCreatedSuccess": "Compte créé avec succès !"
+    },
+    "error": {
+      "unknown": "Une erreur est survenue. Veuillez réessayer plus tard.",
+      "network": "Impossible de contacter le serveur. Vérifiez votre connexion internet.",
+      "loginRequired": "Vous devez être connecté pour accéder à cette page.",
+      "notFoundFilm": "Film introuvable",
+      "notFoundUser": "Utilisateur introuvable",
+      "missingToken": "Token manquant.",
+      "invalidToken": "Token invalide ou expiré.",
+      "invalidQueryParameter": "Paramètre de requête invalide.",
+      "notFound": "Page {path} non trouvée.",
+      "torrentNotFound": "Torrent introuvable. Ce film peut ne pas être encore disponible en streaming. Veuillez réessayer plus tard.",
+      "subtitleNotFound": "Aucun sous-titre disponible dans cette langue."
+    }
+  }
+}

@@ -50,7 +50,7 @@ export default function UserProfile({user, tabs, updateUserAction}: {user: iUser
                 <p className="uppercase">{tProfile("memberSince", {date: memberSince}) + (showLastName ? ` · #${user.username}` : "")}</p>
             </div>
         </div>
-        <div className="flex h-12 sm:h-16">
+        <div className="flex h-12 sm:h-16 overflow-x-auto">
             <div className="border-b border-r w-12" />
             {tabs.map((tab, index) => (<button
                 key={index}

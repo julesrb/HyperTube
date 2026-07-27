@@ -67,7 +67,7 @@ export default function Input(
         />
         <label htmlFor={id}
                className={"pointer-events-none uppercase absolute text-xs font-light bottom-15\
-                   peer-focus:text-xs peer-focus:font-light peer-focus:bottom-15\
+                   peer-focus:text-xs peer-focus:font-body peer-focus:font-light peer-focus:bottom-15\
                    peer-placeholder-shown:font-condensed peer-placeholder-shown:tracking-wide peer-placeholder-shown:bottom-9 peer-placeholder-shown:text-2xl" + (requestErrorMessage ? " text-red" : "")}>{placeholder}</label>
         {isPassword && (<button type="button" className="absolute right-0 top-1" onClick={handleTogglePasswordVisibility}><EyeIcon crossed={isPasswordVisible} color={requestErrorMessage ? "red" : "black"} /></button>)}
         {isPassword && (<IconButton color={requestErrorMessage ? "red" : "black"} className="absolute right-0 top-1" onClick={handleTogglePasswordVisibility}>{(color: string) => <EyeIcon crossed={isPasswordVisible} color={color}/>}</IconButton>)}
